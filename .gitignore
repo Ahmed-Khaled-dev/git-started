@@ -4,6 +4,10 @@ src
 #Make file
 Makefile
 
+# VS code
+.vscode
+tempCodeRunnerFile.cpp
+
 # Prerequisites
 *.d
 
