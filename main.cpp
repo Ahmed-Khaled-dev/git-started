@@ -6,8 +6,6 @@ using namespace sf;
 /** note that some variables should be in the while(window.isOpen()) loop because it needs to be updated */
 
 int p1 = 0, delay = 0;
-ContextSettings Settings;
-RenderWindow window(VideoMode(1920, 1080), "GitStarted", sf::Style::Default, Settings);
 
 
 void respawning_commits_and_get_its_postion(CircleShape commit[])
@@ -17,27 +15,14 @@ void respawning_commits_and_get_its_postion(CircleShape commit[])
         commit[i].setRadius(30);
         commit[i].setFillColor(Color::Black);
         commit[i].setOrigin(30, 30);
-        commit[i].setPosition(149 * (i + i), 413);
-        
+        commit[i].setPosition(149 * (i) * 2, 413);
 
     }
         
 }
 
 
-bool commits_condtions(Vector2i& postion, CircleShape commit[])
-{
-    for (int i = 0; i < 5; i++)
-    {
-        if (commit[i].getGlobalBounds().contains(Vector2f(postion.x, postion.y))) {
-            return true;
-        }
-    }
-    
-}
-
-
-void sprite_animation_and_position(Sprite& head, Vector2i& position_of_head, CircleShape commit[], bool& clicked)
+void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, CircleShape commit[], bool& clicked, int& move)
 {
     if (true) //sprite animation
     {
@@ -51,18 +36,29 @@ void sprite_animation_and_position(Sprite& head, Vector2i& position_of_head, Cir
         if (p1 == 2)
             p1 = 0;
     }
-    for (size_t i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
     {
-        CircleShape la(25);
-        la.setPosition(0, 0);
-        la.setFillColor(Color::Black);
-        if (commit[i].getGlobalBounds().contains(Vector2f(position_of_head.x, position_of_head.y)) && clicked) {
-            head.setPosition(commit[i].getPosition().x, commit[i].getPosition().y - 130);
+
+        bool contained = commit[i].getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) ;
+        if ( clicked) {
+            move = 50;
+        }
+        cout << head.getPosition().x - commit[1].getPosition().x  << '\t' <<move<<endl;
+        if (commit[i].getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && move){
+            if(head.getPosition().x - commit[i].getPosition().x < 0){
+                head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
+                head.move(7.0, 0);}
+            else if (head.getPosition().x - commit[i].getPosition().x > 0){
+                 head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
+                head.move(-7.0, 0);}
+            else if (abs(head.getPosition().x - commit[i].getPosition().x) <=6){
+                move = 0;
+                }
+            
         }
     }
 
 }
-
 
 int main()
 {
@@ -81,11 +77,12 @@ int main()
     head.setTextureRect(IntRect(0, 0, 200.25, 301));
     head.setScale(0.8, 0.8);
     head.setOrigin(100.125, 150.5);
-    bool clicked;
+    head.setPosition(0, 200);
+    bool clicked, move_right = false, move_left = false;
     octacat.setSmooth(true);
     respawning_commits_and_get_its_postion(commit);
-    
-    // 3  variables for getting the mainmenu cords
+    int move = 0;
+    // 3  variables for getting the mainmenu cordssetting
 
 
 
@@ -102,9 +99,7 @@ int main()
                 window.close();
         }
        
-        cout << position.x << '\t' << position.y << endl;
-
-        sprite_animation_and_position(head, position, commit, clicked);
+        sprite_animation_and_position(head, position, commit, clicked, move);
 
         
 
