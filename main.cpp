@@ -803,3 +803,4 @@ void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, Ci
     }
 
 }
+}
