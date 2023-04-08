@@ -4,10 +4,11 @@
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1000, 500), "GIT Started");
-    std:: string user_input;
+    std:: string user_input,final_input;
     sf :: Font font;
     font.loadFromFile("font/Roboto-Black.ttf");
     sf::Text text("", font);
+    sf::Text text_final("", font);
     sf :: Clock clock; //for cursor
     while (window.isOpen())
     {
@@ -26,8 +27,9 @@ int main()
                     if (!user_input.empty())
                         user_input.pop_back();             //pop it from the string
                 }
-                if (event.key.code == sf::Keyboard::Return) {  //user clicks enter (will be modified into appearing separately)
-                        user_input += '\n';
+                if (event.key.code == sf::Keyboard::Return) {  //user clicks enter and the text will be transfered at the top of the screen
+                        final_input += ( user_input + "\n") ;
+                        user_input.clear();
                 }
             }
         }static sf::Time text_effect_time; 
@@ -41,10 +43,12 @@ int main()
             text_effect_time = sf::Time::Zero;
         }
 
-        text.setString(user_input + (show_cursor ? '|' : ' '));
+        text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
         text.setPosition(0,450);
+        text_final.setString(final_input);
         window.clear();
         window.draw(text);
+        window.draw(text_final);
         window.display();
     }
 
