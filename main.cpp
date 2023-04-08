@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 using namespace std;
 using namespace sf;
-void txt (RenderWindow& window, string s)
+void txt (RenderWindow& window)
 {
     Clock clock;
     Time time; //...=0
@@ -40,7 +40,6 @@ void txt (RenderWindow& window, string s)
 int main()
 {
     RenderWindow window({800, 300}, "dialogue-text-function");
-    string script;
-    txt(window,script);
+    txt(window);
     return 0;
 }
