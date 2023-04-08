@@ -42,6 +42,7 @@ int main()
         }
 
         text.setString(user_input + (show_cursor ? '|' : ' '));
+        text.setPosition(0,450);
         window.clear();
         window.draw(text);
         window.display();
