@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <locale>
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1000, 500), "GIT Started");
