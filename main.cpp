@@ -6,11 +6,10 @@ using namespace sf;
 using namespace std;
 
 void playMusicFromFile(string file_path, Music& music);
-void updateDiamondleText(CircleShape& diamond, Text& text, string new_text);
-void changeDiamondColor(CircleShape& diamond, Color color);
-void changeCircleleColor(CircleShape& circle, Color color);
-void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness );
-void textproperities(CircleShape& circle ,Text& text,Color color);
+void updateDiamondText(CircleShape& diamond, Text& text, string new_text);
+void changeCircleColor(CircleShape& circle, Color color);
+void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness);
+void textProperities(CircleShape& circle ,Text& text,Color color);
 
 int main() {
 
@@ -41,13 +40,13 @@ int main() {
     }
 
     Text text1("Hello", font, 35);//a way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    textproperities(diamond, text1, Color::Black);
+    textProperities(diamond, text1, Color::Black);
 
     Text text2("+vol", font, 35);
-    textproperities(circle1, text2, Color::Black);
+    textProperities(circle1, text2, Color::Black);
 
     Text text3("-vol", font, 35);
-    textproperities(circle2, text3, Color::Black);
+    textProperities(circle2, text3, Color::Black);
 
     while (window.isOpen()) {
         Event event;
@@ -60,11 +59,11 @@ int main() {
                 if (diamond.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
                     if (music.getStatus() == SoundSource::Status::Playing) {
                         music.pause();   //if music is being played --> pause it
-                        updateDiamondleText(diamond, text1, "Paused");
+                        updateDiamondText(diamond, text1, "Paused");
                     }
                     else if (music.getStatus() == SoundSource::Status::Paused) {
                         music.play();
-                        updateDiamondleText(diamond, text1, "Playing");
+                        updateDiamondText(diamond, text1, "Playing");
                     }
                 }
             }
@@ -81,33 +80,32 @@ int main() {
             }
             if (event.type == Event::MouseMoved) {
                 if (diamond.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
-                    changeDiamondColor(diamond, Color::Yellow); //when you hover on the rectangle a function changes its color
+                    changeCircleColor(diamond, Color::Yellow); //when you hover on the rectangle a function changes its color
                 }
                 else {
-                    changeDiamondColor(diamond, Color::Magenta);
+                    changeCircleColor(diamond, Color::Magenta);
 
                 }
             }
             if (event.type == Event::MouseMoved) {
                 if (circle1.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
-                    changeCircleleColor(circle1, Color::Cyan);
+                    changeCircleColor(circle1, Color::Cyan);
                 }
                 else {
-                    changeCircleleColor(circle1, Color::Red);
+                    changeCircleColor(circle1, Color::Red);
 
                 }
             }
             if (event.type == Event::MouseMoved) {
                 if (circle2.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
-                    changeCircleleColor(circle2, Color::Cyan);
+                    changeCircleColor(circle2, Color::Cyan);
                 }
                 else {
-                    changeCircleleColor(circle2, Color::Blue);
+                    changeCircleColor(circle2, Color::Blue);
 
                 }
             }
         }
-
         window.clear();
         window.draw(diamond);
         window.draw(circle1);
@@ -128,15 +126,13 @@ void playMusicFromFile(const string file_path, Music& music) {
     music.setLoop(true); // loops the music
     music.play();
 }
-void updateDiamondleText(CircleShape& diamond, Text& text, string new_text) {
+void updateDiamondText(CircleShape& diamond, Text& text, string new_text) {
+
     text.setString(new_text);
     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
     text.setPosition(diamond.getPosition());
 }
-void changeDiamondColor(CircleShape& diamond, Color color) {
-    diamond.setFillColor(color);
-}
-void changeCircleleColor(CircleShape& circle, Color color) {
+void changeCircleColor(CircleShape& circle, Color color) {
     circle.setFillColor(color);
 }
 void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness )
@@ -147,11 +143,10 @@ void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor,
     circle.setOrigin(circle.getRadius(), circle.getRadius()); //makes the origin of the circle at its center
     circle.setPosition(x_position, y_position); 
 }
- void textproperities(CircleShape& circle, Text& text, Color color) {
+ void textProperities(CircleShape& circle, Text& text, Color color) {
 
      text.setFillColor(Color::Black);
      text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
      //making the center of the text at its center
      text.setPosition(circle.getPosition()); //assigning the text with the center of the circle
-
 }
