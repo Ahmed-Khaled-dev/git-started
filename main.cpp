@@ -9,6 +9,7 @@ void playMusicFromFile(string file_path, Music& music);
 void updateRectangleText(RectangleShape& rectangle, Text& text, string new_text);
 void changeRectangleColor(RectangleShape& rectangle, Color color);
 void changeCircleleColor(CircleShape& circle, Color color);
+void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness = 0);
 int main() {
 
     Music music;
@@ -29,23 +30,10 @@ int main() {
     rectangle.setFillColor(Color::Magenta);
 
     CircleShape circle1(50,8);//deafault number of points is 30 (the circle) 2x <------------
-    circle1.setFillColor(Color::Red);
-    circle1.setOutlineColor(Color(0, 255, 0)); //creates an outline with color ( here is light green)
-    circle1.setOutlineThickness(15);     // defines the thickness of that outline
-    circle1.setOrigin(circle1.getRadius(), circle1.getRadius()); //makes the origin of the circle at its center
-    circle1.setPosition(700, 500);
+    shapesProperities(circle1, Color::Red, Color::Green, 700, 500, 15);
 
-    CircleShape circle2(50,8);// if you want it a normal circle --> CircleShape circle2(50); 2x <-----------
-    circle2.setFillColor(Color::Blue);
-    circle2.setOutlineColor(Color(0, 255, 0));
-    circle2.setOutlineThickness(15);// you can make it an inline by reversing the Thickness (-15)
-    circle2.setOrigin(circle1.getRadius(), circle1.getRadius());
-    circle2.setPosition(300, 500);
-
-    Font font2; //defining font object
-    if (!font2.loadFromFile("resources/arial.TTF")) {
-        cout << "Error has happened while loading the font" << endl;
-    }
+    CircleShape circle2(50,8);// (if you want it a normal circle --> CircleShape circle2(50);) 2x <-----------
+    shapesProperities(circle2, Color::Blue, Color::Green, 300, 500, 15);
 
     Font font;
     if (!font.loadFromFile("resources/arial.TTF")) {
@@ -90,13 +78,11 @@ int main() {
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 if (circle1.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
                     music.setVolume(music.getVolume() + 10);//new volume = current volume+10
-                    text2.setStyle(Text::Style::Bold | Text::Style::Underlined);//you can set OutlineColor(); and OutlineThickness(); just like shapes
                 }
             }
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 if (circle2.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
                     music.setVolume(music.getVolume() - 10);
-                    text3.setStyle(Text::Style::Bold | Text::Style::Underlined);
                 }
                 
             }
@@ -164,4 +150,12 @@ void changeRectangleColor(RectangleShape& rectangle, Color color) {
 }
 void changeCircleleColor(CircleShape& circle, Color color) {
     circle.setFillColor(color);
+}
+void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness )
+{
+    circle.setFillColor(fillcolor);
+    circle.setOutlineColor(outlinecolor); //creates an outline with color ( if you want to make it an inline reverse the outlinethickness 15-->(-15)) 
+    circle.setOutlineThickness(outlinethickness);     // defines the thickness of that outline
+    circle.setOrigin(circle.getRadius(), circle.getRadius()); //makes the origin of the circle at its center
+    circle.setPosition(x_position, y_position); 
 }
