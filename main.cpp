@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <SFML/Audio.hpp>
+#include <iostream>
 
 using namespace sf;
 using namespace std;
@@ -10,6 +10,7 @@ void updateDiamondleText(CircleShape& diamond, Text& text, string new_text);
 void changeDiamondColor(CircleShape& diamond, Color color);
 void changeCircleleColor(CircleShape& circle, Color color);
 void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness );
+void textproperities(CircleShape& circle ,Text& text,Color color);
 
 int main() {
 
@@ -36,24 +37,17 @@ int main() {
 
     Font font;
     if (!font.loadFromFile("resources/arial.TTF")) {
-        cout << "Error has happened while loading the font" << endl;
+         cout << "Error has happened while loading the font" << endl;
     }
 
-    Text text3("-vol", font, 35);//a way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    text3.setFillColor(Color::Black);
-    text3.setOrigin(text3.getLocalBounds().left + text3.getLocalBounds().width / 2, text3.getLocalBounds().top + text3.getLocalBounds().height / 2); 
-    //making the center of the text at its center
-    text3.setPosition(circle2.getPosition()); //assigning the text with the center of the circle
-   
-    Text text2("+vol", font, 35);
-    text2.setFillColor(Color::Black);
-    text2.setOrigin(text2.getLocalBounds().left + text2.getLocalBounds().width / 2, text2.getLocalBounds().top + text2.getLocalBounds().height / 2);
-    text2.setPosition(circle1.getPosition());
+    Text text1("Hello", font, 35);//a way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
+    textproperities(diamond, text1, Color::Black);
 
-    Text text("Hello", font, 50); 
-    text.setFillColor(Color::Black);
-    text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
-    text.setPosition(diamond.getPosition());
+    Text text2("+vol", font, 35);
+    textproperities(circle1, text2, Color::Black);
+
+    Text text3("-vol", font, 35);
+    textproperities(circle2, text3, Color::Black);
 
     while (window.isOpen()) {
         Event event;
@@ -66,11 +60,11 @@ int main() {
                 if (diamond.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
                     if (music.getStatus() == SoundSource::Status::Playing) {
                         music.pause();   //if music is being played --> pause it
-                        updateDiamondleText(diamond, text, "Paused");
+                        updateDiamondleText(diamond, text1, "Paused");
                     }
                     else if (music.getStatus() == SoundSource::Status::Paused) {
                         music.play();
-                        updateDiamondleText(diamond, text, "Playing");
+                        updateDiamondleText(diamond, text1, "Playing");
                     }
                 }
             }
@@ -115,20 +109,17 @@ int main() {
         }
 
         window.clear();
-
         window.draw(diamond);
         window.draw(circle1);
         window.draw(circle2);
-        window.draw(text);
+        window.draw(text1);
         window.draw(text2);
         window.draw(text3);
-
         window.display();
     }
 
     return 0;
 }
-
 void playMusicFromFile(const string file_path, Music& music) {
 
     if (!music.openFromFile(file_path)) {
@@ -137,13 +128,11 @@ void playMusicFromFile(const string file_path, Music& music) {
     music.setLoop(true); // loops the music
     music.play();
 }
-
 void updateDiamondleText(CircleShape& diamond, Text& text, string new_text) {
     text.setString(new_text);
     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
     text.setPosition(diamond.getPosition());
 }
-
 void changeDiamondColor(CircleShape& diamond, Color color) {
     diamond.setFillColor(color);
 }
@@ -157,4 +146,12 @@ void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor,
     circle.setOutlineThickness(outlinethickness);     // defines the thickness of that outline
     circle.setOrigin(circle.getRadius(), circle.getRadius()); //makes the origin of the circle at its center
     circle.setPosition(x_position, y_position); 
+}
+ void textproperities(CircleShape& circle, Text& text, Color color) {
+
+     text.setFillColor(Color::Black);
+     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
+     //making the center of the text at its center
+     text.setPosition(circle.getPosition()); //assigning the text with the center of the circle
+
 }
