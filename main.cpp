@@ -1,15 +1,16 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include <iostream>
+#include <SFML/Audio.hpp>
 
 using namespace sf;
 using namespace std;
 
 void playMusicFromFile(string file_path, Music& music);
-void updateRectangleText(RectangleShape& rectangle, Text& text, string new_text);
-void changeRectangleColor(RectangleShape& rectangle, Color color);
+void updateDiamondleText(CircleShape& diamond, Text& text, string new_text);
+void changeDiamondColor(CircleShape& diamond, Color color);
 void changeCircleleColor(CircleShape& circle, Color color);
-void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness = 0);
+void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness );
+
 int main() {
 
     Music music;
@@ -24,10 +25,8 @@ int main() {
     const string window_name = "git started";
     RenderWindow window(VideoMode(window_width, window_height), window_name);
 
-    RectangleShape rectangle(Vector2f(200, 200));
-    rectangle.setOrigin(rectangle.getSize().x / 2, rectangle.getSize().y / 2);//making the origin its center
-    rectangle.setPosition((window_width) / 2, (window_height) / 2);  //set it in the middle the window
-    rectangle.setFillColor(Color::Magenta);
+    CircleShape diamond(100, 4);//deafault number of points is 30 (the circle) 2x <------------
+    shapesProperities(diamond, Color::Magenta, Color::Green, 500 , 500, 0);
 
     CircleShape circle1(50,8);//deafault number of points is 30 (the circle) 2x <------------
     shapesProperities(circle1, Color::Red, Color::Green, 700, 500, 15);
@@ -54,7 +53,7 @@ int main() {
     Text text("Hello", font, 50); 
     text.setFillColor(Color::Black);
     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
-    text.setPosition(rectangle.getPosition());
+    text.setPosition(diamond.getPosition());
 
     while (window.isOpen()) {
         Event event;
@@ -64,14 +63,14 @@ int main() {
                 window.close();
             }
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-                if (rectangle.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
+                if (diamond.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
                     if (music.getStatus() == SoundSource::Status::Playing) {
                         music.pause();   //if music is being played --> pause it
-                        updateRectangleText(rectangle, text, "Paused"); 
+                        updateDiamondleText(diamond, text, "Paused");
                     }
                     else if (music.getStatus() == SoundSource::Status::Paused) {
                         music.play();
-                        updateRectangleText(rectangle, text, "Playing");
+                        updateDiamondleText(diamond, text, "Playing");
                     }
                 }
             }
@@ -87,11 +86,11 @@ int main() {
                 
             }
             if (event.type == Event::MouseMoved) {
-                if (rectangle.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
-                    changeRectangleColor(rectangle, Color::Yellow); //when you hover on the rectangle a function changes its color
+                if (diamond.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
+                    changeDiamondColor(diamond, Color::Yellow); //when you hover on the rectangle a function changes its color
                 }
                 else {
-                    changeRectangleColor(rectangle, Color::Magenta);
+                    changeDiamondColor(diamond, Color::Magenta);
 
                 }
             }
@@ -117,7 +116,7 @@ int main() {
 
         window.clear();
 
-        window.draw(rectangle);
+        window.draw(diamond);
         window.draw(circle1);
         window.draw(circle2);
         window.draw(text);
@@ -139,14 +138,14 @@ void playMusicFromFile(const string file_path, Music& music) {
     music.play();
 }
 
-void updateRectangleText(RectangleShape& rectangle, Text& text, string new_text) {
+void updateDiamondleText(CircleShape& diamond, Text& text, string new_text) {
     text.setString(new_text);
     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
-    text.setPosition(rectangle.getPosition());
+    text.setPosition(diamond.getPosition());
 }
 
-void changeRectangleColor(RectangleShape& rectangle, Color color) {
-    rectangle.setFillColor(color);
+void changeDiamondColor(CircleShape& diamond, Color color) {
+    diamond.setFillColor(color);
 }
 void changeCircleleColor(CircleShape& circle, Color color) {
     circle.setFillColor(color);
