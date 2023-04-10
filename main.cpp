@@ -2,21 +2,8 @@
 #include <iostream>
 using namespace sf;
 using namespace std;
-void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
-     text_effect_time += clock.restart();
-
-        if (text_effect_time >= seconds(0.5f)) //cursor time to appear
-        {
-            show_cursor = !show_cursor;
-            text_effect_time = Time::Zero;
-        }
-   
-}
-void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
-        text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
-        text.setPosition(0,200);
-        text_cli_final.setString(final_input);
-}
+void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time);
+void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor);
 int main()
 {
     const int X=1000,Y=500;
@@ -54,7 +41,6 @@ int main()
                 }
             }
         } 
-       
         cli_cursor(clock, show_cursor, text_effect_time);
         cli(cli_text,text_cli_final,user_cli_input,final_cli_input,show_cursor);
         window.clear();
@@ -64,4 +50,20 @@ int main()
     }
 
     return 0;
+}
+
+void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
+     text_effect_time += clock.restart();
+
+        if (text_effect_time >= seconds(0.5f)) //cursor time to appear
+        {
+            show_cursor = !show_cursor;
+            text_effect_time = Time::Zero;
+        }
+   
+}
+void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
+        text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
+        text.setPosition(0,200);
+        text_cli_final.setString(final_input);
 }
