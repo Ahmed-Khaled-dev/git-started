@@ -12,7 +12,7 @@ void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
         }
    
 }
-void cli_text(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
+void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
         text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
         text.setPosition(0,200);
         text_cli_final.setString(final_input);
@@ -22,10 +22,10 @@ int main()
     const int X=1000,Y=500;
     const string title ="GIT Started" ;
     RenderWindow window(VideoMode(X, Y) , title);
-    string user_input,final_input;
+    string user_cli_input,final_cli_input;
     Font font_user;
     font_user.loadFromFile("font/Roboto-Black.ttf");
-    Text text("", font_user);
+    Text cli_text("", font_user);
     Text text_cli_final("", font_user);
     Event event;
     Time text_effect_time; 
@@ -41,24 +41,24 @@ int main()
             }
             if (event.type == Event::TextEntered) {  //take input from user
                 if (isprint(event.text.unicode))      //filter out symbols (only characters in ascii code enters)
-                    user_input+= event.text.unicode;
+                    user_cli_input+= event.text.unicode;
             }
             if (event.type == Event::KeyPressed) {    //if user wants to erase what he wrote
                 if (event.key.code == Keyboard::BackSpace) {
-                    if (!user_input.empty())
-                        user_input.pop_back();             //pop it from the string
+                    if (!user_cli_input.empty())
+                        user_cli_input.pop_back();             //pop it from the string
                 }
                 if (event.key.code == Keyboard::Return) {  //user clicks enter and the text will be transfered at the top of the screen
-                        final_input += ( user_input + "\n") ;
-                        user_input.clear();
+                        final_cli_input += ( user_cli_input + "\n") ;
+                        user_cli_input.clear();
                 }
             }
         } 
        
         cli_cursor(clock, show_cursor, text_effect_time);
-        cli_text(text,text_cli_final,user_input,final_input,show_cursor);
+        cli(cli_text,text_cli_final,user_cli_input,final_cli_input,show_cursor);
         window.clear();
-        window.draw(text);
+        window.draw(cli_text);
         window.draw(text_cli_final);
         window.display();
     }
