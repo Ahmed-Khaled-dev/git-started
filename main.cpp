@@ -2,6 +2,17 @@
 #include <iostream>
 using namespace sf;
 using namespace std;
+void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
+     text_effect_time += clock.restart();
+
+        if (text_effect_time >= seconds(0.5f)) //cursor time to appear
+        {
+            show_cursor = !show_cursor;
+            text_effect_time = Time::Zero;
+        }
+   
+}
+
 int main()
 {
     const int X=1000,Y=500;
@@ -12,16 +23,19 @@ int main()
     font.loadFromFile("font/Roboto-Black.ttf");
     Text text("", font);
     Text text_final("", font);
+    Event event;
+    Time text_effect_time; 
+    bool show_cursor;
     Clock clock; //for cursor
+ 
     while (window.isOpen())
     {
-        Event event;
         while (window.pollEvent(event))
         {
             if (event.type == Event::Closed){
                 window.close();
             }
-         else if (event.type == Event::TextEntered) {  //take input from user
+            if (event.type == Event::TextEntered) {  //take input from user
                 if (isprint(event.text.unicode))      //filter out symbols (only characters in ascii code enters)
                     user_input+= event.text.unicode;
             }
@@ -35,17 +49,9 @@ int main()
                         user_input.clear();
                 }
             }
-        }static Time text_effect_time; 
-        static bool show_cursor;
-
-        text_effect_time += clock.restart();
-
-        if (text_effect_time >= seconds(0.5f)) //cursor time to appear
-        {
-            show_cursor = !show_cursor;
-            text_effect_time = Time::Zero;
-        }
-
+        } 
+       
+        cli_cursor(clock, show_cursor, text_effect_time);
         text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
         text.setPosition(0,450);
         text_final.setString(final_input);
