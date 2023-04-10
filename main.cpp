@@ -761,24 +761,12 @@ using namespace sf;
 
 /** note that some variables should be in the while(window.isOpen()) loop because it needs to be updated */
 
-int p1 = 0, delay = 0;
+short int p1 = 0, delay = 0;
 
 
-void respawning_commits_and_get_its_postion(CircleShape commit[])
-{
-    for (int i = 1; i <= 4; i++)
-    {
-        commit[i].setRadius(30);
-        commit[i].setFillColor(Color::Black);
-        commit[i].setOrigin(30, 30);
-        commit[i].setPosition(149 * (i) * 2, 413);
-
-    }
-        
-}
 
 
-void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, CircleShape commit[], bool& clicked, int& move)
+void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, CircleShape commit[], bool& clicked, bool& move)
 {
     if (true) //sprite animation
     {
@@ -792,21 +780,21 @@ void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, Ci
         if (p1 == 2)
             p1 = 0;
     }
-    for (int i = 0; i < 5; i++)
+    for (short int i = 0; i < 5; i++)
     {
 
         bool contained = commit[i].getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) ;
         if ( clicked) {
-            move = 50;
+            move = 1;
         }
         cout << head.getPosition().x - commit[1].getPosition().x  << '\t' <<move<<endl;
         if (commit[i].getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && move){
             if(head.getPosition().x - commit[i].getPosition().x < 0){
                 head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
-                head.move(7.0, 0);}
+                head.move(1.0, 0);}
             else if (head.getPosition().x - commit[i].getPosition().x > 0){
                  head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
-                head.move(-7.0, 0);}
+                head.move(-1.0, 0);}
             else if (abs(head.getPosition().x - commit[i].getPosition().x) <=6){
                 move = 0;
                 }
@@ -822,7 +810,6 @@ int main()
     Settings.antialiasingLevel = 18;
     RenderWindow window(VideoMode(1920, 1080), "GitStarted", Style::Default, Settings);
     //all the needed variables
-    RectangleShape line(Vector2f(150, 5));
     window.setFramerateLimit(60);
     CircleShape commit[5];
     Sprite head;
@@ -834,11 +821,9 @@ int main()
     head.setScale(0.8, 0.8);
     head.setOrigin(100.125, 150.5);
     head.setPosition(0, 200);
-    bool clicked, move_right = false, move_left = false;
+    bool clicked;
     octacat.setSmooth(true);
-    respawning_commits_and_get_its_postion(commit);
-    int move = 0;
-    // 3  variables for getting the mainmenu cordssetting
+    bool move = 0;
 
 
 
@@ -851,7 +836,7 @@ int main()
         Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == Event::Closed)
                 window.close();
         }
        
@@ -861,8 +846,6 @@ int main()
 
         window.clear(Color :: White);
         window.draw(head);
-        for (int i = 0; i < 5; i++)
-            window.draw(commit[i]);
         window.display();
         
     }
