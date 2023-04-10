@@ -78,6 +78,12 @@ void showContinuationMessage(dialogueText &dialogue_text);
 
 int main()
 {
+    const int WINDOW_WIDTH = 1920;
+    const int WINDOW_HEIGHT = 1080;
+    string current_screen = "main menu";
+
+    RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
+
     // Dialogue box
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
@@ -216,6 +222,13 @@ int main()
     // Option menu
 
     Event event;
+    Texture commit_textures;
+    if (!commit_textures.loadFromFile("resources/sprites/commits_sprites.png"))
+    {
+        cout << "Error loading commit sprites" << endl;
+    }
+    commit_textures.setSmooth(true);
+
     while (window.isOpen())
     {
         Mouse mouse;
@@ -471,46 +484,7 @@ int main()
         }
         else if(current_screen == "options")
         {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
-            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
-            window.draw(main_menu);
-            window.draw(option_menu);
-            for (int i = 0; i < 2; i++)     
-                window.draw(slider[i]);;
-            window.draw(sfx_text.text);
-            window.draw(music_text.text);
-            window.draw(options_exit_button);
-        }
-        else if(current_screen == "options_in_game")
-        {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
-            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
-            drawDialogue(window, dialogue_box);
-            createCliInputShape(cli_input_shape);
-            createEditWindowShape(edit_window_shape);
-            createCliOutputShape(cli_output_shape);
-            window.draw(dialogue_box.body_shape);
-            window.draw(edit_window_shape);
-            window.draw(cli_input_shape);
-            window.draw(cli_output_shape);
-            window.draw(dialogue_box.title_shape);
-            window.draw(dialogue_box.title);   
-            window.draw(dialogue_box.sprite);
-            window.draw(dialogue_text.script_text);
-            window.draw(dialogue_text.continuation_text);
-            window.draw(edit_window_text);
-            window.draw(cli_text);
-            window.draw(cli_text_final); 
-            window.draw(edit_window_title);
-            window.draw(edit_window_title_text);
-            window.draw(option_menu);
-            for (int i = 0; i < 2; i++)     
-                window.draw(slider[i]);;
-            window.draw(sfx_text.text);
-            window.draw(music_text.text);
-            window.draw(options_exit_button);
+            // Write here "options" screen properties
         }
         window.setView(view);
         window.display();
@@ -641,6 +615,34 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setOutlineColor(Color::Black);
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
+void addCommit(int& commits_count, commit commits[], Texture& commit_textures, string commit_message, int window_length, int window_width){
+    // All the following are the same for both conditions
+    Sprite commit_sprite;
+    commit_sprite.setTexture(commit_textures);
+    commit_sprite.scale(Vector2f(0.5, 0.5));
+    //commit_sprite.setColor({241, 80, 47});
+    if (commits_count == 0)
+    {
+        // I cut from the texture a circle **without** an arrow
+        commit_sprite.setTextureRect(IntRect(287, 70, 156, 156)); 
+        commit_sprite.setPosition(window_length/2, window_width/3);
+    }
+    else
+    {
+        const int circle_length = 60;
+        const int arrow_length = 125;
+        for (int i = 0; i < commits_count; i++)
+        {
+            commits[i].sprite.move(Vector2f(-(circle_length + arrow_length), 0));
+        }
+        // I cut from the texture a circle **with** an arrow
+        commit_sprite.setTextureRect(IntRect(37, 278, 406, 432));
+        commit_sprite.setPosition(window_length/2 - arrow_length, window_width/3);
+    }
+
+    commit new_commit = {commit_message, commit_sprite};
+    commits[commits_count] = new_commit;
+    commits_count++;
 }
 
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
