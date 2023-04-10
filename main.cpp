@@ -12,8 +12,6 @@ void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time);
 void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor);
 int main()
 {
-
- 
     string user_cli_input,final_cli_input;
     Font font_user;
     font_user.loadFromFile("font/Roboto-Black.ttf");
