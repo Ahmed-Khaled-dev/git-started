@@ -9,17 +9,17 @@ struct commit{
     Sprite sprite;
 };
 
-void addCommit(int &commits_count, commit commits[], Texture& commit_textures, string commit_message);
+void addCommit(unsigned short int &commits_count, commit commits[], Texture& commit_textures, string commit_message);
 
-const int WINDOW_X = 1600, WINDOW_Y = 1000;
+const unsigned short int WINDOW_X = 1600, WINDOW_Y = 1000;
 const string GAME_TITLE = "Git Started";
 
 RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
 
 int main(){
 
-    int commits_count = 0;
-    const int MAX_COMMITS = 100;
+    unsigned short int commits_count = 0;
+    const unsigned short int MAX_COMMITS = 100;
 
     commit commits[MAX_COMMITS];
 
@@ -44,9 +44,10 @@ int main(){
                 addCommit(commits_count, commits, commit_textures, "initial commit");
             }
         }
-        const int bg_color_rgb[3] = {43, 45, 47};
+        // Unsigned char stores from 0 -> 255 (RGB range)
+        const unsigned char bg_color_rgb[3] = {43, 45, 47};
         window.clear({bg_color_rgb[0], bg_color_rgb[1], bg_color_rgb[2]});
-        for (int i = 0; i < commits_count; i++)
+        for (unsigned short int i = 0; i < commits_count; i++)
         {
             window.draw(commits[i].sprite);
             //cout << "Commit number " << i << " X-position -> " << commits[i].sprite.getPosition().x << endl;
@@ -57,11 +58,11 @@ int main(){
     return 0;
 }
 
-void addCommit(int& commits_count, commit commits[], Texture& commit_textures, string commit_message){
+void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message){
     // All the following are the same for both conditions
     Sprite commit_sprite;
     commit_sprite.setTexture(commit_textures);
-    const int COMMIT_SCALING = 0.5;
+    const float COMMIT_SCALING = 0.5;
     commit_sprite.scale(Vector2f(COMMIT_SCALING, COMMIT_SCALING));
 
     if (commits_count == 0)
@@ -72,9 +73,9 @@ void addCommit(int& commits_count, commit commits[], Texture& commit_textures, s
     }
     else
     {
-        const int circle_length = 60;
-        const int arrow_length = 125;
-        for (int i = 0; i < commits_count; i++)
+        const unsigned short int circle_length = 60;
+        const unsigned short int arrow_length = 125;
+        for (unsigned short int i = 0; i < commits_count; i++)
         {
             commits[i].sprite.move(Vector2f(-(circle_length + arrow_length), 0));
         }
