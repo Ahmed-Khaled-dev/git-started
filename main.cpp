@@ -12,17 +12,21 @@ void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
         }
    
 }
-
+void cli_text(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
+        text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
+        text.setPosition(0,200);
+        text_cli_final.setString(final_input);
+}
 int main()
 {
     const int X=1000,Y=500;
     const string title ="GIT Started" ;
     RenderWindow window(VideoMode(X, Y) , title);
     string user_input,final_input;
-    Font font;
-    font.loadFromFile("font/Roboto-Black.ttf");
-    Text text("", font);
-    Text text_final("", font);
+    Font font_user;
+    font_user.loadFromFile("font/Roboto-Black.ttf");
+    Text text("", font_user);
+    Text text_cli_final("", font_user);
     Event event;
     Time text_effect_time; 
     bool show_cursor;
@@ -39,7 +43,7 @@ int main()
                 if (isprint(event.text.unicode))      //filter out symbols (only characters in ascii code enters)
                     user_input+= event.text.unicode;
             }
-            else if (event.type == Event::KeyPressed) {    //if user wants to erase what he wrote
+            if (event.type == Event::KeyPressed) {    //if user wants to erase what he wrote
                 if (event.key.code == Keyboard::BackSpace) {
                     if (!user_input.empty())
                         user_input.pop_back();             //pop it from the string
@@ -52,12 +56,10 @@ int main()
         } 
        
         cli_cursor(clock, show_cursor, text_effect_time);
-        text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
-        text.setPosition(0,450);
-        text_final.setString(final_input);
+        cli_text(text,text_cli_final,user_input,final_input,show_cursor);
         window.clear();
         window.draw(text);
-        window.draw(text_final);
+        window.draw(text_cli_final);
         window.display();
     }
 
