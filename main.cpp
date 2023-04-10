@@ -81,6 +81,17 @@ int main()
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
     string current_screen = "main menu";
+struct commit{
+    string message;
+    Sprite sprite;
+};
+
+void addCommit(int &commits_count, commit commits[], Texture& commit_textures, string commit_message);
+
+const int WINDOW_X = 1600, WINDOW_Y = 1000;
+const string GAME_TITLE = "Git Started";
+
+RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
 
@@ -485,6 +496,16 @@ int main()
         else if(current_screen == "options")
         {
             // Write here "options" screen properties
+                addCommit(commits_count, commits, commit_textures, "initial commit", WINDOW_X, WINDOW_Y);
+                addCommit(commits_count, commits, commit_textures, "initial commit");
+            }
+        }
+        const int bg_color_rgb[3] = {43, 45, 47};
+        window.clear({bg_color_rgb[0], bg_color_rgb[1], bg_color_rgb[2]});
+        for (int i = 0; i < commits_count; i++)
+        {
+            window.draw(commits[i].sprite);
+            //cout << "Commit number " << i << " X-position -> " << commits[i].sprite.getPosition().x << endl;
         }
         window.setView(view);
         window.display();
@@ -616,16 +637,18 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
 void addCommit(int& commits_count, commit commits[], Texture& commit_textures, string commit_message, int window_length, int window_width){
+void addCommit(int& commits_count, commit commits[], Texture& commit_textures, string commit_message){
     // All the following are the same for both conditions
     Sprite commit_sprite;
     commit_sprite.setTexture(commit_textures);
-    commit_sprite.scale(Vector2f(0.5, 0.5));
-    //commit_sprite.setColor({241, 80, 47});
+    const int COMMIT_SCALING = 0.5;
+    commit_sprite.scale(Vector2f(COMMIT_SCALING, COMMIT_SCALING));
+
     if (commits_count == 0)
     {
         // I cut from the texture a circle **without** an arrow
         commit_sprite.setTextureRect(IntRect(287, 70, 156, 156)); 
-        commit_sprite.setPosition(window_length/2, window_width/3);
+        commit_sprite.setPosition(WINDOW_X/2, WINDOW_Y/3);
     }
     else
     {
@@ -637,7 +660,7 @@ void addCommit(int& commits_count, commit commits[], Texture& commit_textures, s
         }
         // I cut from the texture a circle **with** an arrow
         commit_sprite.setTextureRect(IntRect(37, 278, 406, 432));
-        commit_sprite.setPosition(window_length/2 - arrow_length, window_width/3);
+        commit_sprite.setPosition(WINDOW_X/2 - arrow_length, WINDOW_Y/3);
     }
 
     commit new_commit = {commit_message, commit_sprite};
