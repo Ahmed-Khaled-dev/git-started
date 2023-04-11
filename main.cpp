@@ -8,6 +8,7 @@ using namespace sf;
 const int window_width = 1920;
 const int window_height = 1080;
 
+
 //structs
 struct declaration //for dialogue box
 {
