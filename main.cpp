@@ -502,6 +502,17 @@ RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
                 addCommit(commits_count, commits, commit_textures, "initial commit");
             }
         }
+            if (event.type == Event::Closed)
+                window.close();
+        
+            if (Keyboard::isKeyPressed(Keyboard::Up))
+                addCommit(commits_count, commits, commit_textures, "initial commit");
+            
+        }
+       
+        sprite_animation_and_position(head, position, commits, clicked, move);
+
+        
         // Unsigned char stores from 0 -> 255 (RGB range)
         const unsigned char bg_color_rgb[3] = {43, 45, 47};
         window.clear({bg_color_rgb[0], bg_color_rgb[1], bg_color_rgb[2]});
