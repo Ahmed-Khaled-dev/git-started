@@ -8,21 +8,21 @@ void updateDiamondText(CircleShape& diamond, Text& text, string new_text);
 void changeCircleColor(CircleShape& circle, Color color);
 void shapesProperities(CircleShape& circle, Color fillcolor, Color outlinecolor, float x_position, float y_position, float outlinethickness);
 void textProperities(CircleShape& circle ,Text& text,Color color);
-void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time);
-void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor);
+void ShowCliCursor(Clock &clock, bool & show_cursor,Time &text_effect_time);
+void SetCliTexts(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor);
 int main()
 {
     string user_cli_input,final_cli_input;
-    Font font_user;
-    font_user.loadFromFile("font/Roboto-Black.ttf");
-    Text cli_text("", font_user);
-    Text text_cli_final("", font_user);
+    Font cli_font;
+    cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf");
+    Text cli_text("", cli_font);
+    Text text_cli_final("", cli_font);
     Event event;
     Time text_effect_time; 
     bool show_cursor;
     Clock clock; //for cursor
       Music music;
-    playMusicFromFile("resources/lepo.wav", music);/* 1-path of the music is written as a string 
+    playMusicFromFile("resources/audio/lepo.wav", music);/* 1-path of the music is written as a string 
     2- mp3 require licence (i tried to play mp3 files alot of time and it failed and found out that it require some soet of licence 
     but you can change the file type using Audacity)
     * 3-i made it to accept the music as an argument to be able to view it inside the function  */
@@ -44,7 +44,7 @@ int main()
     shapesProperities(circle2, Color::Blue, Color::Green, 300, 500, 15);
 
     Font font;
-    if (!font.loadFromFile("resources/arial.TTF")) {
+    if (!font.loadFromFile("resources/fonts/arial.TTF")) {
          cout << "Error has happened while loading the font" << endl;
     }
 
@@ -133,8 +133,8 @@ int main()
             }
         
         
-        cli_cursor(clock, show_cursor, text_effect_time);
-        cli(cli_text,text_cli_final,user_cli_input,final_cli_input,show_cursor);
+        ShowCliCursor(clock, show_cursor, text_effect_time);
+        SetCliTexts(cli_text,text_cli_final,user_cli_input,final_cli_input,show_cursor);
         window.clear();
         window.draw(cli_text);
         window.draw(text_cli_final);
@@ -150,7 +150,7 @@ int main()
     
 }
 
-void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
+void ShowCliCursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
      text_effect_time += clock.restart();
 
         if (text_effect_time >= seconds(0.5f)) //cursor time to appear
@@ -160,9 +160,9 @@ void cli_cursor(Clock &clock, bool & show_cursor,Time &text_effect_time){
         }
    
 }
-void cli(Text &text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
-        text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
-        text.setPosition(0,200);
+void SetCliTexts(Text &cli_text, Text &text_cli_final,string &user_input ,string final_input ,bool &show_cursor){
+        cli_text.setString(user_input + (show_cursor ? '|' : ' ')); //shape of cursor
+        cli_text.setPosition(0,200);
         text_cli_final.setString(final_input);
 }
 void playMusicFromFile(const string file_path, Music& music) {
