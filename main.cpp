@@ -90,6 +90,12 @@ void addCommit(unsigned short int &commits_count, commit commits[], Texture& com
 
 const unsigned short int WINDOW_X = 1600, WINDOW_Y = 1000;
 const string GAME_TITLE = "Git Started";
+/** note that some variables should be in the while(window.isOpen()) loop because it needs to be updated */
+unsigned short int p1 = 0, delay = 0; //used for the animation
+
+void addCommit(unsigned short int &commits_count, commit commits[], Texture& commit_textures, string commit_message);
+
+void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& head_should_move);
 
 RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
 
@@ -100,6 +106,26 @@ RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
     unsigned short int commits_count = 0;
+int main()
+{
+    RenderWindow window(VideoMode(1920, 1080), "GitStarted");
+    //all the needed variables
+    window.setFramerateLimit(60);
+    Sprite head;
+    Texture octacat, commit_textures;
+    octacat.loadFromFile("octocat.png");
+    octacat.setSmooth(true);
+    commit_textures.loadFromFile("commits_sprites.png");
+    head.setTexture(octacat);
+    commit_textures.setSmooth(true);
+    head.setTextureRect(IntRect(0, 0, 200.25, 301));
+    head.setScale(0.8, 0.8);
+    head.setOrigin(100.125, 150.5);
+    head.setPosition(0, 200);
+    bool clicked;
+    octacat.setSmooth(true);
+    bool head_should_move = 0;
+     unsigned short int commits_count = 0;
     const unsigned short int MAX_COMMITS = 100;
 
     // Fonts
@@ -510,7 +536,7 @@ RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
             
         }
        
-        sprite_animation_and_position(head, position, commits, clicked, move);
+        spriteAnimationAndPosition(head, position, commits, clicked, head_should_move);
 
         
         // Unsigned char stores from 0 -> 255 (RGB range)
@@ -683,6 +709,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commits_count++;
 }
 
+<<<<<<< HEAD
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
     music_text.font.loadFromFile(sfx_text.option_font_type);
     sfx_text.font.loadFromFile(sfx_text.option_font_type);
@@ -807,6 +834,13 @@ short int p1 = 0, delay = 0;
 
 
 void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, CircleShape commit[], bool& clicked, bool& move)
+=======
+
+
+}
+
+void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& head_should_move)
+>>>>>>> 3152766 (edited the name of the fucntions and improved the speed)
 {
     if (true) //sprite animation
     {
@@ -820,6 +854,7 @@ void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, Ci
         if (p1 == 2)
             p1 = 0;
     }
+<<<<<<< HEAD
     for (short int i = 0; i < 5; i++)
     {
 
@@ -837,10 +872,30 @@ void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, Ci
                 head.move(-1.0, 0);}
             else if (abs(head.getPosition().x - commit[i].getPosition().x) <=6){
                 move = 0;
+=======
+    for (short int i = 0; i < 100; i++)
+    {
+        if ( clicked ) {
+            head_should_move = 1;
+        }
+       // cout << head.getPosition().x - commit[1].sprite.getPosition().x  << '\t' <<head_should_move<<endl;
+        if (commit[i].sprite.getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && head_should_move){
+            if(head.getPosition().x - commit[i].sprite.getPosition().x < 0){
+                head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
+                head.move(5.0, 0);}
+            else if (head.getPosition().x - commit[i].sprite.getPosition().x > 0){
+                 head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
+                head.move(-5.0, 0);}
+            else if (abs(head.getPosition().x - commit[i].sprite.getPosition().x) == 0){
+                head_should_move = 0;
+>>>>>>> 3152766 (edited the name of the fucntions and improved the speed)
                 }
             
         }
     }
+<<<<<<< HEAD
 
 }
+=======
+>>>>>>> 3152766 (edited the name of the fucntions and improved the speed)
 }
