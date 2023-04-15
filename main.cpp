@@ -27,7 +27,7 @@ struct dialogueText
     Clock clock;
     Text text;
     String font_type = "resources/fonts/Roboto-Black.ttf";
-    Color color = Color::Blue;
+    Color color = {225, 227, 227};
     double size = 35;
     double speed = 0.09f;
     String script = "This is our game\ngit-started\nwelcome boo!";
@@ -47,35 +47,24 @@ int main()
 {
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
-    const string window_name = "git started";
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
-    Event event;
-    
-    string user_cli_input, final_cli_input;
     Font cli_font;
     cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf");
+    string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
-    Event event;
     Time cli_cursor_time;
     bool show_cursor;
     Clock cursor_clock;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
-    
-    
-    
 
-    RectangleShape vol_dec_button(Vector2f(150, 50));
+    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50));
     setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
-
-    RectangleShape vol_status_button(Vector2f(225,50));
     setButtonProperties(vol_status_button, Color::White, 300, 50);
-
-    RectangleShape vol_inc_button(Vector2f(150, 50));
     setButtonProperties(vol_inc_button, Color::Red, 500, 50);
 
     Font buttons_font;
@@ -83,21 +72,18 @@ int main()
         cout << "Error has happened while loading the font" << endl;
     }
 
-    Text vol_status_text("Hello", buttons_font , 35);
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
-
-    Text vol_inc_text("+vol", buttons_font , 35);
-    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
-
+    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
     Text vol_dec_text("-vol", buttons_font , 35);
+    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
+    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
     setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
 
+    Event event;
     while (window.isOpen())
     {
         while (window.pollEvent(event))
         {
-
             if (event.type == Event::Closed) 
             {
                 window.close();
@@ -124,10 +110,8 @@ int main()
                     user_cli_input.clear();
                 }
             }
-
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) 
             {
-
                 if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
                     if (music.getStatus() == SoundSource::Status::Playing) 
@@ -179,38 +163,35 @@ int main()
 
                 }
             }
-            drawDialogue(window, dialogue_box);
-            printDialogueText(dialogue_text);
-            window.clear(Color::White);
-            window.draw(dialogue_box.shape);
-            window.draw(dialogue_box.title);
-            window.draw(dialogue_box.sprite);
-            window.draw(dialogue_text.text);
-            window.display();
-            showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
-            window.clear();
-            window.draw(cli_text);
-            window.draw(cli_text_final);
-            window.draw(vol_status_button);
-            window.draw(vol_inc_button);
-            window.draw(vol_dec_button);
-            window.draw(vol_status_text);
-            window.draw(vol_inc_text);
-            window.draw(vol_dec_text);
-            window.display();
         }
+        drawDialogue(window, dialogue_box);
+        printDialogueText(dialogue_text);
+        showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
+        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+        window.clear(Color::Black);
+        window.draw(dialogue_box.shape);
+        window.draw(dialogue_box.title);
+        window.draw(dialogue_box.sprite);
+        window.draw(dialogue_text.text);
+        window.draw(cli_text);
+        window.draw(cli_text_final);
+        window.draw(vol_status_button);
+        window.draw(vol_inc_button);
+        window.draw(vol_dec_button);
+        window.draw(vol_status_text);
+        window.draw(vol_inc_text);
+        window.draw(vol_dec_text);
+        window.display();
     }
-    
 }
 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
 {
     //Dialogue box
     dialogue_box.shape.setSize(Vector2f(750,300));
-    dialogue_box.shape.setFillColor(Color::White);
+    dialogue_box.shape.setFillColor(Color::Black);
     dialogue_box.shape.setOutlineThickness(5);
-    dialogue_box.shape.setOutlineColor(Color::Black);
+    dialogue_box.shape.setOutlineColor(Color::White);
     dialogue_box.shape.setPosition((window.getSize().x - dialogue_box.shape.getSize().x) / 2, window.getSize().y - dialogue_box.shape.getSize().y);
     
     //Sprite
@@ -221,7 +202,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
     dialogue_box.title.setFont(dialogue_box.font);
-    dialogue_box.title.setFillColor(Color::Black);
+    dialogue_box.title.setFillColor(Color::White);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
     dialogue_box.title.setPosition(700, 800);
 }
