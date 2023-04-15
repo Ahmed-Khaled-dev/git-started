@@ -93,18 +93,15 @@ const unsigned short int WINDOW_X = 1600, WINDOW_Y = 1000;
 const string GAME_TITLE = "Git Started";
 /** note that some variables should be in the while(window.isOpen()) loop because it needs to be updated */
 unsigned short int p1 = 0, delay = 0; //used for the animation
-<<<<<<< HEAD
 
 void addCommit(unsigned short int &commits_count, commit commits[], Texture& commit_textures, string commit_message);
 
 void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& head_should_move);
-=======
 short int dis = 0; //distance between the head and the commit
 short int index = 0; //To get the coordinates of the last commit
 short int Xvelocity = 3, Yvelocity = 3;
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& window_collision);
->>>>>>> 53af344 (Added head deflection)
 
 RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
 
@@ -132,14 +129,11 @@ int main()
     head.setOrigin(100.125, 150.5);
     head.setPosition(200, 200);
     bool clicked;
-<<<<<<< HEAD
     octacat.setSmooth(true);
     bool head_should_move = 0;
      unsigned short int commits_count = 0;
-=======
     bool window_collision = 1;
     unsigned short int commits_count = 0;
->>>>>>> 53af344 (Added head deflection)
     const unsigned short int MAX_COMMITS = 100;
 
     // Fonts
@@ -555,14 +549,11 @@ int main()
             }
 
         }
-<<<<<<< HEAD
        
         spriteAnimationAndPosition(head, position, commits, clicked, head_should_move);
 
         
-=======
         spriteAnimationAndPosition(head, position, commits, clicked, window_collision);
->>>>>>> 53af344 (Added head deflection)
         // Unsigned char stores from 0 -> 255 (RGB range)
         const unsigned char bg_color_rgb[3] = {43, 45, 47};
         window.clear({bg_color_rgb[0], bg_color_rgb[1], bg_color_rgb[2]});
@@ -726,12 +717,9 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
         const unsigned short int arrow_length = 125;
         for (unsigned short int i = 0; i < commits_count; i++)
         {
-<<<<<<< HEAD
             commits[i].sprite.move(Vector2f(-(circle_length + arrow_length), 0));
-=======
             commits[i].sprite.move(Vector2f(-(CIRCLE_LENGTH + ARROW_LENGTH), 0));
             index = commits_count;
->>>>>>> 53af344 (Added head deflection)
         }
         // I cut from the texture a circle **with** an arrow
         commit_sprite.setTextureRect(IntRect(37, 278, 406, 432));
@@ -894,9 +882,7 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
         if (p1 == 2)
             p1 = 0;
     }
-<<<<<<< HEAD
     for (short int i = 0; i < 5; i++)
-=======
     for (short int i = 0; i < 100; i++)
     {
         if (commit[i].sprite.getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && clicked) {
@@ -918,7 +904,6 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
         }
     }
     if (dis < 0)
->>>>>>> 53af344 (Added head deflection)
     {
 
         bool contained = commit[i].getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) ;
@@ -937,7 +922,6 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
                 move = 0;
     for (short int i = 0; i < 100; i++)
     {
-<<<<<<< HEAD
         if ( clicked ) {
             head_should_move = 1;
         }
@@ -954,11 +938,9 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
                 }
             
         }
-=======
         head.move(-5, 0);
         head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
         dis -= 5;
->>>>>>> 53af344 (Added head deflection)
     }
 
 }
