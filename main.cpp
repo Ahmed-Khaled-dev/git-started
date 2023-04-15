@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
 
@@ -35,34 +36,172 @@ struct dialogueText
 // Functions definition 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
+void playMusicFromFile(string file_path, Music& music);
+void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
+void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
+void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
+void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time);
+void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor);
 
 int main()
 {
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
+    const string window_name = "git started";
+
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
     Event event;
     
-    //Game loop
+    string user_cli_input, final_cli_input;
+    Font cli_font;
+    cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf");
+    Text cli_text("", cli_font), cli_text_final("", cli_font);
+    Event event;
+    Time cli_cursor_time;
+    bool show_cursor;
+    Clock cursor_clock;
+    Music music;
+    playMusicFromFile("resources/audio/lepo.wav", music);
+    
+    
+    
+
+    RectangleShape vol_dec_button(Vector2f(150, 50));
+    setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
+
+    RectangleShape vol_status_button(Vector2f(225,50));
+    setButtonProperties(vol_status_button, Color::White, 300, 50);
+
+    RectangleShape vol_inc_button(Vector2f(150, 50));
+    setButtonProperties(vol_inc_button, Color::Red, 500, 50);
+
+    Font buttons_font;
+    if (!buttons_font.loadFromFile("resources/fonts/arial.TTF")) {
+        cout << "Error has happened while loading the font" << endl;
+    }
+
+    Text vol_status_text("Hello", buttons_font , 35);
+    // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
+    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
+
+    Text vol_inc_text("+vol", buttons_font , 35);
+    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
+
+    Text vol_dec_text("-vol", buttons_font , 35);
+    setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
+
     while (window.isOpen())
     {
         while (window.pollEvent(event))
         {
-            if (event.type == Event::Closed)
+
+            if (event.type == Event::Closed) 
+            {
                 window.close();
+            }
+            // Take input from user
+            if (event.type == Event::TextEntered) 
+            { 
+                // Filter out symbols (only characters in ascii code enters)
+                if (isprint(event.text.unicode))     
+                    user_cli_input += event.text.unicode;
+            }
+            // If user wants to erase what he wrote
+            if (event.type == Event::KeyPressed) 
+            {    
+                if (event.key.code == Keyboard::BackSpace) 
+                {
+                    if (!user_cli_input.empty())
+                        user_cli_input.pop_back();
+                }
+                // User clicks enter and the text will be transfered at the top of the screen
+                if (event.key.code == Keyboard::Return) 
+                {
+                    final_cli_input += (user_cli_input + "\n");
+                    user_cli_input.clear();
+                }
+            }
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) 
+            {
+
+                if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    if (music.getStatus() == SoundSource::Status::Playing) 
+                    {
+                        music.pause();   
+                        updateButtonText(vol_status_button, vol_status_text, "Paused");
+                    }
+                    else if (music.getStatus() == SoundSource::Status::Paused) 
+                    {
+                        music.play();
+                        updateButtonText(vol_status_button, vol_status_text, "Playing");
+                    }
+                }
+                if (vol_inc_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    music.setVolume(music.getVolume() + 10); //new volume = current volume+10
+                }
+
+                if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    music.setVolume(music.getVolume() - 10);
+                }
+            }
+            if (event.type == Event::MouseMoved) {
+                if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    // When you hover on the rectangle a function changes its color
+                    vol_status_button.setFillColor(Color::Yellow); 
+                }
+                else 
+                {
+                    vol_status_button.setFillColor(Color::Magenta);
+                }
+                if (vol_inc_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    vol_inc_button.setFillColor(Color::Cyan);
+                }
+                else 
+                {
+                    vol_inc_button.setFillColor(Color::Red);
+                }
+                if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    vol_dec_button.setFillColor(Color::Cyan);
+                }
+                else 
+                {
+                    vol_dec_button.setFillColor(Color::Blue);
+
+                }
+            }
+            drawDialogue(window, dialogue_box);
+            printDialogueText(dialogue_text);
+            window.clear(Color::White);
+            window.draw(dialogue_box.shape);
+            window.draw(dialogue_box.title);
+            window.draw(dialogue_box.sprite);
+            window.draw(dialogue_text.text);
+            window.display();
+            showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+            window.clear();
+            window.draw(cli_text);
+            window.draw(cli_text_final);
+            window.draw(vol_status_button);
+            window.draw(vol_inc_button);
+            window.draw(vol_dec_button);
+            window.draw(vol_status_text);
+            window.draw(vol_inc_text);
+            window.draw(vol_dec_text);
+            window.display();
         }
-        drawDialogue(window, dialogue_box);
-        printDialogueText(dialogue_text);
-        window.clear(Color::White);
-        window.draw(dialogue_box.shape);
-        window.draw(dialogue_box.title);
-        window.draw(dialogue_box.sprite);
-        window.draw(dialogue_text.text);
-        window.display();
     }
+    
 }
 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
@@ -107,3 +246,52 @@ void printDialogueText(dialogueText& dialogue_text)
             }
         }   
 }
+
+void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time) {
+    cli_cursor_time += cursor_clock.restart();
+
+    // Cursor time to appear
+    if (cli_cursor_time >= seconds(0.5f)) 
+    {
+        show_cursor = !show_cursor;
+        cli_cursor_time = Time::Zero;
+    }
+}
+
+void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
+    // Shape of cursor
+    cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
+    cli_text.setPosition(1500, 950);
+    cli_text_final.setString(final_cli_input);
+    cli_text_final.setPosition(1500, 500);
+}
+
+void playMusicFromFile(const string file_path, Music& music) {
+    if (!music.openFromFile(file_path)) {
+        cout << "Error playing music";
+    }
+    // Loops the music
+    music.setLoop(true); 
+    music.play();
+}
+
+void updateButtonText(RectangleShape& rectangle, Text& text, string new_text) {
+    text.setString(new_text);
+    text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
+    text.setPosition(rectangle.getPosition());
+}
+
+void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color) {
+    text.setFillColor(Color::Black);
+    // Making the center of the text at its center
+    text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
+    // Assigning the text with the center of the button
+    text.setPosition(rectangle.getPosition()); 
+}
+
+void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position){
+    rectangle.setFillColor(fillcolor);
+    rectangle.setOrigin(rectangle.getSize() / 2.f);
+    rectangle.setPosition(x_position, y_position);
+}
+
