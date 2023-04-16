@@ -709,7 +709,6 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commits_count++;
 }
 
-<<<<<<< HEAD
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
     music_text.font.loadFromFile(sfx_text.option_font_type);
     sfx_text.font.loadFromFile(sfx_text.option_font_type);
@@ -834,13 +833,11 @@ short int p1 = 0, delay = 0;
 
 
 void sprite_animation_and_position(Sprite& head, Vector2i& position_of_mouse, CircleShape commit[], bool& clicked, bool& move)
-=======
 
 
 }
 
 void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& head_should_move)
->>>>>>> 3152766 (edited the name of the fucntions and improved the speed)
 {
     if (true) //sprite animation
     {
@@ -854,7 +851,6 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
         if (p1 == 2)
             p1 = 0;
     }
-<<<<<<< HEAD
     for (short int i = 0; i < 5; i++)
     {
 
@@ -872,7 +868,6 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
                 head.move(-1.0, 0);}
             else if (abs(head.getPosition().x - commit[i].getPosition().x) <=6){
                 move = 0;
-=======
     for (short int i = 0; i < 100; i++)
     {
         if ( clicked ) {
@@ -888,14 +883,10 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
                 head.move(-5.0, 0);}
             else if (abs(head.getPosition().x - commit[i].sprite.getPosition().x) == 0){
                 head_should_move = 0;
->>>>>>> 3152766 (edited the name of the fucntions and improved the speed)
                 }
             
         }
     }
-<<<<<<< HEAD
 
 }
-=======
->>>>>>> 3152766 (edited the name of the fucntions and improved the speed)
 }
