@@ -58,6 +58,7 @@ struct optionMenu {
 };
 
 // Functions declaration
+void editWindowShape(RectangleShape &form);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
 void playMusicFromFile(string file_path, Music& music);
@@ -89,6 +90,7 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
+    RectangleShape form;
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
@@ -337,12 +339,14 @@ int main()
         else if(current_screen == "levels")
         {
             drawDialogue(window, dialogue_box);
-            printDialogueText(dialogue_text);
+            editWindowShape(form);
+        printDialogueText(dialogue_text);
             showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
-            window.draw(dialogue_box.title_shape);
+            window.draw(form);
+        window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
@@ -468,7 +472,7 @@ void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
     // Shape of cursor
     cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(1500, 940);
+    cli_text.setPosition(1200, 740);
     cli_text.setFillColor(Color::Black);
     cli_text_final.setString(final_cli_input);
     cli_text_final.setFillColor(Color::Black);
@@ -557,4 +561,13 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
              slider[1].setPosition(po.x, slider[1].getPosition().y);
              music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
         }
+}
+
+
+void editWindowShape(RectangleShape &form){
+    form.setSize(Vector2f(300,600));
+    form.setFillColor(Color::Black);
+    form.setOutlineThickness(2);
+    form.setOutlineColor(Color::White);
+    form.setPosition(300,150);
 }
