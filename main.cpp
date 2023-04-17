@@ -34,6 +34,7 @@ struct dialogueText
 }dialogue_text;
 
 // Functions definition 
+void menuScreen(RenderWindow& window,RectangleShape& start_button,RectangleShape& options_button,RectangleShape& close_button,Font buttons_font);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
 void playMusicFromFile(string file_path, Music& music);
@@ -47,6 +48,7 @@ int main()
 {
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
+    string mode=" ";
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
@@ -68,7 +70,7 @@ int main()
     setButtonProperties(vol_inc_button, Color::Red, 500, 50);
 
     Font buttons_font;
-    if (!buttons_font.loadFromFile("resources/fonts/arial.TTF")) {
+    if (!buttons_font.loadFromFile("resources/fonts/minecraft_font.ttf")) {
         cout << "Error has happened while loading the font" << endl;
     }
 
@@ -79,12 +81,16 @@ int main()
     setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
     setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
 
+    // Menu Screen buttons & text
+    RectangleShape start_button(Vector2f(406,121)),options_button(Vector2f(323,68)),close_button(Vector2f(316,116));
+    
     Event event;
+    menuScreen(window,start_button,options_button,close_button,buttons_font);
     while (window.isOpen())
     {
         while (window.pollEvent(event))
         {
-            if (event.type == Event::Closed) 
+            if (event.type == Event::Closed || mode == "close") 
             {
                 window.close();
             }
@@ -134,6 +140,19 @@ int main()
                 {
                     music.setVolume(music.getVolume() - 10);
                 }
+
+                if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    mode="start";
+                }
+                if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    mode="options";
+                }
+                if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    mode = "close";
+                }
             }
             if (event.type == Event::MouseMoved) {
                 if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
@@ -164,6 +183,8 @@ int main()
                 }
             }
         }
+       if(mode =="start")
+        {
         drawDialogue(window, dialogue_box);
         printDialogueText(dialogue_text);
         showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
@@ -182,9 +203,34 @@ int main()
         window.draw(vol_inc_text);
         window.draw(vol_dec_text);
         window.display();
+        }
+        else if(mode =="options")
+        {
+            //write here "options" screen propertiess
+        }
     }
 }
 
+void menuScreen(RenderWindow& window,RectangleShape& start_button,RectangleShape& options_button,RectangleShape& close_button,Font buttons_font)
+{
+    window.clear(Color::Black);
+    setButtonProperties(start_button, Color::Green, 754, 474);
+    setButtonProperties(options_button, Color::Yellow, 801, 653);
+    setButtonProperties(close_button, Color::Red, 1561, 138);
+    Text start_text("Start", buttons_font , 50), options_text("Options", buttons_font , 40);
+    Text close_text("Close", buttons_font , 35);
+    setButtonTextProperties(start_button, start_text, Color::Black);
+    setButtonTextProperties(options_button, options_text, Color::Black);
+    setButtonTextProperties(close_button, close_text, Color::Black);
+    window.draw(start_button);
+    window.draw(options_button);
+    window.draw(close_button);
+    window.draw(start_text);
+    window.draw(options_text);
+    window.draw(close_text);
+    window.display();
+    
+}
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
 {
     //Dialogue box
