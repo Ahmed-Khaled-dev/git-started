@@ -72,7 +72,17 @@ int main()
     if (!buttons_font.loadFromFile("resources/fonts/minecraft_font.ttf")) {
         cout << "Error has happened while loading the font" << endl;
     }
-
+    Font game_font;
+    if (!game_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
+        cout << "Error has happened while loading the font" << endl;
+    }
+    Text game_title;
+    game_title.setString("Git Started");
+    game_title.setFont(game_font);
+    game_title.setOutlineThickness(7);
+    game_title.setOutlineColor(Color::Black);
+    game_title.setCharacterSize(100);
+    game_title.setPosition(600, 150);
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
     Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
     Text vol_dec_text("-vol", buttons_font , 35);
@@ -96,6 +106,7 @@ int main()
     Sprite menu(bg);
     
     Event event;
+    
    
     while (window.isOpen())
     {
@@ -228,6 +239,7 @@ int main()
             window.draw(start_text);
             window.draw(options_text);
             window.draw(close_text);
+            window.draw(game_title);
             window.display();
         }
         if(mode =="start")
@@ -345,6 +357,8 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
 
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position){
     rectangle.setFillColor(fillcolor);
+    rectangle.setOutlineThickness(5);
+    rectangle.setOutlineColor(Color::Black);
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
 }
