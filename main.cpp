@@ -58,6 +58,7 @@ struct optionMenu {
 };
 
 // Functions declaration
+void cliShape(RectangleShape &form);
 void editWindowShape(RectangleShape &form);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
@@ -90,7 +91,9 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
-    RectangleShape form;
+    RectangleShape form,cli_shape;
+    cli_font.loadFromFile("resources/fonts/arial.ttf");
+    bool cli_selected;
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
@@ -192,16 +195,38 @@ int main()
             {
                 window.close();
             }
+            //mouse click
+             if (event.type == Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == Mouse::Left)
+                {
+                    Vector2i mousePos = Mouse::getPosition(window);
+                    if (cli_shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+                    {
+                        cli_selected = true;
+                    }
+                    else
+                    {
+                       cli_selected = false;
+                    }
+                }
+            }
             // Take input from user
+           if(cli_selected){
             if (event.type == Event::TextEntered) 
             { 
+                
                 // Filter out symbols (only characters in ascii code enters)
-                if (isprint(event.text.unicode))     
-                    user_cli_input += event.text.unicode;
+                
+                     if (isprint(event.text.unicode))     
+                        user_cli_input += event.text.unicode;
+                
             }
             // If user wants to erase what he wrote
+            
             if (event.type == Event::KeyPressed) 
             {    
+                
                 if (event.key.code == Keyboard::BackSpace) 
                 {
                     if (!user_cli_input.empty())
@@ -214,6 +239,8 @@ int main()
                     user_cli_input.clear();
                 }
             }
+        }
+        
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) 
             {
                 if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
@@ -340,12 +367,14 @@ int main()
         {
             drawDialogue(window, dialogue_box);
             editWindowShape(form);
+        cliShape(cli_shape);
         printDialogueText(dialogue_text);
             showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
             window.draw(form);
+        window.draw(cli_shape);
         window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
@@ -567,7 +596,15 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
 void editWindowShape(RectangleShape &form){
     form.setSize(Vector2f(300,600));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(2);
+    form.setOutlineThickness(1);
     form.setOutlineColor(Color::White);
     form.setPosition(300,150);
+}
+
+void cliShape(RectangleShape &form){
+    form.setSize(Vector2f(100,60));
+    form.setFillColor(Color::Black);
+    form.setOutlineThickness(1);
+    form.setOutlineColor(Color::White);
+    form.setPosition(1200,750);
 }
