@@ -64,7 +64,7 @@ struct dialogueText
     bool continuation_message_running = 0;
     bool script_part_ended = 0;
     Text text;
-    Color color = { 225, 227, 227 };
+    Color color = { 0, 0, 0 };
     double size = 35;
     double speed = 0.09f;
     String script = "This is our game\ngit-started\nwelcome boo!";
@@ -143,8 +143,19 @@ int main()
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
 
+    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225, 50)), vol_inc_button(Vector2f(150, 50));
+    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(600, 900)), buttons_background_2(Vector2f(600, 900));
+    RectangleShape back_button(Vector2f(125, 60));
+    setButtonProperties(back_button, 54, 69, 79, 62, 30);
+    setButtonProperties(buttons_background_1, 0, 0, 0, 325, 525);
+    setButtonProperties(vol_dec_button, 155, 89, 182, 100, 50);
+    setButtonProperties(vol_status_button, 243, 156, 18, 300, 50);
+    setButtonProperties(vol_inc_button, 155, 89, 182, 500, 50);
+    setButtonProperties(levels_menu_button, 241, 196, 15, 960, 540);
+    setButtonProperties(buttons_background_2, 0, 0, 0, 1625, 525);
+
     Texture levels_menu;
-    if (!levels_menu.loadFromFile("resources/backgrounds/time-machine.jpg")) {
+    if (!levels_menu.loadFromFile("resources/sprites/time-machine.jpeg")) {
         cout << "Error has happened while loading the levels_menu background" << endl;
     }
     Sprite menu_level;
@@ -732,6 +743,8 @@ void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green
     rectangle.setFillColor(Color(red_intensity, green_intensity, blue_intensity));
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
+    rectangle.setOutlineThickness(5);
+    rectangle.setOutlineColor(Color::Black);
 }
 
 void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu) {
