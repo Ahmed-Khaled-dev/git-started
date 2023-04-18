@@ -58,6 +58,7 @@ struct optionMenu {
 };
 
 // Functions declaration
+void editText(Text & edit_text,string& edit_input);
 void cliShape(RectangleShape &form);
 void editWindowShape(RectangleShape &form);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
@@ -93,12 +94,14 @@ int main()
     Font cli_font;
     RectangleShape form,cli_shape;
     cli_font.loadFromFile("resources/fonts/arial.ttf");
-    bool cli_selected;
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
 
     // Music
+    string user_edit_input;
+    Text edit_text("",cli_font);
+    bool cli_selected,edit_selected;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
@@ -195,7 +198,7 @@ int main()
             {
                 window.close();
             }
-            //mouse click
+            //mouse click cli
              if (event.type == Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == Mouse::Left)
@@ -211,35 +214,70 @@ int main()
                     }
                 }
             }
+            //mouse click edit
+             if (event.type == Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == Mouse::Left)
+                {
+                    Vector2i mousePos = Mouse::getPosition(window);
+                    if (form.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+                    {
+                        edit_selected = true;
+                    }
+                    else
+                    {
+                       edit_selected = false;
+                    }
+                }
+            }
             // Take input from user
-           if(cli_selected){
+           
             if (event.type == Event::TextEntered) 
             { 
+                if(edit_selected)
+                if (isprint(event.text.unicode))     
+                    user_edit_input += event.text.unicode;
                 
                 // Filter out symbols (only characters in ascii code enters)
-                
+                if(cli_selected)
                      if (isprint(event.text.unicode))     
                         user_cli_input += event.text.unicode;
                 
+               
             }
             // If user wants to erase what he wrote
             
             if (event.type == Event::KeyPressed) 
             {    
-                
-                if (event.key.code == Keyboard::BackSpace) 
-                {
-                    if (!user_cli_input.empty())
-                        user_cli_input.pop_back();
+                if(cli_selected){
+                     if (event.key.code == Keyboard::BackSpace) 
+                     {
+                          if (!user_cli_input.empty())
+                             user_cli_input.pop_back();
+                     }
+                        // User clicks enter and the text will be transfered at the top of the screen
+                    if (event.key.code == Keyboard::Return) 
+                    {
+                           final_cli_input += (user_cli_input + "\n");
+                           user_cli_input.clear();
+                    }
                 }
-                // User clicks enter and the text will be transfered at the top of the screen
-                if (event.key.code == Keyboard::Return) 
-                {
-                    final_cli_input += (user_cli_input + "\n");
-                    user_cli_input.clear();
+
+                if(edit_selected){
+                     if (event.key.code == Keyboard::BackSpace) 
+                     {
+                          if (!user_edit_input.empty())
+                             user_edit_input.pop_back();
+                     }
+                        // User clicks enter and the text will be transfered at the top of the screen
+                    if (event.key.code == Keyboard::Return) 
+                    {
+                           user_edit_input += ( "\n");
+                          
+                    }
                 }
             }
-        }
+        
         
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) 
             {
@@ -373,6 +411,7 @@ int main()
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
+        editText(edit_text,user_edit_input);
             window.draw(form);
         window.draw(cli_shape);
         window.draw(dialogue_box.title_shape);
@@ -380,7 +419,8 @@ int main()
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
             window.draw(dialogue_text.continuation_text);
-            window.draw(cli_text);
+            window.draw(edit_text);
+        window.draw(cli_text);
             window.draw(cli_text_final);
             window.draw(vol_status_button);
             window.draw(vol_inc_button);
@@ -506,6 +546,11 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     cli_text_final.setString(final_cli_input);
     cli_text_final.setFillColor(Color::Black);
     cli_text_final.setPosition(1500, 500);
+}
+
+void editText(Text & edit_text,string& edit_input){
+    edit_text.setString(edit_input);
+    edit_text.setPosition(350,200);
 }
 
 void playMusicFromFile(const string file_path, Music& music) {
