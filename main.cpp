@@ -204,8 +204,7 @@ int main()
             {
                 if (event.mouseButton.button == Mouse::Left)
                 {
-                    Vector2i mousePos = Mouse::getPosition(window);
-                    if (cli_shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+                    if (cli_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         cli_selected = true;
                     }
@@ -221,8 +220,8 @@ int main()
             {
                 if (event.mouseButton.button == Mouse::Left)
                 {
-                    Vector2i mousePos = Mouse::getPosition(window);
-                    if (form.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+                    
+                    if (form.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         edit_selected = true;
                     }
@@ -242,7 +241,7 @@ int main()
                     //bounds for text
                 Vector2f pos = edit_text.findCharacterPos(user_edit_input.size());  
                 
-                if(!(form.getGlobalBounds().contains(static_cast<sf::Vector2f>(pos)))){
+                if(!(form.getGlobalBounds().contains(pos))){
                    char temp =user_edit_input[user_edit_input.size()-1];
                    user_edit_input.pop_back();
                     user_edit_input+=("\n");
