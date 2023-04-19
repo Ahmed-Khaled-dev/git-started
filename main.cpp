@@ -76,13 +76,16 @@ int main()
     if (!game_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
         cout << "Error has happened while loading the font" << endl;
     }
+    
     Text game_title;
-    game_title.setString("Git Started");
+    game_title.setString("\t  Git \n Started");
     game_title.setFont(game_font);
-    game_title.setOutlineThickness(7);
-    game_title.setOutlineColor(Color::Black);
-    game_title.setCharacterSize(100);
-    game_title.setPosition(600, 150);
+    game_title.setOutlineThickness(-4);
+    game_title.setFillColor(Color(50, 50, 50)); // Dark grey fill
+    game_title.setOutlineColor(Color(100, 255, 30)); //Green outline
+    game_title.setCharacterSize(120);
+    game_title.setPosition(620, 80);
+
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
     Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
     Text vol_dec_text("-vol", buttons_font , 35);
