@@ -205,27 +205,33 @@ int main()
                 }
                 if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    start_button.setFillColor(Color::Cyan);
+                    start_button.setFillColor(Color(34, 139, 34));
+                    start_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
                     start_button.setFillColor(Color::Green);
+                    start_button.setScale(1.0f, 1.0f);
                 }
                 if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    options_button.setFillColor(Color::Magenta);
+                    options_button.setFillColor(Color(153, 153, 0));
+                    options_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
                     options_button.setFillColor(Color::Yellow);
+                    options_button.setScale(1.0f, 1.0f);
                 }
                 if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    close_button.setFillColor(Color::Yellow);
+                    close_button.setFillColor(Color(139, 0, 0));
+                    close_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
                     close_button.setFillColor(Color::Red);
+                    close_button.setScale(1.0f, 1.0f);
                 }
             }
         }
