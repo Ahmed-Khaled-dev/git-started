@@ -104,7 +104,7 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
 void headAnimationAndMovement(Sprite& head);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
-void optimizeTextProperties(Text& text, float x_position, float y_position);
+void optimizeTextOriginandPosition(Text& text, float x_position, float y_position);
 
 int main()
 {
@@ -145,16 +145,12 @@ int main()
     music.setVolume(0);
 
     RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225, 50)), vol_inc_button(Vector2f(150, 50));
-    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(750, 900)), back_button(Vector2f(125, 60));
+    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(750, 850)), back_button(Vector2f(125, 60));
     RectangleShape level1_button(Vector2f(700, 100)), level2_button(Vector2f(700, 100)), level3_button(Vector2f(700, 100));
     RectangleShape level4_button(Vector2f(700, 100)), level5_button(Vector2f(700, 100));
 
-    setButtonProperties(back_button, 54, 69, 79, 62, 30);
+    setButtonProperties(back_button, 54, 69, 79, 77, 45);
     setButtonProperties(buttons_background_1, 0, 31, 63, 400, 525);
-    setButtonProperties(vol_dec_button, 155, 89, 182, 100, 50);
-    setButtonProperties(vol_status_button, 243, 156, 18, 300, 50);
-    setButtonProperties(vol_inc_button, 155, 89, 182, 500, 50);
-    setButtonProperties(levels_menu_button, 241, 196, 15, 960, 540);
     setButtonProperties(level1_button, 112, 128, 144, 400, 200);
     setButtonProperties(level2_button, 112, 128, 144, 400, 325);
     setButtonProperties(level3_button, 112, 128, 144, 400, 500);
@@ -169,6 +165,33 @@ int main()
     menu_level.setTexture(levels_menu);
 
     // Command line interface (CLI)
+    // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
+    Text vol_status_text("Hello", buttons_font, 32), vol_inc_text("+vol", buttons_font, 32);
+    Text vol_dec_text("-vol", buttons_font, 32), levels_menu_text("levels menu", buttons_font, 32);
+    Text back_button_text("Back", buttons_font, 32), level_discribing_text_1("Intro", buttons_font, 32);
+    Text level_discribing_text_2("Commits", buttons_font, 32), level_discribing_text_3("Branches", buttons_font, 32);
+    Text level1_text("Tragic Failure: The Cost of Poor Organization (git init)", buttons_font, 17);
+    Text level2_text("Stage and Shine: Unleash Your Staging Prowess! (git add)", buttons_font, 17);
+    Text level3_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 17);
+    Text level4_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 17);
+    Text level5_text("Branching Out: Conquer the Code Chaos! (git branch)", buttons_font, 17);
+
+    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
+    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
+    setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
+    setButtonTextProperties(levels_menu_button, levels_menu_text, Color::Black);
+    setButtonTextProperties(back_button, back_button_text, Color::Black);
+    setButtonTextProperties(level1_button, level1_text, Color::Black);
+    setButtonTextProperties(level2_button, level2_text, Color::Black);
+    setButtonTextProperties(level3_button, level3_text, Color::Black);
+    setButtonTextProperties(level4_button, level4_text, Color::Black);
+    setButtonTextProperties(level5_button, level5_text, Color::Black);
+
+    optimizeTextOriginandPosition(level_discribing_text_1, 400, 125);
+    optimizeTextOriginandPosition(level_discribing_text_2, 400, 425);
+    optimizeTextOriginandPosition(level_discribing_text_3, 400, 725);
+
+    // Command line
     string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     bool show_cli_cursor = 0, cli_selected = 0;
@@ -292,7 +315,6 @@ int main()
     pop_commit.setVolume(0);
     commit commits[MAX_COMMITS];
     window.setFramerateLimit(60);
-    //
 
     Event event;
     while (window.isOpen())
@@ -528,54 +550,74 @@ int main()
                     game_window_back_button.setFillColor(Color::Yellow);
                     game_window_back_button.setScale(1.0f, 1.0f);
                 }
+                if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    back_button.setFillColor(Color(140, 140, 140));
+                    back_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    back_button.setFillColor(Color(200, 200, 200));
+                    back_button.setScale(1.0f, 1.0f);
+                }
                 if (level1_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
                     level1_button.setFillColor(Color(140, 140, 140));
+                    level1_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
                     level1_button.setFillColor(Color(112, 128, 144));
+                    level1_button.setScale(1.0f, 1.0f);
 
                 }
                 if (level2_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
                     level2_button.setFillColor(Color(140, 140, 140));
+                    level2_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
                     level2_button.setFillColor(Color(112, 128, 144));
+                    level2_button.setScale(1.0f, 1.0f);
 
                 }
                 if (level3_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
                     level3_button.setFillColor(Color(140, 140, 140));
+                    level3_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
                     level3_button.setFillColor(Color(112, 128, 144));
+                    level3_button.setScale(1.0f, 1.0f);
 
                 }
                 if (level4_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
                     level4_button.setFillColor(Color(140, 140, 140));
+                    level4_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
                     level4_button.setFillColor(Color(112, 128, 144));
+                    level4_button.setScale(1.0f, 1.0f);
 
                 }
                 if (level5_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
                     level5_button.setFillColor(Color(140, 140, 140));
+                    level5_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
                     level5_button.setFillColor(Color(112, 128, 144));
+                    level5_button.setScale(1.0f, 1.0f);
 
                 }
             }
@@ -704,7 +746,6 @@ int main()
         window.display();
     }
 
-    window.display();
 }
 
 
@@ -826,7 +867,7 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
     text.setPosition(rectangle.getPosition());
 }
 
-void optimizeTextProperties(Text& text, float x_position, float y_position) {
+void optimizeTextOriginandPosition(Text& text, float x_position, float y_position) {
     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
     text.setPosition(x_position, y_position);
 }
