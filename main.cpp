@@ -101,6 +101,7 @@ int main()
     // Music
     string user_edit_input;
     Text edit_text("",cli_font);
+    edit_text.setCharacterSize(23);
     bool cli_selected=0,edit_selected=0,show_edit_cursor=0;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
@@ -235,10 +236,19 @@ int main()
            
             if (event.type == Event::TextEntered) 
             { 
-                if(edit_selected)
+                if(edit_selected){
                 if (isprint(event.text.unicode))     
                     user_edit_input += event.text.unicode;
+                    //bounds for text
+                Vector2f pos = edit_text.findCharacterPos(user_edit_input.size());  
                 
+                if(!(form.getGlobalBounds().contains(static_cast<sf::Vector2f>(pos)))){
+                   char temp =user_edit_input[user_edit_input.size()-1];
+                   user_edit_input.pop_back();
+                    user_edit_input+=("\n");
+                    user_edit_input+=temp;
+                }
+                }
                 // Filter out symbols (only characters in ascii code enters)
                 if(cli_selected)
                      if (isprint(event.text.unicode))     
