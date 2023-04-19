@@ -104,6 +104,7 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
 void headAnimationAndMovement(Sprite& head);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
+void optimizeTextProperties(Text& text, float x_position, float y_position);
 
 int main()
 {
@@ -144,11 +145,12 @@ int main()
     music.setVolume(0);
 
     RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225, 50)), vol_inc_button(Vector2f(150, 50));
-    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(800, 900)), level1_button(Vector2f(700, 100));
-    RectangleShape back_button(Vector2f(125, 60)), level2_button(Vector2f(700, 100)), level3_button(Vector2f(700, 100));
+    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(750, 900)), back_button(Vector2f(125, 60));
+    RectangleShape level1_button(Vector2f(700, 100)), level2_button(Vector2f(700, 100)), level3_button(Vector2f(700, 100));
     RectangleShape level4_button(Vector2f(700, 100)), level5_button(Vector2f(700, 100));
+
     setButtonProperties(back_button, 54, 69, 79, 62, 30);
-    setButtonProperties(buttons_background_1, 0, 0, 0, 400, 525);
+    setButtonProperties(buttons_background_1, 0, 31, 63, 400, 525);
     setButtonProperties(vol_dec_button, 155, 89, 182, 100, 50);
     setButtonProperties(vol_status_button, 243, 156, 18, 300, 50);
     setButtonProperties(vol_inc_button, 155, 89, 182, 500, 50);
@@ -436,6 +438,33 @@ int main()
                         edit_window_input += ("\n");
                     }
                 }
+                else if (current_screen == "levels_menu") {
+
+                    if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level1_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level2_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level3_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level4_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level5_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                }
             }
             if (event.type == Event::MouseMoved) {
 
@@ -498,6 +527,56 @@ int main()
                 {
                     game_window_back_button.setFillColor(Color::Yellow);
                     game_window_back_button.setScale(1.0f, 1.0f);
+                }
+                if (level1_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    level1_button.setFillColor(Color(140, 140, 140));
+                }
+                else
+                {
+                    level1_button.setFillColor(Color(112, 128, 144));
+
+                }
+                if (level2_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    level2_button.setFillColor(Color(140, 140, 140));
+                }
+                else
+                {
+                    level2_button.setFillColor(Color(112, 128, 144));
+
+                }
+                if (level3_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    level3_button.setFillColor(Color(140, 140, 140));
+                }
+                else
+                {
+                    level3_button.setFillColor(Color(112, 128, 144));
+
+                }
+                if (level4_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    level4_button.setFillColor(Color(140, 140, 140));
+                }
+                else
+                {
+                    level4_button.setFillColor(Color(112, 128, 144));
+
+                }
+                if (level5_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    level5_button.setFillColor(Color(140, 140, 140));
+                }
+                else
+                {
+                    level5_button.setFillColor(Color(112, 128, 144));
+
                 }
             }
             // Check if down arrow (later space) key has been pressed
@@ -624,7 +703,10 @@ int main()
         window.setView(view);
         window.display();
     }
+
+    window.display();
 }
+
 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 {
@@ -744,7 +826,13 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
     text.setPosition(rectangle.getPosition());
 }
 
-void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position) {
+void optimizeTextProperties(Text& text, float x_position, float y_position) {
+    text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
+    text.setPosition(x_position, y_position);
+}
+
+void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position)
+{
     rectangle.setFillColor(Color(red_intensity, green_intensity, blue_intensity));
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
