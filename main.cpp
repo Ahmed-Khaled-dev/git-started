@@ -144,15 +144,20 @@ int main()
     music.setVolume(0);
 
     RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225, 50)), vol_inc_button(Vector2f(150, 50));
-    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(600, 900)), buttons_background_2(Vector2f(600, 900));
-    RectangleShape back_button(Vector2f(125, 60));
+    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(800, 900)), level1_button(Vector2f(700, 100));
+    RectangleShape back_button(Vector2f(125, 60)), level2_button(Vector2f(700, 100)), level3_button(Vector2f(700, 100));
+    RectangleShape level4_button(Vector2f(700, 100)), level5_button(Vector2f(700, 100));
     setButtonProperties(back_button, 54, 69, 79, 62, 30);
-    setButtonProperties(buttons_background_1, 0, 0, 0, 325, 525);
+    setButtonProperties(buttons_background_1, 0, 0, 0, 400, 525);
     setButtonProperties(vol_dec_button, 155, 89, 182, 100, 50);
     setButtonProperties(vol_status_button, 243, 156, 18, 300, 50);
     setButtonProperties(vol_inc_button, 155, 89, 182, 500, 50);
     setButtonProperties(levels_menu_button, 241, 196, 15, 960, 540);
-    setButtonProperties(buttons_background_2, 0, 0, 0, 1625, 525);
+    setButtonProperties(level1_button, 112, 128, 144, 400, 200);
+    setButtonProperties(level2_button, 112, 128, 144, 400, 325);
+    setButtonProperties(level3_button, 112, 128, 144, 400, 500);
+    setButtonProperties(level4_button, 112, 128, 144, 400, 625);
+    setButtonProperties(level5_button, 112, 128, 144, 400, 800);
 
     Texture levels_menu;
     if (!levels_menu.loadFromFile("resources/sprites/time-machine.jpeg")) {
