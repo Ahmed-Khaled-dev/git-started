@@ -58,7 +58,7 @@ struct optionMenu {
 };
 
 // Functions declaration
-void editText(Text & edit_text,string& edit_input);
+void editText(Text & edit_text,string& edit_input,bool&);
 void cliShape(RectangleShape &form);
 void editWindowShape(RectangleShape &form);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
@@ -67,7 +67,7 @@ void playMusicFromFile(string file_path, Music& music);
 void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
-void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time);
+void showCliCursor(Clock& cursor_clock, bool& show_cursor,bool& , Time& cli_cursor_time);
 void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor);
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
@@ -101,7 +101,7 @@ int main()
     // Music
     string user_edit_input;
     Text edit_text("",cli_font);
-    bool cli_selected,edit_selected;
+    bool cli_selected=0,edit_selected=0,show_edit_cursor=0;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
@@ -120,7 +120,7 @@ int main()
     string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     Time cli_cursor_time;
-    bool show_cursor;
+    bool show_cursor=0;
     Clock cursor_clock;
 
     Text game_title;
@@ -211,6 +211,7 @@ int main()
                     else
                     {
                        cli_selected = false;
+                       show_cursor=false;
                     }
                 }
             }
@@ -407,12 +408,13 @@ int main()
             editWindowShape(form);
         cliShape(cli_shape);
         printDialogueText(dialogue_text);
-            showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+        showCliCursor(cursor_clock, show_cursor,cli_selected, cli_cursor_time);
+        showCliCursor(cursor_clock, show_edit_cursor,edit_selected, cli_cursor_time);
+        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
-        editText(edit_text,user_edit_input);
-            window.draw(form);
+        editText(edit_text,user_edit_input,show_edit_cursor);
+        window.draw(form);
         window.draw(cli_shape);
         window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
@@ -528,14 +530,17 @@ void printDialogueText(dialogueText& dialogue_text)
     }  
 }
 
-void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time) {
+void showCliCursor(Clock& cursor_clock, bool& show_cursor,bool&cli_selected, Time& cli_cursor_time) {
+   if(cli_selected){
     cli_cursor_time += cursor_clock.restart();
     // Cursor time to appear
+    
     if (cli_cursor_time >= seconds(0.5f)) 
     {
         show_cursor = !show_cursor;
         cli_cursor_time = Time::Zero;
     }
+}
 }
 
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
@@ -548,8 +553,8 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     cli_text_final.setPosition(1500, 500);
 }
 
-void editText(Text & edit_text,string& edit_input){
-    edit_text.setString(edit_input);
+void editText(Text & edit_text,string& edit_input,bool& show_cursor){
+    edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
     edit_text.setPosition(350,200);
 }
 
