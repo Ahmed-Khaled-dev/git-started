@@ -234,19 +234,21 @@ int main()
             if (event.type == Event::TextEntered) 
             { 
                 if(edit_selected){
-                    if (isprint(event.text.unicode))     
-                        user_edit_input += event.text.unicode;
-                    //bounds for text
-                    Vector2f pos = edit_window_text.findCharacterPos(user_edit_input.size());  
-                    
-                    if(!(edit_window_shape.getGlobalBounds().contains(pos))){
-                        char temp =user_edit_input[user_edit_input.size()-1];
-                        user_edit_input.pop_back();
-                       
-                        user_edit_input+=("\n");
-                       
-                        user_edit_input+=temp;
-                    }
+                     if(user_edit_input.length()<580&&(edit_window_text.findCharacterPos(user_edit_input.size()).y<686)){
+                        if (isprint(event.text.unicode))     
+                            user_edit_input += event.text.unicode;
+                        //bounds for text
+                        Vector2f pos = edit_window_text.findCharacterPos(user_edit_input.size());  
+                        
+                        if(!(edit_window_shape.getGlobalBounds().contains(pos))){
+                            char temp =user_edit_input[user_edit_input.size()-1];
+                            user_edit_input.pop_back();
+                        
+                            user_edit_input+=("\n");
+                        
+                            user_edit_input+=temp;
+                        }
+                    }else {edit_selected=false;}
                 }
                 // Filter out symbols (only characters in ascii code enters)
                 if(cli_selected)
