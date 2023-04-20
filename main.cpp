@@ -378,3 +378,106 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
 }
+#include<iostream>
+using namespace std;
+using namespace sf;
+
+ const int WINDOW_LENGTH = 1920, WINDOW_WIDTH = 1080;
+RenderWindow window(VideoMode(WINDOW_LENGTH, WINDOW_WIDTH), "Git Started");
+
+void soundAndMusicTexts (Text& sfx, Text& music);
+void soundAndMusicControls (Music& music_sample, Sound& pop, Sprite slide[], CircleShape contoroller[], Text& sfx, Text& music, bool& clicked);
+
+int main()
+{
+   
+    Texture background_texture, slide_texture;
+    background_texture.loadFromFile("resources/sprites/background.png");
+    slide_texture.loadFromFile("resources/sprites/slide.png");
+    background_texture.setSmooth(true);
+    slide_texture.setSmooth(true);
+    Sprite background, slide[2];
+    background.setTexture(background_texture);
+    slide[0].setTexture(slide_texture);
+     slide[1].setTexture(slide_texture);
+    Music music_sample;
+    music_sample.openFromFile("resources/music/sample.ogg");
+    SoundBuffer pop_effect;
+    pop_effect.loadFromFile("resources/sound_effects/pop.wav");
+    Sound pop;
+    pop.setBuffer(pop_effect);
+    Text sfx, music;
+    Font font;
+    font.loadFromFile("resources/fonts/Roboto-Regular.ttf");
+    sfx.setFont(font);
+    music.setFont(font);
+    window.setFramerateLimit(60);
+    Event event;
+    CircleShape contorl[2];
+    contorl[0].setRadius(15);
+    contorl[1].setRadius(15);
+    contorl[0].setPosition(220 + 499, 600);
+    contorl[1].setPosition(280 + 499, 705);
+    for (int i = 0; i < 2; i++)
+        contorl[i].setOrigin(15, 15);
+    bool clicked;
+    music_sample.play();
+    while (window.isOpen())
+    {
+        Mouse mouse;
+        Vector2i position = mouse.getPosition(window);
+        clicked = Mouse::isButtonPressed(Mouse::Left);
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::Closed){
+                window.close();
+            }
+        }
+        soundAndMusicTexts(sfx, music);
+        soundAndMusicControls(music_sample, pop, slide, contorl, sfx, music,clicked);
+        // Unsigned char stores from 0 -> 255 (RGB range)
+        window.clear();
+        window.draw(background);
+        for (int i = 0; i < 2; i++)
+            window.draw(slide[i]);
+        for (int i = 0; i < 2; i++)     
+            window.draw(contorl[i]);
+        window.draw(sfx);
+        window.draw(music);
+        window.display();
+    }
+    return 0;
+}
+
+void soundAndMusicTexts (Text& sfx, Text& music){
+    Mouse mouse;
+    sfx.setString("SFX");
+    sfx.setFillColor(Color :: Red);
+    music.setString("Music");
+    sfx.setCharacterSize(60);
+    music.setCharacterSize(60);
+    music.setFillColor(Color :: Red);
+    sfx.setPosition(97, 561);
+    music.setPosition(97, 661);
+    if (sfx.getGlobalBounds().contains(Vector2f(mouse.getPosition().x, mouse.getPosition().y)))
+        sfx.setFillColor(Color :: White);
+    if (music.getGlobalBounds().contains(Vector2f(mouse.getPosition().x, mouse.getPosition().y)))
+        music.setFillColor(Color :: White);        
+}
+void soundAndMusicControls (Music& music_sample, Sound& pop, Sprite slide[], CircleShape contoroller[], Text& sfx, Text& music, bool& clicked){
+    Mouse mouse;
+    Vector2i po = mouse.getPosition(window);
+    slide[0].setPosition(220, 595);
+    slide[1].setPosition(280, 700);
+        if(slide[0].getGlobalBounds().contains(po.x, po.y) && clicked &&  contoroller[0].getGlobalBounds().intersects(slide[0].getGlobalBounds()) || (contoroller[0].getGlobalBounds().contains(po.x, po.y) && clicked)){
+            contoroller[0].setPosition(po.x, contoroller[0].getPosition().y);
+            pop.setVolume(((contoroller[0].getPosition().x - 220) * 100.0) / (220.0 + 499.0));
+            }
+        if (slide[1].getGlobalBounds().contains(po.x, po.y) && clicked &&  contoroller[1].getGlobalBounds().intersects(slide[1].getGlobalBounds()) || (contoroller[1].getGlobalBounds().contains(po.x, po.y) && clicked)){
+             contoroller[1].setPosition(po.x, contoroller[1].getPosition().y);
+             music_sample.setVolume(((contoroller[1].getPosition().x - 280.0) * 100.0) / (280.0 + 499.0));
+        }
+        if (sfx.getGlobalBounds().contains(po.x, po.y) && clicked)
+            pop.play();
+    
+}
