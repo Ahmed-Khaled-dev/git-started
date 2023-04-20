@@ -252,7 +252,7 @@ int main()
             if (event.type == Event::TextEntered) 
             { 
                 if(edit_selected){
-                     if(user_edit_input.length()<580&&(edit_window_text.findCharacterPos(user_edit_input.size()).y<686)){
+                     if(user_edit_input.length()<580&&(edit_window_text.findCharacterPos(user_edit_input.size()).y<edit_window_shape.getGlobalBounds().height)){
                         if (isprint(event.text.unicode))     
                             user_edit_input += event.text.unicode;
                         //bounds for text
