@@ -47,7 +47,7 @@ int main()
 {
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
-    string mode="menu";
+    string current_screen="main menu";
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
@@ -70,21 +70,27 @@ int main()
 
     Font buttons_font;
     if (!buttons_font.loadFromFile("resources/fonts/minecraft_font.ttf")) {
-        cout << "Error has happened while loading the font" << endl;
+        cout << "Error has happened while loading the buttons font" << endl;
     }
-    Font game_font;
-    if (!game_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
-        cout << "Error has happened while loading the font" << endl;
+    Font game_title_font;
+    if (!game_title_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
+        cout << "Error has happened while loading the title font" << endl;
     }
     
     Text game_title;
     game_title.setString("\t  Git \n Started");
-    game_title.setFont(game_font);
+    game_title.setFont(game_title_font);
     game_title.setOutlineThickness(-4);
     game_title.setFillColor(Color(50, 50, 50)); // Dark grey fill
-    game_title.setOutlineColor(Color(100, 255, 30)); //Green outline
+    game_title.setOutlineColor(Color(100, 255, 30)); 
     game_title.setCharacterSize(120);
     game_title.setPosition(620, 80);
+    /*Git Green: RGB(52, 111, 69)
+    Git Blue: RGB(0, 116, 184)
+    Git Yellow: RGB(241, 196, 15)
+    Git Orange: RGB(235, 97, 0)
+    Green outline Color(100, 255, 30)
+    Dark grey fill Color(50, 50, 50)*/
 
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
     Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
@@ -103,10 +109,10 @@ int main()
     setButtonTextProperties(start_button, start_text, Color::Black);
     setButtonTextProperties(options_button, options_text, Color::Black);
     setButtonTextProperties(close_button, close_text, Color::Black);
-    //Menu Screen background
-    Texture bg;
-    bg.loadFromFile("resources/sprites/menuBg.png");
-    Sprite menu(bg);
+    
+    Texture main_menu_bg;
+    main_menu_bg.loadFromFile("resources/sprites/menuBg.png");
+    Sprite main_menu(main_menu_bg);
     
     Event event;
     
@@ -115,7 +121,7 @@ int main()
     {
         while (window.pollEvent(event))
         {
-            if (event.type == Event::Closed || mode == "close") 
+            if (event.type == Event::Closed || current_screen == "close") 
             {
                 window.close();
             }
@@ -168,15 +174,15 @@ int main()
 
                 if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    mode="start";
+                    current_screen="levels";
                 }
                 if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    mode="options";
+                    current_screen="options";
                 }
                 if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    mode = "close";
+                    current_screen = "close";
                 }
             }
             if (event.type == Event::MouseMoved) {
@@ -238,10 +244,10 @@ int main()
                 }
             }
         }
-        if(mode =="menu")
+        if(current_screen =="main menu")
         {
             window.clear(Color::Black);
-            window.draw(menu);
+            window.draw(main_menu);
             window.draw(start_button);
             window.draw(options_button);
             window.draw(close_button);
@@ -251,28 +257,28 @@ int main()
             window.draw(game_title);
             window.display();
         }
-        if(mode =="start")
+        if(current_screen =="levels")
         {
-        drawDialogue(window, dialogue_box);
-        printDialogueText(dialogue_text);
-        showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
-        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
-        window.clear(Color::Black);
-        window.draw(dialogue_box.shape);
-        window.draw(dialogue_box.title);
-        window.draw(dialogue_box.sprite);
-        window.draw(dialogue_text.text);
-        window.draw(cli_text);
-        window.draw(cli_text_final);
-        window.draw(vol_status_button);
-        window.draw(vol_inc_button);
-        window.draw(vol_dec_button);
-        window.draw(vol_status_text);
-        window.draw(vol_inc_text);
-        window.draw(vol_dec_text);
-        window.display();
+            drawDialogue(window, dialogue_box);
+            printDialogueText(dialogue_text);
+            showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+            window.clear(Color::Black);
+            window.draw(dialogue_box.shape);
+            window.draw(dialogue_box.title);
+            window.draw(dialogue_box.sprite);
+            window.draw(dialogue_text.text);
+            window.draw(cli_text);
+            window.draw(cli_text_final);
+            window.draw(vol_status_button);
+            window.draw(vol_inc_button);
+            window.draw(vol_dec_button);
+            window.draw(vol_status_text);
+            window.draw(vol_inc_text);
+            window.draw(vol_dec_text);
+            window.display();
         }
-        else if(mode =="options")
+        else if(current_screen =="options")
         {
             //write here "options" screen propertiess
         }
