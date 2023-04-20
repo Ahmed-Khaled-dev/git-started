@@ -149,7 +149,7 @@ int main()
     RectangleShape level4_button(Vector2f(700, 100)), level5_button(Vector2f(700, 100));
 
     setButtonProperties(back_button, 54, 69, 79, 77, 45);
-    setButtonProperties(buttons_background_1, 0, 0, 0, 960, 520);
+    setButtonProperties(buttons_background_1, 0, 31, 63, 960, 540);
     setButtonProperties(level1_button, 112, 128, 144, 960, 200);
     setButtonProperties(level2_button, 112, 128, 144, 960, 325);
     setButtonProperties(level3_button, 112, 128, 144, 960, 500);
@@ -157,14 +157,14 @@ int main()
     setButtonProperties(level5_button, 112, 128, 144, 960, 800);
 
     Texture levels_menu;
-    if (!levels_menu.loadFromFile("resources/sprites/levels-background.jpg")) {
+    if (!levels_menu.loadFromFile("resources/sprites/levels-menu.jpg")) {
         cout << "Error has happened while loading the levels_menu background" << endl;
     }
-    Sprite menu_level;
-    menu_level.setTexture(levels_menu);
-    menu_level.setOrigin(menu_level.getLocalBounds().width / 2.0f, menu_level.getLocalBounds().height / 2.0f);
-    menu_level.setPosition(960, 495);
-    menu_level.setScale(0.65f, 0.65f);
+    Sprite menu_of_levels;
+    menu_of_levels.setTexture(levels_menu);
+    menu_of_levels.setOrigin(menu_of_levels.getLocalBounds().width / 2.0f, menu_of_levels.getLocalBounds().height / 2.0f);
+    menu_of_levels.setPosition(960, 540);
+    menu_of_levels.setScale(0.33f, 0.33f);
 
     // Command line interface (CLI)
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
@@ -743,7 +743,7 @@ int main()
 
         else if (current_screen == "levels menu") {
 
-            window.draw(menu_level);
+            window.draw(menu_of_levels);
             window.draw(back_button);
             window.draw(buttons_background_1);
             window.draw(level1_button);
@@ -761,7 +761,7 @@ int main()
             window.draw(level4_text);
             window.draw(level5_text);
 
-            }
+        }
 
         window.setView(view);
         window.display();
