@@ -58,6 +58,7 @@ struct optionMenu {
 };
 
 // Functions declaration
+void createCommandShape(RectangleShape &form);
 void setEditWindowText(Text & edit_text,string& edit_input,bool&);
 void createCliShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
@@ -92,16 +93,17 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
-    RectangleShape edit_window_shape,cli_shape;
+    RectangleShape edit_window_shape,cli_shape,command_shape;
     cli_font.loadFromFile("resources/fonts/arial.ttf");
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
 
     // Music
-    string user_edit_input="type here";
+    string user_edit_input="1. type here";
     Text edit_window_text(user_edit_input ,cli_font);
-    edit_window_text.setCharacterSize(23);
+    edit_window_text.setCharacterSize(22);
+    int count_line=1;
     bool cli_selected=0,edit_selected=0,show_edit_cursor=0;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
@@ -239,7 +241,9 @@ int main()
                     if(!(edit_window_shape.getGlobalBounds().contains(pos))){
                         char temp =user_edit_input[user_edit_input.size()-1];
                         user_edit_input.pop_back();
+                        count_line++;
                         user_edit_input+=("\n");
+                       
                         user_edit_input+=temp;
                     }
                 }
@@ -263,7 +267,7 @@ int main()
                         // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                           final_cli_input += (user_cli_input + "\n");
+                           final_cli_input += ('$'+ user_cli_input + "\n");
                            user_cli_input.clear();
                     }
                 }
@@ -409,6 +413,7 @@ int main()
         else if(current_screen == "levels")
         {
         drawDialogue(window, dialogue_box);
+        createCommandShape(command_shape);
         createEditWindowShape(edit_window_shape);
         createCliShape(cli_shape);
         printDialogueText(dialogue_text);
@@ -419,6 +424,7 @@ int main()
             window.draw(dialogue_box.body_shape);
         setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor);
         window.draw(edit_window_shape);
+        window.draw(command_shape);
         window.draw(cli_shape);
         window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
@@ -549,17 +555,16 @@ void showCursor(Clock& cursor_clock, bool& show_cursor,bool& selected, Time& cur
 
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
     // Shape of cursor
-    cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(1200, 740);
-    cli_text.setFillColor(Color::Black);
+    cli_text.setString( user_cli_input + (show_cursor ? '|' : ' ')); 
+    cli_text.setPosition(1200, 700);
+    cli_text_final.setFillColor(Color::Cyan);
     cli_text_final.setString(final_cli_input);
-    cli_text_final.setFillColor(Color::Black);
     cli_text_final.setPosition(1500, 500);
 }
 
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor){
     edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
-    edit_text.setPosition(350,200);
+    edit_text.setPosition(310,160);
 }
 
 void playMusicFromFile(const string file_path, Music& music) {
@@ -656,9 +661,17 @@ void createEditWindowShape(RectangleShape &form){
 }
 
 void createCliShape(RectangleShape &form){
-    form.setSize(Vector2f(100,60));
+    form.setSize(Vector2f(250,60));
     form.setFillColor(Color::Black);
     form.setOutlineThickness(1);
     form.setOutlineColor(Color::White);
-    form.setPosition(1200,750);
+    form.setPosition(1200,700);
+}
+
+void createCommandShape(RectangleShape &form){
+    form.setSize(Vector2f(250,200));
+    form.setFillColor(Color::Black);
+    form.setOutlineThickness(1);
+    form.setOutlineColor(Color::White);
+    form.setPosition(1200,500);
 }
