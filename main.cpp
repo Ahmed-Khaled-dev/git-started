@@ -377,17 +377,47 @@ int main()
                 {
                     current_screen = "options_in_game";
                 }
-                if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu")
-                {
-                    current_screen = "levels menu";
+                if (current_screen == "main menu") {
+
+                    if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels menu";
+                    }
+                    if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "options";
+                    }
+                    if (main_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "close";
+                    }
                 }
-                if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu")
-                {
-                    current_screen = "options";
-                }
-                if (main_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu")
-                {
-                    current_screen = "close";
+                else if (current_screen == "levels menu") {
+
+                    if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level1_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level2_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level3_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level4_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
+                    else if (level5_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels";
+                    }
                 }
             }
             if (event.type == Event::TextEntered)
@@ -458,33 +488,7 @@ int main()
                         edit_window_input += ("\n");
                     }
                 }
-                else if (current_screen == "levels_menu") {
 
-                    if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
-                    }
-                    else if (level1_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
-                    }
-                    else if (level2_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
-                    }
-                    else if (level3_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
-                    }
-                    else if (level4_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
-                    }
-                    else if (level5_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
-                    }
-                }
             }
             if (event.type == Event::MouseMoved) {
 
