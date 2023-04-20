@@ -95,14 +95,9 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
-    RectangleShape edit_window_shape,cli_shape,command_shape,save_button(Vector2f(120, 50));
-    setButtonProperties(save_button, Color::Yellow, 960, 670);
-    Text save_text("Save", cli_font , 35);
-    setButtonTextProperties(save_button, save_text, Color::Black);
-    save_button.setPosition(500,700);
-    save_button.setOrigin(120/2,50/2);
-    save_text.setOrigin(40,save_text.getLocalBounds().top/2);
-    save_text.setPosition(save_button.getPosition().x,save_button.getPosition().y);
+    RectangleShape edit_window_shape,cli_shape,command_shape;
+    
+    
     cli_font.loadFromFile("resources/fonts/arial.ttf");
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
@@ -117,12 +112,18 @@ int main()
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
-    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50));
+    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50)),save_button(Vector2f(120, 50));
     setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
     setButtonProperties(vol_status_button, Color::White, 300, 50);
     setButtonProperties(vol_inc_button, Color::Red, 500, 50);
+
+    
+    if (!buttons_font.loadFromFile("resources/fonts/arial.TTF")) {
+        cout << "Error has happened while loading the font" << endl;
+    }
+
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
+    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35),save_text("Save", cli_font , 35);
     Text vol_dec_text("-vol", buttons_font , 35);
     setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
     setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
@@ -197,6 +198,10 @@ int main()
     pop.setVolume(0);
     setSfxAndMusicTexts(sfx_text, music_text, option_menu);
     // Option menu
+
+        setButtonProperties(save_button, Color::Yellow, 500, 700);
+    setButtonTextProperties(save_button, save_text, Color::Black);
+
 
     Event event;
     while (window.isOpen())
