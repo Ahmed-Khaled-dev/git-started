@@ -58,16 +58,16 @@ struct optionMenu {
 };
 
 // Functions declaration
-void editText(Text & edit_text,string& edit_input,bool&);
-void cliShape(RectangleShape &form);
-void editWindowShape(RectangleShape &form);
+void setEditWindowText(Text & edit_text,string& edit_input,bool&);
+void createCliShape(RectangleShape &form);
+void createEditWindowShape(RectangleShape &form);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
 void playMusicFromFile(string file_path, Music& music);
 void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
-void showCliCursor(Clock& cursor_clock, bool& show_cursor,bool& , Time& cli_cursor_time);
+void showCursor(Clock& cursor_clock, bool& show_cursor,bool& , Time& cursor_time);
 void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor);
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
@@ -92,7 +92,7 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
-    RectangleShape form,cli_shape;
+    RectangleShape edit_window_shape,cli_shape;
     cli_font.loadFromFile("resources/fonts/arial.ttf");
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
@@ -100,8 +100,8 @@ int main()
 
     // Music
     string user_edit_input="type here";
-    Text edit_text(user_edit_input ,cli_font);
-    edit_text.setCharacterSize(23);
+    Text edit_window_text(user_edit_input ,cli_font);
+    edit_window_text.setCharacterSize(23);
     bool cli_selected=0,edit_selected=0,show_edit_cursor=0;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
@@ -121,7 +121,7 @@ int main()
     string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     Time cli_cursor_time;
-    bool show_cursor=0;
+    bool show_cli_cursor=0;
     Clock cursor_clock;
 
     Text game_title;
@@ -211,17 +211,10 @@ int main()
                     else
                     {
                        cli_selected = false;
-                       show_cursor=false;
+                       show_cli_cursor=false;
                     }
-                }
-            }
-            //mouse click edit
-             if (event.type == Event::MouseButtonPressed)
-            {
-                if (event.mouseButton.button == Mouse::Left)
-                {
-                    
-                    if (form.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                     //mouse click edit
+                     if (edit_window_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         edit_selected = true;
                     }
@@ -232,22 +225,23 @@ int main()
                     }
                 }
             }
-            // Take input from user
+           
+           
            
             if (event.type == Event::TextEntered) 
             { 
                 if(edit_selected){
-                if (isprint(event.text.unicode))     
-                    user_edit_input += event.text.unicode;
+                    if (isprint(event.text.unicode))     
+                        user_edit_input += event.text.unicode;
                     //bounds for text
-                Vector2f pos = edit_text.findCharacterPos(user_edit_input.size());  
-                
-                if(!(form.getGlobalBounds().contains(pos))){
-                   char temp =user_edit_input[user_edit_input.size()-1];
-                   user_edit_input.pop_back();
-                    user_edit_input+=("\n");
-                    user_edit_input+=temp;
-                }
+                    Vector2f pos = edit_window_text.findCharacterPos(user_edit_input.size());  
+                    
+                    if(!(edit_window_shape.getGlobalBounds().contains(pos))){
+                        char temp =user_edit_input[user_edit_input.size()-1];
+                        user_edit_input.pop_back();
+                        user_edit_input+=("\n");
+                        user_edit_input+=temp;
+                    }
                 }
                 // Filter out symbols (only characters in ascii code enters)
                 if(cli_selected)
@@ -414,24 +408,24 @@ int main()
         }
         else if(current_screen == "levels")
         {
-            drawDialogue(window, dialogue_box);
-            editWindowShape(form);
-        cliShape(cli_shape);
+        drawDialogue(window, dialogue_box);
+        createEditWindowShape(edit_window_shape);
+        createCliShape(cli_shape);
         printDialogueText(dialogue_text);
-        showCliCursor(cursor_clock, show_cursor,cli_selected, cli_cursor_time);
-        showCliCursor(cursor_clock, show_edit_cursor,edit_selected, cli_cursor_time);
-        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+        showCursor(cursor_clock, show_cli_cursor,cli_selected, cli_cursor_time);
+        showCursor(cursor_clock, show_edit_cursor,edit_selected, cli_cursor_time);
+        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
-        editText(edit_text,user_edit_input,show_edit_cursor);
-        window.draw(form);
+        setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor);
+        window.draw(edit_window_shape);
         window.draw(cli_shape);
         window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
             window.draw(dialogue_text.continuation_text);
-            window.draw(edit_text);
+            window.draw(edit_window_text);
         window.draw(cli_text);
             window.draw(cli_text_final);
             window.draw(vol_status_button);
@@ -540,17 +534,17 @@ void printDialogueText(dialogueText& dialogue_text)
     }  
 }
 
-void showCliCursor(Clock& cursor_clock, bool& show_cursor,bool&cli_selected, Time& cli_cursor_time) {
-   if(cli_selected){
-    cli_cursor_time += cursor_clock.restart();
-    // Cursor time to appear
-    
-    if (cli_cursor_time >= seconds(0.5f)) 
-    {
-        show_cursor = !show_cursor;
-        cli_cursor_time = Time::Zero;
+void showCursor(Clock& cursor_clock, bool& show_cursor,bool& selected, Time& cursor_time) {
+    if(selected){
+         cursor_time += cursor_clock.restart();
+         // Cursor time to appear
+            
+        if (cursor_time >= seconds(0.5f)) 
+        {
+            show_cursor = !show_cursor;
+            cursor_time = Time::Zero;
+        }
     }
-}
 }
 
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
@@ -563,7 +557,7 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     cli_text_final.setPosition(1500, 500);
 }
 
-void editText(Text & edit_text,string& edit_input,bool& show_cursor){
+void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor){
     edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
     edit_text.setPosition(350,200);
 }
@@ -653,7 +647,7 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
 }
 
 
-void editWindowShape(RectangleShape &form){
+void createEditWindowShape(RectangleShape &form){
     form.setSize(Vector2f(300,600));
     form.setFillColor(Color::Black);
     form.setOutlineThickness(1);
@@ -661,7 +655,7 @@ void editWindowShape(RectangleShape &form){
     form.setPosition(300,150);
 }
 
-void cliShape(RectangleShape &form){
+void createCliShape(RectangleShape &form){
     form.setSize(Vector2f(100,60));
     form.setFillColor(Color::Black);
     form.setOutlineThickness(1);
