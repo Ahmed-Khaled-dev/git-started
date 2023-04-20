@@ -100,11 +100,12 @@ int main()
     }
 
     // Music
-    string user_edit_input="1. type here";
+    string user_edit_input="type here";
     Text edit_window_text(user_edit_input ,cli_font);
     edit_window_text.setCharacterSize(22);
-    int count_line=1;
-    bool cli_selected=0,edit_selected=0,show_edit_cursor=0;
+    Time cursor_time;
+    bool show_cli_cursor,cli_selected=false,edit_selected=false,show_edit_cursor=false;
+    Clock cursor_clock;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
@@ -241,7 +242,7 @@ int main()
                     if(!(edit_window_shape.getGlobalBounds().contains(pos))){
                         char temp =user_edit_input[user_edit_input.size()-1];
                         user_edit_input.pop_back();
-                        count_line++;
+                       
                         user_edit_input+=("\n");
                        
                         user_edit_input+=temp;
