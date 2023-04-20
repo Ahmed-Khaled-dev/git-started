@@ -47,31 +47,36 @@ int main()
 {
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
+    string current_screen = "main menu";
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
+
+    // Dialogue box
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
+
+    // Fonts
+    Font buttons_font;
+    if (!buttons_font.loadFromFile("resources/fonts/minecraft_font.ttf")) {
+        cout << "Error has happened while loading the buttons font" << endl;
+    }
+    Font game_title_font;
+    if (!game_title_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
+        cout << "Error has happened while loading the game title font" << endl;
+    }
     Font cli_font;
-    cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf");
-    string user_cli_input, final_cli_input;
-    Text cli_text("", cli_font), cli_text_final("", cli_font);
-    Time cli_cursor_time;
-    bool show_cursor;
-    Clock cursor_clock;
+    if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
+        cout << "Error has happened while loading the command line font" << endl;
+    }
+
+    // Music
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
-
     RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50));
     setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
     setButtonProperties(vol_status_button, Color::White, 300, 50);
     setButtonProperties(vol_inc_button, Color::Red, 500, 50);
-
-    Font buttons_font;
-    if (!buttons_font.loadFromFile("resources/fonts/arial.TTF")) {
-        cout << "Error has happened while loading the font" << endl;
-    }
-
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
     Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
     Text vol_dec_text("-vol", buttons_font , 35);
@@ -79,12 +84,49 @@ int main()
     setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
     setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
 
+    // Command line
+    string user_cli_input, final_cli_input;
+    Text cli_text("", cli_font), cli_text_final("", cli_font);
+    Time cli_cursor_time;
+    bool show_cursor;
+    Clock cursor_clock;
+
+    Text game_title;
+    game_title.setString("\t  Git \n Started");
+    game_title.setFont(game_title_font);
+    game_title.setOutlineThickness(-4);
+    game_title.setFillColor(Color(50, 50, 50)); // Dark grey fill
+    game_title.setOutlineColor(Color(100, 255, 30)); 
+    game_title.setCharacterSize(120);
+    game_title.setPosition(620, 80);
+    /*Git Green: RGB(52, 111, 69)
+    Git Blue: RGB(0, 116, 184)
+    Git Yellow: RGB(241, 196, 15)
+    Git Orange: RGB(235, 97, 0)
+    Green outline Color(100, 255, 30)
+    Dark grey fill Color(50, 50, 50)*/
+
+    // Main Menu Screen buttons 
+    RectangleShape start_button(Vector2f(406,121)),options_button(Vector2f(323,80)),close_button(Vector2f(230,75));
+    setButtonProperties(start_button, Color::Green, 960, 520);
+    setButtonProperties(options_button, Color::Yellow, 960, 670);
+    setButtonProperties(close_button, Color::Red, 1720, 180);
+    Text start_text("Start", buttons_font , 53), options_text("Options", buttons_font , 40);
+    Text close_text("Close", buttons_font , 33);
+    setButtonTextProperties(start_button, start_text, Color::Black);
+    setButtonTextProperties(options_button, options_text, Color::Black);
+    setButtonTextProperties(close_button, close_text, Color::Black);
+    
+    Texture main_menu_bg;
+    main_menu_bg.loadFromFile("resources/sprites/main_menu_bg.png");
+    Sprite main_menu(main_menu_bg);
+    
     Event event;
     while (window.isOpen())
     {
         while (window.pollEvent(event))
         {
-            if (event.type == Event::Closed) 
+            if (event.type == Event::Closed || current_screen == "close") 
             {
                 window.close();
             }
@@ -129,10 +171,21 @@ int main()
                 {
                     music.setVolume(music.getVolume() + 10); //new volume = current volume+10
                 }
-
                 if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
                     music.setVolume(music.getVolume() - 10);
+                }
+                if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    current_screen = "levels";
+                }
+                if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    current_screen = "options";
+                }
+                if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    current_screen = "close";
                 }
             }
             if (event.type == Event::MouseMoved) {
@@ -162,25 +215,73 @@ int main()
                     vol_dec_button.setFillColor(Color::Blue);
 
                 }
+                if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    start_button.setFillColor(Color(34, 139, 34));
+                    start_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    start_button.setFillColor(Color::Green);
+                    start_button.setScale(1.0f, 1.0f);
+                }
+                if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    options_button.setFillColor(Color(153, 153, 0));
+                    options_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    options_button.setFillColor(Color::Yellow);
+                    options_button.setScale(1.0f, 1.0f);
+                }
+                if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    close_button.setFillColor(Color(139, 0, 0));
+                    close_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    close_button.setFillColor(Color::Red);
+                    close_button.setScale(1.0f, 1.0f);
+                }
             }
         }
-        drawDialogue(window, dialogue_box);
-        printDialogueText(dialogue_text);
-        showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
-        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
         window.clear(Color::Black);
-        window.draw(dialogue_box.shape);
-        window.draw(dialogue_box.title);
-        window.draw(dialogue_box.sprite);
-        window.draw(dialogue_text.text);
-        window.draw(cli_text);
-        window.draw(cli_text_final);
-        window.draw(vol_status_button);
-        window.draw(vol_inc_button);
-        window.draw(vol_dec_button);
-        window.draw(vol_status_text);
-        window.draw(vol_inc_text);
-        window.draw(vol_dec_text);
+        if(current_screen == "main menu")
+        {
+            window.draw(main_menu);
+            window.draw(start_button);
+            window.draw(options_button);
+            window.draw(close_button);
+            window.draw(start_text);
+            window.draw(options_text);
+            window.draw(close_text);
+            window.draw(game_title);
+        }
+        else if(current_screen == "levels")
+        {
+            drawDialogue(window, dialogue_box);
+            printDialogueText(dialogue_text);
+            showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+            window.draw(dialogue_box.shape);
+            window.draw(dialogue_box.title);
+            window.draw(dialogue_box.sprite);
+            window.draw(dialogue_text.text);
+            window.draw(cli_text);
+            window.draw(cli_text_final);
+            window.draw(vol_status_button);
+            window.draw(vol_inc_button);
+            window.draw(vol_dec_button);
+            window.draw(vol_status_text);
+            window.draw(vol_inc_text);
+            window.draw(vol_dec_text);
+        }
+        else if(current_screen == "options")
+        {
+            // Write here "options" screen properties
+        }
         window.display();
     }
 }
@@ -272,7 +373,8 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
 
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position){
     rectangle.setFillColor(fillcolor);
+    rectangle.setOutlineThickness(5);
+    rectangle.setOutlineColor(Color::Black);
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
 }
-
