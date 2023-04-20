@@ -144,30 +144,31 @@ int main()
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
 
-    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225, 50)), vol_inc_button(Vector2f(150, 50));
-    RectangleShape levels_menu_button(Vector2f(350, 75)), buttons_background_1(Vector2f(750, 850)), back_button(Vector2f(125, 60));
+    RectangleShape  buttons_background_1(Vector2f(750, 850)), back_button(Vector2f(125, 60));
     RectangleShape level1_button(Vector2f(700, 100)), level2_button(Vector2f(700, 100)), level3_button(Vector2f(700, 100));
     RectangleShape level4_button(Vector2f(700, 100)), level5_button(Vector2f(700, 100));
 
     setButtonProperties(back_button, 54, 69, 79, 77, 45);
-    setButtonProperties(buttons_background_1, 0, 31, 63, 400, 525);
-    setButtonProperties(level1_button, 112, 128, 144, 400, 200);
-    setButtonProperties(level2_button, 112, 128, 144, 400, 325);
-    setButtonProperties(level3_button, 112, 128, 144, 400, 500);
-    setButtonProperties(level4_button, 112, 128, 144, 400, 625);
-    setButtonProperties(level5_button, 112, 128, 144, 400, 800);
+    setButtonProperties(buttons_background_1, 0, 0, 0, 960, 520);
+    setButtonProperties(level1_button, 112, 128, 144, 960, 200);
+    setButtonProperties(level2_button, 112, 128, 144, 960, 325);
+    setButtonProperties(level3_button, 112, 128, 144, 960, 500);
+    setButtonProperties(level4_button, 112, 128, 144, 960, 625);
+    setButtonProperties(level5_button, 112, 128, 144, 960, 800);
 
     Texture levels_menu;
-    if (!levels_menu.loadFromFile("resources/sprites/time-machine.jpeg")) {
+    if (!levels_menu.loadFromFile("resources/sprites/levels-background.jpg")) {
         cout << "Error has happened while loading the levels_menu background" << endl;
     }
     Sprite menu_level;
     menu_level.setTexture(levels_menu);
+    menu_level.setOrigin(menu_level.getLocalBounds().width / 2.0f, menu_level.getLocalBounds().height / 2.0f);
+    menu_level.setPosition(960, 495);
+    menu_level.setScale(0.65f, 0.65f);
 
     // Command line interface (CLI)
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text vol_status_text("Hello", buttons_font, 32), vol_inc_text("+vol", buttons_font, 32);
-    Text vol_dec_text("-vol", buttons_font, 32), levels_menu_text("levels menu", buttons_font, 32);
+
     Text back_button_text("Back", buttons_font, 32), level_discribing_text_1("Intro", buttons_font, 32);
     Text level_discribing_text_2("Commits", buttons_font, 32), level_discribing_text_3("Branches", buttons_font, 32);
     Text level1_text("Tragic Failure: The Cost of Poor Organization (git init)", buttons_font, 17);
@@ -176,10 +177,6 @@ int main()
     Text level4_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 17);
     Text level5_text("Branching Out: Conquer the Code Chaos! (git branch)", buttons_font, 17);
 
-    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
-    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
-    setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
-    setButtonTextProperties(levels_menu_button, levels_menu_text, Color::Black);
     setButtonTextProperties(back_button, back_button_text, Color::Black);
     setButtonTextProperties(level1_button, level1_text, Color::Black);
     setButtonTextProperties(level2_button, level2_text, Color::Black);
@@ -187,9 +184,9 @@ int main()
     setButtonTextProperties(level4_button, level4_text, Color::Black);
     setButtonTextProperties(level5_button, level5_text, Color::Black);
 
-    optimizeTextOriginandPosition(level_discribing_text_1, 400, 125);
-    optimizeTextOriginandPosition(level_discribing_text_2, 400, 425);
-    optimizeTextOriginandPosition(level_discribing_text_3, 400, 725);
+    optimizeTextOriginandPosition(level_discribing_text_1, 960, 125);
+    optimizeTextOriginandPosition(level_discribing_text_2, 960, 425);
+    optimizeTextOriginandPosition(level_discribing_text_3, 960, 725);
 
     // Command line
     string user_cli_input, final_cli_input;
@@ -316,6 +313,7 @@ int main()
     commit commits[MAX_COMMITS];
     window.setFramerateLimit(60);
 
+
     Event event;
     while (window.isOpen())
     {
@@ -381,7 +379,7 @@ int main()
                 }
                 if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu")
                 {
-                    current_screen = "levels";
+                    current_screen = "levels menu";
                 }
                 if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu")
                 {
@@ -742,6 +740,29 @@ int main()
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
         }
+
+        else if (current_screen == "levels menu") {
+
+            window.draw(menu_level);
+            window.draw(back_button);
+            window.draw(buttons_background_1);
+            window.draw(level1_button);
+            window.draw(level2_button);
+            window.draw(level3_button);
+            window.draw(level4_button);
+            window.draw(level5_button);
+            window.draw(back_button_text);
+            window.draw(level_discribing_text_2);
+            window.draw(level_discribing_text_1);
+            window.draw(level_discribing_text_3);
+            window.draw(level1_text);
+            window.draw(level2_text);
+            window.draw(level3_text);
+            window.draw(level4_text);
+            window.draw(level5_text);
+
+            }
+
         window.setView(view);
         window.display();
     }
