@@ -99,8 +99,8 @@ int main()
     }
 
     // Music
-    string user_edit_input;
-    Text edit_text("",cli_font);
+    string user_edit_input="type here";
+    Text edit_text(user_edit_input ,cli_font);
     edit_text.setCharacterSize(23);
     bool cli_selected=0,edit_selected=0,show_edit_cursor=0;
     Music music;
@@ -228,6 +228,7 @@ int main()
                     else
                     {
                        edit_selected = false;
+                       show_edit_cursor=false;
                     }
                 }
             }
