@@ -58,6 +58,8 @@ struct optionMenu {
 };
 
 // Functions declaration
+// Functions definition
+bool check_string(string&  user_edit_input);
 void createCommandShape(RectangleShape &form);
 void setEditWindowText(Text & edit_text,string& edit_input,bool&);
 void createCliShape(RectangleShape &form);
@@ -93,7 +95,14 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
-    RectangleShape edit_window_shape,cli_shape,command_shape;
+    RectangleShape edit_window_shape,cli_shape,command_shape,save_button(Vector2f(120, 50));
+    setButtonProperties(save_button, Color::Yellow, 960, 670);
+    Text save_text("Save", cli_font , 35);
+    setButtonTextProperties(save_button, save_text, Color::Black);
+    save_button.setPosition(500,700);
+    save_button.setOrigin(120/2,50/2);
+    save_text.setOrigin(40,save_text.getLocalBounds().top/2);
+    save_text.setPosition(save_button.getPosition().x,save_button.getPosition().y);
     cli_font.loadFromFile("resources/fonts/arial.ttf");
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
@@ -104,8 +113,7 @@ int main()
     Text edit_window_text(user_edit_input ,cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
-    bool show_cli_cursor,cli_selected=false,edit_selected=false,show_edit_cursor=false;
-    Clock cursor_clock;
+    bool cli_selected=false,edit_selected=false,show_edit_cursor=false;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
@@ -225,6 +233,11 @@ int main()
                     {
                        edit_selected = false;
                        show_edit_cursor=false;
+                    }
+                    
+                    if (save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                    {
+                        check_string(user_edit_input);
                     }
                 }
             }
@@ -436,7 +449,9 @@ int main()
             window.draw(dialogue_text.continuation_text);
             window.draw(edit_window_text);
         window.draw(cli_text);
-            window.draw(cli_text_final);
+            window.draw(save_button);
+        window.draw(save_text);
+        window.draw(cli_text_final);
             window.draw(vol_status_button);
             window.draw(vol_inc_button);
             window.draw(vol_dec_button);
@@ -677,4 +692,20 @@ void createCommandShape(RectangleShape &form){
     form.setOutlineThickness(1);
     form.setOutlineColor(Color::White);
     form.setPosition(1200,500);
+}
+
+bool check_string(string&  user_edit_input){
+    string checker="hi,this is for check";
+    if(user_edit_input==checker)
+    {
+       // cout<<"ye";
+        return 1; 
+    }
+   
+    else
+    {
+       // cout<<"da";
+        return 0;
+    }
+    
 }
