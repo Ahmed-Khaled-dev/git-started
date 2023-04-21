@@ -115,7 +115,7 @@ int main()
 
     // Fonts
     Font buttons_font;
-    if (!buttons_font.loadFromFile("resources/fonts/ethnocentric rg it.otf")) {
+    if (!buttons_font.loadFromFile("resources/fonts/BankGothic Bold.ttf")) {
         cout << "Error has happened while loading the font" << endl;
     }
     Font game_title_font;
@@ -168,14 +168,13 @@ int main()
 
     // Command line interface (CLI)
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-
     Text back_button_text("Back", buttons_font, 32), intro_levels_cateogry("Intro", buttons_font, 32);
     Text commits_levels_cateogry("Commits", buttons_font, 32), branches_levels_cateogry("Branches", buttons_font, 32);
-    Text level1_text("Tragic Failure: The Cost of Poor Organization (git init)", buttons_font, 14);
-    Text level2_text("Stage and Shine: Unleash Your Staging Prowess! (git add)", buttons_font, 14);
-    Text level3_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 12);
-    Text level4_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 15);
-    Text level5_text("Branching Out: Conquer the Code Chaos! (git branch)", buttons_font, 15);
+    Text level1_text("Tragic Failure: The Cost of Poor Organization (git init)", buttons_font, 19);
+    Text level2_text("Stage and Shine: Unleash Your Staging Prowess! (git add)", buttons_font, 18);
+    Text level3_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 16);
+    Text level4_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 20);
+    Text level5_text("Branching Out: Conquer the Code Chaos! (git branch)", buttons_font, 19);
 
     setButtonTextProperties(back_button, back_button_text, Color::Black);
     setButtonTextProperties(init_level_button, level1_text, Color::Black);
