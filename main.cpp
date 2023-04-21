@@ -115,8 +115,8 @@ int main()
 
     // Fonts
     Font buttons_font;
-    if (!buttons_font.loadFromFile("resources/fonts/minecraft_font.ttf")) {
-        cout << "Error has happened while loading the buttons font" << endl;
+    if (!buttons_font.loadFromFile("resources/fonts/Orbitron-Black.ttf")) {
+        cout << "Error has happened while loading the font" << endl;
     }
     Font game_title_font;
     if (!game_title_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
