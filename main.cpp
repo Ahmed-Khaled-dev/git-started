@@ -115,7 +115,7 @@ int main()
 
     // Fonts
     Font buttons_font;
-    if (!buttons_font.loadFromFile("resources/fonts/Orbitron-Black.ttf")) {
+    if (!buttons_font.loadFromFile("resources/fonts/MontserratAlternates-SemiBoldItalic.otf")) {
         cout << "Error has happened while loading the font" << endl;
     }
     Font game_title_font;
