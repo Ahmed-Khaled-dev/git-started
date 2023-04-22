@@ -97,7 +97,6 @@ short int dis = 0; //distance between the head and the commit
 short int index = 0; //To get the coordinates of the last commit
 short int Xvelocity = 3, Yvelocity = 3;
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
-<<<<<<< HEAD
 void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& window_collision);
 
 RenderWindow window(VideoMode(WINDOW_X, WINDOW_Y), GAME_TITLE);
@@ -122,6 +121,8 @@ unsigned short int p1 = 0, delay = 0; //used for the animation
 void addCommit(unsigned short int &commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& head_should_move);
 
+void headGoToTheNewestCommit(Sprite& head, bool& go_back);
+void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& window_collision, bool& go_back);
 int main()
 {
     const int WINDOW_LENGTH = 1920, WINDOW_WIDTH = 1080;
@@ -744,7 +745,6 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commits[commits_count] = new_commit;
     commits_count++;
 }
-<<<<<<< HEAD
 
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
     music_text.font.loadFromFile(sfx_text.option_font_type);
@@ -878,6 +878,26 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
 void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& window_collision)
 {
     if (true) //Sprite animation
+void headGoToTheNewestCommit(Sprite& head, bool& go_back) {
+    if (go_back)
+    {
+        delay2++;
+        if (DISTANCE > 0 && delay2 >= 10)
+        {
+            head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
+            head.move(5, 0);
+            DISTANCE -= 5;
+        }
+        if (DISTANCE <= 0) {
+            DISTANCE = (50 + 135);
+            go_back = 0;
+            delay2 = 0;
+        }
+    }
+}
+void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[], bool& clicked, bool& window_collision, bool& go_back)
+{
+    if (!go_back) //Sprite animation
     {
         head.setTextureRect(IntRect(head_frame_index_in_the_sprite * 200.25, 0, 200.25, 301));
         if (window_collision) {
