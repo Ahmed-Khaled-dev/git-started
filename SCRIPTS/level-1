@@ -1,0 +1,10 @@
+Let me show you around our time machine. 
+This is the edit window, where you will write the code you want.
+This is the command line window, where you will write the suitable “GIT” commands for your code
+This is your git graph, it is a diagram that shows how the commands are translated and makes it easier to understand how they work.
+After showing you around, let’s start our adventure by telling you what the word “command” means in “GIT”. 
+“Commands” are a set of lines, each one of them is responsible for making a certain job. 
+We will start with our first command “Git init”.
+
+Git init is responsible for making a new Git folder which we call a repository. Most of our git commands won’t work unless we initialize a repository. That’s why “Git init” has to be the first command to be executed. 
+Let’s try executing it together.  
