@@ -95,24 +95,16 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
-    RectangleShape edit_window_shape,cli_shape,command_shape;
-    
-    
     cli_font.loadFromFile("resources/fonts/arial.ttf");
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
 
     // Music
-    string user_edit_input="type here";
-    Text edit_window_text(user_edit_input ,cli_font);
-    edit_window_text.setCharacterSize(22);
-    Time cursor_time;
-    bool cli_selected=false,edit_selected=false,show_edit_cursor=false;
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
-    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50)),save_button(Vector2f(120, 50));
+    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50));
     setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
     setButtonProperties(vol_status_button, Color::White, 300, 50);
     setButtonProperties(vol_inc_button, Color::Red, 500, 50);
@@ -123,7 +115,7 @@ int main()
     }
 
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35),save_text("Save", cli_font , 35);
+    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
     Text vol_dec_text("-vol", buttons_font , 35);
     setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
     setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
@@ -132,9 +124,25 @@ int main()
     // Command line
     string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
-    Time cli_cursor_time;
-    bool show_cli_cursor=0;
+    bool show_cli_cursor=0,cli_selected=false;
     Clock cursor_clock;
+    RectangleShape cli_shape,command_shape;
+    
+    //Edit Window
+    RectangleShape edit_window_shape;
+    string user_edit_input="type here";
+    Text edit_window_text(user_edit_input ,cli_font);
+    edit_window_text.setCharacterSize(22);
+    Time cursor_time;
+    bool edit_selected=false,show_edit_cursor=false;
+    //save button
+    RectangleShape save_button(Vector2f(120, 50));
+    Text save_text("Save", cli_font , 35);
+    setButtonProperties(save_button, Color(2,118,36), 500, 700);
+    setButtonTextProperties(save_button, save_text, Color::Black);
+    
+
+
 
     Text game_title;
     game_title.setString("\t  Git \n Started");
@@ -199,8 +207,7 @@ int main()
     setSfxAndMusicTexts(sfx_text, music_text, option_menu);
     // Option menu
 
-        setButtonProperties(save_button, Color::Yellow, 500, 700);
-    setButtonTextProperties(save_button, save_text, Color::Black);
+
 
 
     Event event;
@@ -438,8 +445,8 @@ int main()
         createEditWindowShape(edit_window_shape);
         createCliShape(cli_shape);
         printDialogueText(dialogue_text);
-        showCursor(cursor_clock, show_cli_cursor,cli_selected, cli_cursor_time);
-        showCursor(cursor_clock, show_edit_cursor,edit_selected, cli_cursor_time);
+        showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
+        showCursor(cursor_clock, show_edit_cursor,edit_selected, cursor_time);
         setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
@@ -448,21 +455,21 @@ int main()
         window.draw(command_shape);
         window.draw(cli_shape);
         window.draw(dialogue_box.title_shape);
-            window.draw(dialogue_box.title);   
-            window.draw(dialogue_box.sprite);
+        window.draw(dialogue_box.title);   
+        window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
-            window.draw(dialogue_text.continuation_text);
-            window.draw(edit_window_text);
+        window.draw(dialogue_text.continuation_text);
+        window.draw(edit_window_text);
         window.draw(cli_text);
-            window.draw(save_button);
+        window.draw(save_button);
         window.draw(save_text);
         window.draw(cli_text_final);
-            window.draw(vol_status_button);
-            window.draw(vol_inc_button);
-            window.draw(vol_dec_button);
-            window.draw(vol_status_text);
-            window.draw(vol_inc_text);
-            window.draw(vol_dec_text);
+        window.draw(vol_status_button);
+        window.draw(vol_inc_button);
+        window.draw(vol_dec_button);
+        window.draw(vol_status_text);
+        window.draw(vol_inc_text);
+        window.draw(vol_dec_text);
         }
         else if(current_screen == "options")
         {
@@ -588,6 +595,7 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor){
     edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
     edit_text.setPosition(310,160);
+    edit_text.setFillColor(Color(110,164,197));
 }
 
 void playMusicFromFile(const string file_path, Music& music) {
@@ -677,25 +685,25 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
 
 void createEditWindowShape(RectangleShape &form){
     form.setSize(Vector2f(300,600));
-    form.setFillColor(Color::Black);
-    form.setOutlineThickness(1);
-    form.setOutlineColor(Color::White);
+    form.setFillColor(Color(0,116,184));
+    form.setOutlineThickness(5);
+    form.setOutlineColor(Color::Black);
     form.setPosition(300,150);
 }
 
 void createCliShape(RectangleShape &form){
     form.setSize(Vector2f(250,60));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(1);
-    form.setOutlineColor(Color::White);
+    form.setOutlineThickness(-8);
+    form.setOutlineColor(Color(241, 196, 15));
     form.setPosition(1200,700);
 }
 
 void createCommandShape(RectangleShape &form){
     form.setSize(Vector2f(250,200));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(1);
-    form.setOutlineColor(Color::White);
+    form.setOutlineThickness(-8);
+    form.setOutlineColor(Color(241, 196, 15));
     form.setPosition(1200,500);
 }
 
