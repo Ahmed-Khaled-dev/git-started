@@ -18,24 +18,36 @@ struct dialogueBox
     Texture texture; 
     Sprite sprite;
     Text title;
-    string title_content = "Title";
-    double title_size = 38;
+    string title_content = "Mentor";
+    double title_size = 25;
     string image_path = "resources/sprites/man.png";
     string font_type= "resources/fonts/Roboto-Black.ttf";
-    RectangleShape shape;
+    RectangleShape shape_1;
+    RectangleShape shape_2;
 }dialogue_box;
 
 struct dialogueText
 {
     Font font;
     Time time;
+    Time fade_time;
     Clock clock;
-    Text text;
-    String font_type = "resources/fonts/Roboto-Black.ttf";
-    Color color = {225, 227, 227};
-    double size = 35;
+    Clock fade;
+    Text text_1;
+    Text text_2;
+    string font_type = "resources/fonts/Roboto-Black.ttf";
+    Color color = Color::Black;
+    double size = 32;
     double speed = 0.09f;
-    String script = "This is our game\ngit-started\nwelcome boo!";
+    double dalay = 0.8f;
+    String script = " ";
+    string cont_text ="Press down to continue...";
+    vector <String> new_script  = { "This is our game git-started\nwelcome",
+    "we will help you learn git\nand or github","in a fun easy way","so... lets git started!" };
+    int current_script_index = 0;
+    bool script_end=0;
+    bool message_is_running=0;
+    bool at_end=0;
 }dialogue_text;
 
 struct optionMenu {
@@ -58,7 +70,7 @@ void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& o
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
-
+void showContinuationMessage(dialogueText &dialogue_text);
 int main()
 {
     // Dialogue box
@@ -293,8 +305,20 @@ int main()
                     close_button.setScale(1.0f, 1.0f);
                 }
             }
+            // Check if space key has been pressed
+            if (Keyboard::isKeyPressed(Keyboard::Down) && !dialogue_text.script_end)
+            { 
+                if(dialogue_text.new_script[dialogue_text.current_script_index]==dialogue_text.new_script.back())
+                {
+                    dialogue_text.script_end=1;
+                }    
+                // Clear the current text and reset the script to the next string
+                dialogue_text.text_1.setString("");
+                dialogue_text.script = dialogue_text.new_script[dialogue_text.current_script_index];
+                dialogue_text.current_script_index++;
+            }
         }
-        window.clear(Color::Black);
+        window.clear(Color(223, 221, 221));
         if(current_screen == "main menu")
         {
             window.draw(main_menu);
@@ -312,10 +336,13 @@ int main()
             printDialogueText(dialogue_text);
             showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
-            window.draw(dialogue_box.shape);
-            window.draw(dialogue_box.title);
+            showContinuationMessage(dialogue_text);
+            window.draw(dialogue_box.shape_1);
+            window.draw(dialogue_box.shape_2);
+            window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
-            window.draw(dialogue_text.text);
+            window.draw(dialogue_text.text_1);
+            window.draw(dialogue_text.text_2);
             window.draw(cli_text);
             window.draw(cli_text_final);
             window.draw(vol_status_button);
@@ -340,17 +367,24 @@ int main()
         }
         window.display();
     }
-}
+    }
 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
 {
-    //Dialogue box
-    dialogue_box.shape.setSize(Vector2f(750,300));
-    dialogue_box.shape.setFillColor(Color::Black);
-    dialogue_box.shape.setOutlineThickness(5);
-    dialogue_box.shape.setOutlineColor(Color::White);
-    dialogue_box.shape.setPosition((window.getSize().x - dialogue_box.shape.getSize().x) / 2, window.getSize().y - dialogue_box.shape.getSize().y);
+    //Dialogue box (big)
+    dialogue_box.shape_1.setSize(Vector2f(750,300));
+    dialogue_box.shape_1.setFillColor(Color(44,240,83));
+    dialogue_box.shape_1.setOutlineThickness(5);
+    dialogue_box.shape_1.setOutlineColor(Color::Black);
+    dialogue_box.shape_1.setPosition((window.getSize().x - dialogue_box.shape_1.getSize().x) / 2, window.getSize().y - dialogue_box.shape_1.getSize().y);
     
+    //Dialogue box (small)
+    dialogue_box.shape_2.setSize(Vector2f(750,65));
+    dialogue_box.shape_2.setFillColor(Color(95,219,120));
+    dialogue_box.shape_2.setOutlineThickness(0.8f);
+    dialogue_box.shape_2.setOutlineColor(Color(72,84,74));
+    dialogue_box.shape_2.setPosition((window.getSize().x - dialogue_box.shape_2.getSize().x) / 2, window.getSize().y - dialogue_box.shape_2.getSize().y-235);
+
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
     dialogue_box.sprite.setScale(0.8, 0.8);
@@ -359,35 +393,64 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
     dialogue_box.title.setFont(dialogue_box.font);
-    dialogue_box.title.setFillColor(Color::White);
+    dialogue_box.title.setFillColor(Color(57,60,58));
+    dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
-    dialogue_box.title.setPosition(700, 800);
+    dialogue_box.title.setPosition(630, 800);
 }
+void showContinuationMessage(dialogueText &dialogue_text)
+{
+        dialogue_text.fade_time+=dialogue_text.fade.restart();
+        if(dialogue_text.fade_time>=seconds(dialogue_text.dalay))
+        {
+            dialogue_text.message_is_running =! dialogue_text.message_is_running;
+            dialogue_text.fade_time = Time::Zero;
+        }
 
+        if(!dialogue_text.script_end && dialogue_text.at_end)
+        {
+            dialogue_text.text_2.setString((dialogue_text.message_is_running ? dialogue_text.cont_text : ""));
+            dialogue_text.text_2.setFont(dialogue_text.font);
+            dialogue_text.text_2.setFillColor(Color(57,60,58));
+            dialogue_text.text_2.setCharacterSize(24);
+            dialogue_text.text_2.setStyle(Text::Italic);
+            dialogue_text.text_2.setPosition(1047, 950);
+        }
+        else if (!dialogue_text.at_end)
+        {
+            dialogue_text.text_2.setFillColor(Color::Transparent);
+        }
+}
 void printDialogueText(dialogueText& dialogue_text)
 {
+        dialogue_text.text_1.setFont(dialogue_text.font);
+        dialogue_text.text_1.setFillColor(dialogue_text.color);
+        dialogue_text.text_1.setCharacterSize(dialogue_text.size);
+        dialogue_text.text_1.setPosition(700, 860);
         dialogue_text.time += dialogue_text.clock.restart();
-        dialogue_text.text.setFont(dialogue_text.font);
-        dialogue_text.text.setFillColor(dialogue_text.color);
-        dialogue_text.text.setCharacterSize(dialogue_text.size);
-        dialogue_text.text.setPosition(850, 850);
         while (dialogue_text.time >= seconds(dialogue_text.speed))
         {
             dialogue_text.time -= seconds(dialogue_text.speed);
-            dialogue_text.script;
             if (dialogue_text.script.getSize() > 0)
             {
                 // Start from index zero
-                dialogue_text.text.setString(dialogue_text.text.getString() + dialogue_text.script[0]); 
-                // Deletes index zero and re-indexes
+                dialogue_text.text_1.setString(dialogue_text.text_1.getString() + dialogue_text.script[0]); 
+                // pop front
                 dialogue_text.script = dialogue_text.script.toAnsiString().substr(1);
-            }
-        }   
+                if (dialogue_text.script.isEmpty())
+                {
+                    dialogue_text.at_end=1;
+                }
+                else
+                {
+                    dialogue_text.at_end=0;
+                }
+            } 
+        }  
 }
 
 void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time) {
     cli_cursor_time += cursor_clock.restart();
-
     // Cursor time to appear
     if (cli_cursor_time >= seconds(0.5f)) 
     {
@@ -399,8 +462,10 @@ void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
     // Shape of cursor
     cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(1500, 950);
+    cli_text.setPosition(1500, 940);
+    cli_text.setFillColor(Color::Black);
     cli_text_final.setString(final_cli_input);
+    cli_text_final.setFillColor(Color::Black);
     cli_text_final.setPosition(1500, 500);
 }
 
