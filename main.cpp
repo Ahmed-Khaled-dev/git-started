@@ -59,7 +59,7 @@ struct optionMenu {
 
 // Functions declaration
 // Functions definition
-bool check_string(string&  user_edit_input);
+bool check_string(string&  user_edit_input,string&);
 void createCommandShape(RectangleShape &form);
 void setEditWindowText(Text & edit_text,string& edit_input,bool&,RectangleShape& rectangle);
 void createCliShape(RectangleShape &form);
@@ -130,7 +130,7 @@ int main()
     
     //Edit Window
     RectangleShape edit_window_shape;
-    string user_edit_input="type here";
+    string user_edit_input="type here",checker="Hi,this is for check";
     Text edit_window_text(user_edit_input ,cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
@@ -249,7 +249,7 @@ int main()
                     
                     if (save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                     {
-                        check_string(user_edit_input);
+                        check_string(user_edit_input,checker);
                     }
                 }
             }
@@ -266,21 +266,32 @@ int main()
                         Vector2f pos = edit_window_text.findCharacterPos(user_edit_input.size());  
                         
                         if(!(edit_window_shape.getGlobalBounds().contains(pos))){
-                            char temp =user_edit_input[user_edit_input.size()-1];
+                            char temp_last =user_edit_input[user_edit_input.size()-1],temp_b_last=user_edit_input[user_edit_input.size()-2];
                             user_edit_input.pop_back();
-                        
+                            user_edit_input.pop_back();
                             user_edit_input+=("\n");
                         
-                            user_edit_input+=temp;
+                            user_edit_input+=temp_b_last;
+                            user_edit_input+=temp_last;
+
                         }
                     }else {edit_selected=false;}
                 }
                 // Filter out symbols (only characters in ascii code enters)
                 if(cli_selected)
+                {
+                    
                      if (isprint(event.text.unicode))     
                         user_cli_input += event.text.unicode;
-                
+                         
+                         Vector2f pst = cli_text.findCharacterPos(user_cli_input.size());  
+                        
+                        if(!(cli_shape.getGlobalBounds().contains(pst))){
+                            user_cli_input.pop_back();
+                        
+                         }
                
+                }
             }
             // If user wants to erase what he wrote
             
@@ -408,6 +419,17 @@ int main()
                 {
                     close_button.setFillColor(Color::Red);
                     close_button.setScale(1.0f, 1.0f);
+                }
+                
+                if (save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    save_button.setFillColor(Color(34, 139, 34));
+                    save_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    save_button.setFillColor(Color(2,118,36));
+                    save_button.setScale(1.0f, 1.0f);
                 }
             }
             // Check if down arrow (later space) key has been pressed
@@ -687,15 +709,15 @@ void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, Re
 }
 
 void createEditWindowShape(RectangleShape &form){
-    form.setSize(Vector2f(300,600));
+    form.setSize(Vector2f(450,600));
     form.setFillColor(Color(0,116,184));
-    form.setOutlineThickness(1);
+    form.setOutlineThickness(5);
     form.setOutlineColor(Color::Black);
     form.setPosition(300,150);
 }
 
 void createCliShape(RectangleShape &form){
-    form.setSize(Vector2f(250,60));
+    form.setSize(Vector2f(350,60));
     form.setFillColor(Color::Black);
     form.setOutlineThickness(8);
     form.setOutlineColor(Color(241, 196, 15));
@@ -703,15 +725,15 @@ void createCliShape(RectangleShape &form){
 }
 
 void createCommandShape(RectangleShape &form){
-    form.setSize(Vector2f(250,200));
+    form.setSize(Vector2f(350,200));
     form.setFillColor(Color::Black);
     form.setOutlineThickness(8);
     form.setOutlineColor(Color(241, 196, 15));
     form.setPosition(1200,500);
 }
 
-bool check_string(string&  user_edit_input){
-    string checker="hi,this is for check";
+bool check_string(string&  user_edit_input,string&checker){
+   
     if(user_edit_input==checker)
     {
        // cout<<"ye";
