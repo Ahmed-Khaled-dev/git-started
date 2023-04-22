@@ -61,7 +61,7 @@ struct optionMenu {
 // Functions definition
 bool check_string(string&  user_edit_input);
 void createCommandShape(RectangleShape &form);
-void setEditWindowText(Text & edit_text,string& edit_input,bool&);
+void setEditWindowText(Text & edit_text,string& edit_input,bool&,RectangleShape& rectangle);
 void createCliShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
@@ -71,7 +71,7 @@ void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
 void showCursor(Clock& cursor_clock, bool& show_cursor,bool& , Time& cursor_time);
-void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor);
+void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape&);
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
@@ -295,7 +295,7 @@ int main()
                         // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                           final_cli_input += ('$'+ user_cli_input + "\n");
+                           final_cli_input += ("$ "+ user_cli_input + "\n");
                            user_cli_input.clear();
                     }
                 }
@@ -447,10 +447,10 @@ int main()
         printDialogueText(dialogue_text);
         showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
         showCursor(cursor_clock, show_edit_cursor,edit_selected, cursor_time);
-        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor);
+        setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_shape,command_shape);
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
-        setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor);
+        setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor,edit_window_shape);
         window.draw(edit_window_shape);
         window.draw(command_shape);
         window.draw(cli_shape);
@@ -583,20 +583,7 @@ void showCursor(Clock& cursor_clock, bool& show_cursor,bool& selected, Time& cur
     }
 }
 
-void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
-    // Shape of cursor
-    cli_text.setString( user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(1200, 700);
-    cli_text_final.setFillColor(Color::Cyan);
-    cli_text_final.setString(final_cli_input);
-    cli_text_final.setPosition(1500, 500);
-}
 
-void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor){
-    edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
-    edit_text.setPosition(310,160);
-    edit_text.setFillColor(Color(110,164,197));
-}
 
 void playMusicFromFile(const string file_path, Music& music) {
     if (!music.openFromFile(file_path)) {
@@ -628,6 +615,8 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
 }
+
+
 
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
     music_text.font.loadFromFile(sfx_text.option_font_type);
@@ -682,11 +671,25 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
         }
 }
 
+void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
+    // Shape of cursor
+    cli_text.setString( user_cli_input + (show_cursor ? '|' : ' ')); 
+    cli_text.setPosition(rectangle.getPosition());
+    cli_text_final.setFillColor(Color(50,50,50));
+    cli_text_final.setString(final_cli_input);
+    cli_text_final.setPosition(rectangle_upper.getPosition());
+}
+
+void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
+    edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
+    edit_text.setPosition(rectangle.getPosition());
+    edit_text.setFillColor(Color(110,164,197));
+}
 
 void createEditWindowShape(RectangleShape &form){
     form.setSize(Vector2f(300,600));
     form.setFillColor(Color(0,116,184));
-    form.setOutlineThickness(5);
+    form.setOutlineThickness(1);
     form.setOutlineColor(Color::Black);
     form.setPosition(300,150);
 }
@@ -694,7 +697,7 @@ void createEditWindowShape(RectangleShape &form){
 void createCliShape(RectangleShape &form){
     form.setSize(Vector2f(250,60));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(-8);
+    form.setOutlineThickness(8);
     form.setOutlineColor(Color(241, 196, 15));
     form.setPosition(1200,700);
 }
@@ -702,7 +705,7 @@ void createCliShape(RectangleShape &form){
 void createCommandShape(RectangleShape &form){
     form.setSize(Vector2f(250,200));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(-8);
+    form.setOutlineThickness(8);
     form.setOutlineColor(Color(241, 196, 15));
     form.setPosition(1200,500);
 }
