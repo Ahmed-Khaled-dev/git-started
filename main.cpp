@@ -297,6 +297,10 @@ int main()
     bool create_smoke = 0;
     unsigned short int commits_count = 0;
     const unsigned short int MAX_COMMITS = 100;
+    SoundBuffer pop_buff;
+    pop_buff.loadFromFile("resources/audio/pop.wav");
+    Sound pop;
+    pop.setBuffer(pop_buff);
     commit commits[MAX_COMMITS];
     
     window.setFramerateLimit(60);
@@ -360,6 +364,7 @@ int main()
         {
             if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
                 addCommit(commits_count, commits, commit_textures, "initial commit");
+                pop.play();
                 window_collision = 0;
                 create_smoke = 1;
                 if (index_of_the_last_commit == 0)
@@ -834,7 +839,7 @@ void makeSmoke (Sprite& smoke, bool& create_smoke){
         smoke.setTextureRect(IntRect(smokeFrameInTheSprite * 1380.571428571429, 0, 1380.571428571429, 2000.000));
         smoke.setPosition(window.getSize().x / 2.0 - 90, window.getSize().y / 3.0 - 170);
         delay_for_smoke_animation++;
-        if (delay_for_smoke_animation >= 5){
+        if (delay_for_smoke_animation >= 3){
             smokeFrameInTheSprite++;
             delay_for_smoke_animation = 0;
     }
@@ -856,7 +861,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     {
         // I cut from the texture a circle **without** an arrow
         commit_sprite.setTextureRect(IntRect(287, 70, 156, 156));
-        commit_sprite.setPosition(1920 / 2, 1080 / 3);
+        commit_sprite.setPosition(window.getSize().x / 2.0, window.getSize().y / 3.0);
     }
     else
     {
@@ -1034,9 +1039,9 @@ void headDeflection(Sprite& head, bool& window_collision, bool& go_back){
         head.setTextureRect(IntRect(head_frame_index_in_the_sprite * 200.25, 0, 200.25, 301));
         if (window_collision) {
             head.setPosition(head.getPosition().x + Xvelocity, head.getPosition().y + Yvelocity);
-            if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(1920 - (50 * 0.8)))
+            if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(window.getSize().x - (50 * 0.8)))
                 Xvelocity *= -1;
-            if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(1080 - (100 * 0.8)))
+            if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(window.getSize().y - (100 * 0.8)))
                 Yvelocity *= -1;
         }
     }
