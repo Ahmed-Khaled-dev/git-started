@@ -232,10 +232,11 @@ int main()
                 window.close();
             }
             //mouse click cli
-             if (event.type == Event::MouseButtonPressed)
+             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (event.mouseButton.button == Mouse::Left)
-                {
+                
+
+            
                     if (cli_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         cli_selected = true;
@@ -260,7 +261,16 @@ int main()
                     {
                         check_string(user_edit_input,checker);
                     }
-                }
+                     if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                    {
+                        current_screen="main menu";
+                    }
+                    if (optn_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                    {
+                        current_screen="options";
+                    }
+                    
+                
             }
            
            
@@ -455,8 +465,8 @@ int main()
         showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
         showCursor(cursor_clock, show_edit_cursor,edit_selected, cursor_time);
         setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_shape,command_shape);
-            showContinuationMessage(dialogue_text);
-            window.draw(dialogue_box.body_shape);
+        showContinuationMessage(dialogue_text);
+        window.draw(dialogue_box.body_shape);
         setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor,edit_window_shape);
         window.draw(edit_window_shape);
         window.draw(command_shape);
@@ -464,7 +474,7 @@ int main()
         window.draw(dialogue_box.title_shape);
         window.draw(dialogue_box.title);   
         window.draw(dialogue_box.sprite);
-            window.draw(dialogue_text.script_text);
+        window.draw(dialogue_text.script_text);
         window.draw(dialogue_text.continuation_text);
         window.draw(edit_window_text);
         window.draw(cli_text);
