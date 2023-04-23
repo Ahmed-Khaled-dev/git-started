@@ -133,12 +133,12 @@ int main()
     //save button
     RectangleShape save_button(Vector2f(120, 50));
     Text save_text("Save", cli_font , 35);
-    setButtonProperties(save_button, Color(2,118,36), 515,670);
+    setButtonProperties(save_button, Color(2,118,36), 515,615);
     setButtonTextProperties(save_button, save_text, Color::Black);
     //back button
     RectangleShape back_button(Vector2f(120, 50));
     Text back_text("Back",cli_font,35);
-    setButtonProperties(back_button, Color::Blue, 80,40);
+    setButtonProperties(back_button, Color::Blue, 1700,40);
     setButtonTextProperties(back_button, back_text, Color::Black);    
     //options button
     RectangleShape optn_button(Vector2f(150, 50));
@@ -491,23 +491,23 @@ int main()
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
 {
     //Dialogue box (big)
-    dialogue_box.body_shape.setSize(Vector2f(750,300));
+    dialogue_box.body_shape.setSize(Vector2f(900,260));
     dialogue_box.body_shape.setFillColor(Color(44,240,83));
     dialogue_box.body_shape.setOutlineThickness(5);
     dialogue_box.body_shape.setOutlineColor(Color::Black);
-    dialogue_box.body_shape.setPosition((window.getSize().x - dialogue_box.body_shape.getSize().x) / 2, window.getSize().y - dialogue_box.body_shape.getSize().y);
+    dialogue_box.body_shape.setPosition(80,700);
     
     //Dialogue box (small)
-    dialogue_box.title_shape.setSize(Vector2f(750,65));
+    dialogue_box.title_shape.setSize(Vector2f(900,65));
     dialogue_box.title_shape.setFillColor(Color(95,219,120));
     dialogue_box.title_shape.setOutlineThickness(0.8f);
     dialogue_box.title_shape.setOutlineColor(Color(72,84,74));
-    dialogue_box.title_shape.setPosition((window.getSize().x - dialogue_box.title_shape.getSize().x) / 2, window.getSize().y - dialogue_box.title_shape.getSize().y-235);
+    dialogue_box.title_shape.setPosition(80, 700);
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
     dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(50, 800);
+    dialogue_box.sprite.setPosition(15, 630);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
@@ -515,7 +515,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setFillColor(Color(57,60,58));
     dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
-    dialogue_box.title.setPosition(630, 800);
+    dialogue_box.title.setPosition(220, 720);
 }
 
 void showContinuationMessage(dialogueText &dialogue_text)
@@ -534,7 +534,7 @@ void showContinuationMessage(dialogueText &dialogue_text)
         dialogue_text.continuation_text.setFillColor(Color(57,60,58));
         dialogue_text.continuation_text.setCharacterSize(24);
         dialogue_text.continuation_text.setStyle(Text::Italic);
-        dialogue_text.continuation_text.setPosition(1047, 950);
+        dialogue_text.continuation_text.setPosition(670, 925);
     }
     else if (!dialogue_text.script_part_ended)
     {
@@ -547,7 +547,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFont(dialogue_text.font);
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
-    dialogue_text.script_text.setPosition(700, 860);
+    dialogue_text.script_text.setPosition(250, 780);
     dialogue_text.time += dialogue_text.clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
     {
@@ -691,7 +691,7 @@ void createEditWindowShape(RectangleShape &form){
     form.setFillColor(Color(0,116,184));
     form.setOutlineThickness(8);
     form.setOutlineColor(Color::Black);
-    form.setPosition(80,100);
+    form.setPosition(80,45);
 }
 
 void createCliShape(RectangleShape &form){
