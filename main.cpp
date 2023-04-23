@@ -12,7 +12,7 @@ string current_screen = "main menu";
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 unsigned short int head_frame_index_in_the_sprite = 0, delay_for_idle_animation = 0, delay_for_the_movment_to_the_lastest_commit = 0; //used for the animation
 unsigned short int delay_for_smoke_animation = 0, smokeFrameInTheSprite = 0;
-short int dis = 0, DISTANCE = (50 + 135); //distance between the head and the commit
+short int head_travel_distance = 0, distance_to_the_newest_commit = (50 + 135); //distance between the head and the commit
 short int index_of_the_last_commit = 0; //To get the coordinates of the last commit
 short int Xvelocity = 3, Yvelocity = 3;
 const int WINDOW_WIDTH = 1920;
@@ -28,7 +28,7 @@ struct commit {
 struct dialogueBox
 {
     Font font;
-    Texture texture; 
+    Texture texture;
     Sprite sprite;
     Text title;
     string title_content = "Mentor";
@@ -122,7 +122,8 @@ void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, strin
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void headDeflection(Sprite& head, bool& window_collision, bool& go_back);
 void headIdleAnimation (Sprite& head, bool& go_back);
-void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
+void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
+void headAnimationAndMovment (Sprite& head, short int& head_travel_distance);
 void headGoToTheNewestCommit(Sprite& head, bool& go_back);
 void makeSmoke (Sprite& smoke, bool& create_smoke);
 
@@ -633,7 +634,8 @@ int main()
             headIdleAnimation (head, go_back);
             headDeflection(head, window_collision, go_back);
             headGoToTheNewestCommit(head, go_back);
-            spriteAnimationAndPosition(head, position, commits);
+            calculateHeadDistance(head, position, commits);
+            headAnimationAndMovment (head, head_travel_distance);
             window.draw(dialogue_box.shape);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
@@ -1019,14 +1021,14 @@ void headGoToTheNewestCommit(Sprite& head, bool& go_back) {
     if (go_back)
     {
         delay_for_the_movment_to_the_lastest_commit++;
-        if (DISTANCE > 0 && delay_for_the_movment_to_the_lastest_commit >= 10)
+        if (distance_to_the_newest_commit > 0 && delay_for_the_movment_to_the_lastest_commit >= 10)
         {
             head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
             head.move(5, 0);
-            DISTANCE -= 5;
+            distance_to_the_newest_commit -= 5;
         }
-        if (DISTANCE <= 0) {
-            DISTANCE = (50 + 135);
+        if (distance_to_the_newest_commit <= 0) {
+            distance_to_the_newest_commit = (50 + 135);
             go_back = 0;
             delay_for_the_movment_to_the_lastest_commit = 0;
         }
@@ -1060,30 +1062,32 @@ void headIdleAnimation (Sprite& head, bool& go_back){
     for (short int i = 0; i < 5; i++)
 }
 
-void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commit commit[])
-{
-   
+void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[])
+{ 
     for (short int i = 0; i < 100; i++)
     {
         if (commit[i].sprite.getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && (Mouse::isButtonPressed(Mouse::Left))) {
             if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0) {
-                dis = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
+                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
             }
             else if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x > 0)
             {
-                dis = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
+                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
             }
             else if (i != 0 && head.getPosition().x - commit[i].sprite.getPosition().x > 0)
             {
-                dis = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
+                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
             }
             else if (i != 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0)
             {
-                dis = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
+                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
             }
         }
     }
-    if (dis < 0)
+}
+
+void headAnimationAndMovment (Sprite& head, short int& head_travel_distance){
+     if (head_travel_distance < 0)
     {
 
         bool contained = commit[i].getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) ;
@@ -1101,6 +1105,11 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
             else if (abs(head.getPosition().x - commit[i].getPosition().x) <=6){
                 move = 0;
     for (short int i = 0; i < 100; i++)
+        head.move(5, 0);
+        head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
+        head_travel_distance += 5;
+    }
+    else if (head_travel_distance > 0)
     {
         if ( clicked ) {
             head_should_move = 1;
@@ -1120,7 +1129,7 @@ void spriteAnimationAndPosition(Sprite& head, Vector2i& position_of_mouse, commi
         }
         head.move(-5, 0);
         head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
-        dis -= 5;
+        head_travel_distance -= 5;
     }
 
 }
