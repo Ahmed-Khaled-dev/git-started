@@ -144,7 +144,12 @@ int main()
     RectangleShape optn_button(Vector2f(150, 50));
     Text optn_text("Options",cli_font,35);
     setButtonProperties(optn_button, Color::Blue, 1860,40);
-    setButtonTextProperties(optn_button, optn_text, Color::Black);    
+    setButtonTextProperties(optn_button, optn_text, Color::Black);  
+    //rectangle main.cpp 
+    RectangleShape rec_edit(Vector2f(500, 80));
+    Text rect_text("main.cpp",cli_font,35);
+    setButtonProperties(rec_edit, Color::Blue, 330,85);
+    setButtonTextProperties(rec_edit, rect_text, Color::Black);  
 
 
 
@@ -469,7 +474,9 @@ int main()
         window.draw(back_button);
         window.draw(back_text);   
         window.draw(optn_button);
-        window.draw(optn_text);   
+        window.draw(optn_text); 
+        window.draw(rec_edit);
+        window.draw(rect_text);   
         }
         else if(current_screen == "options")
         {
