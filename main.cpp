@@ -109,22 +109,12 @@ int main()
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
-    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50));
-    setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
-    setButtonProperties(vol_status_button, Color::White, 300, 50);
-    setButtonProperties(vol_inc_button, Color::Red, 500, 50);
 
-    
     if (!buttons_font.loadFromFile("resources/fonts/arial.TTF")) {
         cout << "Error has happened while loading the font" << endl;
     }
 
-    // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
-    Text vol_dec_text("-vol", buttons_font , 35);
-    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
-    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
-    setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
+
 
     // Command line
     string user_cli_input, final_cli_input;
@@ -143,9 +133,18 @@ int main()
     //save button
     RectangleShape save_button(Vector2f(120, 50));
     Text save_text("Save", cli_font , 35);
-    setButtonProperties(save_button, Color(2,118,36), 535,670);
+    setButtonProperties(save_button, Color(2,118,36), 515,670);
     setButtonTextProperties(save_button, save_text, Color::Black);
-    
+    //back button
+    RectangleShape back_button(Vector2f(120, 50));
+    Text back_text("Back",cli_font,35);
+    setButtonProperties(back_button, Color::Blue, 80,40);
+    setButtonTextProperties(back_button, back_text, Color::Black);    
+    //options button
+    RectangleShape optn_button(Vector2f(150, 50));
+    Text optn_text("Options",cli_font,35);
+    setButtonProperties(optn_button, Color::Blue, 1860,40);
+    setButtonTextProperties(optn_button, optn_text, Color::Black);    
 
 
 
@@ -334,27 +333,7 @@ int main()
         
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) 
             {
-                if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    if (music.getStatus() == SoundSource::Status::Playing) 
-                    {
-                        music.pause();   
-                        updateButtonText(vol_status_button, vol_status_text, "Paused");
-                    }
-                    else if (music.getStatus() == SoundSource::Status::Paused) 
-                    {
-                        music.play();
-                        updateButtonText(vol_status_button, vol_status_text, "Playing");
-                    }
-                }
-                if (vol_inc_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    music.setVolume(music.getVolume() + 10); //new volume = current volume+10
-                }
-                if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    music.setVolume(music.getVolume() - 10);
-                }
+
                 if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
                 {
                     current_screen = "levels";
@@ -369,32 +348,6 @@ int main()
                 }
             }
             if (event.type == Event::MouseMoved) {
-                if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    // When you hover on the rectangle a function changes its color
-                    vol_status_button.setFillColor(Color::Yellow); 
-                }
-                else 
-                {
-                    vol_status_button.setFillColor(Color::Magenta);
-                }
-                if (vol_inc_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    vol_inc_button.setFillColor(Color::Cyan);
-                }
-                else 
-                {
-                    vol_inc_button.setFillColor(Color::Red);
-                }
-                if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    vol_dec_button.setFillColor(Color::Cyan);
-                }
-                else 
-                {
-                    vol_dec_button.setFillColor(Color::Blue);
-
-                }
                 if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
                     start_button.setFillColor(Color(34, 139, 34));
@@ -435,6 +388,26 @@ int main()
                 {
                     save_button.setFillColor(Color(2,118,36));
                     save_button.setScale(1.0f, 1.0f);
+                }
+                if (optn_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    optn_button.setFillColor(Color(34, 139, 34));
+                    optn_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    optn_button.setFillColor(Color(2,118,36));
+                    optn_button.setScale(1.0f, 1.0f);
+                }
+                                if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    back_button.setFillColor(Color(34, 139, 34));
+                    back_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    back_button.setFillColor(Color(2,118,36));
+                    back_button.setScale(1.0f, 1.0f);
                 }
             }
             // Check if down arrow (later space) key has been pressed
@@ -480,7 +453,6 @@ int main()
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
         setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor,edit_window_shape);
-        window.clear(Color::Black);
         window.draw(edit_window_shape);
         window.draw(command_shape);
         window.draw(cli_shape);
@@ -493,13 +465,11 @@ int main()
         window.draw(cli_text);
         window.draw(save_button);
         window.draw(save_text);
-        window.draw(cli_text_final);
-        window.draw(vol_status_button);
-        window.draw(vol_inc_button);
-        window.draw(vol_dec_button);
-        window.draw(vol_status_text);
-        window.draw(vol_inc_text);
-        window.draw(vol_dec_text);
+        window.draw(cli_text_final);  
+        window.draw(back_button);
+        window.draw(back_text);   
+        window.draw(optn_button);
+        window.draw(optn_text);   
         }
         else if(current_screen == "options")
         {
@@ -713,7 +683,7 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
     edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
     edit_text.setPosition(rectangle.getPosition().x+7,rectangle.getPosition().y+7);
-    edit_text.setFillColor(Color(110,164,197));
+    edit_text.setFillColor(Color::White);
 }
 
 void createEditWindowShape(RectangleShape &form){
@@ -721,7 +691,7 @@ void createEditWindowShape(RectangleShape &form){
     form.setFillColor(Color(0,116,184));
     form.setOutlineThickness(8);
     form.setOutlineColor(Color::Black);
-    form.setPosition(100,100);
+    form.setPosition(80,100);
 }
 
 void createCliShape(RectangleShape &form){
