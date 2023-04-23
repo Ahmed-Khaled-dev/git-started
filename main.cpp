@@ -305,8 +305,8 @@ int main()
                     close_button.setScale(1.0f, 1.0f);
                 }
             }
-            // Check if space key has been pressed
-            if (Keyboard::isKeyPressed(Keyboard::Down) && !dialogue_text.script_end)
+            // Check if down arrow (later space) key has been pressed
+            if (Keyboard::isKeyPressed(Keyboard::Down) && !dialogue_text.script_end && current_screen == "levels"   )
             { 
                 if(dialogue_text.new_script[dialogue_text.current_script_index]==dialogue_text.new_script.back())
                 {
