@@ -22,32 +22,32 @@ struct dialogueBox
     double title_size = 25;
     string image_path = "resources/sprites/man.png";
     string font_type= "resources/fonts/Roboto-Black.ttf";
-    RectangleShape shape_1;
-    RectangleShape shape_2;
+    RectangleShape body_shape;
+    RectangleShape title_shape;
 }dialogue_box;
 
 struct dialogueText
 {
     Font font;
     Time time;
-    Time fade_time;
+    Time continuation_fade_time;
     Clock clock;
-    Clock fade;
-    Text text_1;
-    Text text_2;
+    Clock continuation_fade_clock;
+    Text script_text;
+    Text continuation_text;
     string font_type = "resources/fonts/Roboto-Black.ttf";
     Color color = Color::Black;
     double size = 32;
-    double speed = 0.09f;
-    double dalay = 0.8f;
-    String script = " ";
-    string cont_text ="Press down to continue...";
+    double script_speed = 0.09f;
+    double continuation_delay = 0.8f;
+    String script_content = " ";
+    string continuation_content = "Press down to continue...";
     vector <String> new_script  = { "This is our game git-started\nwelcome",
     "we will help you learn git\nand or github","in a fun easy way","so... lets git started!" };
     int current_script_index = 0;
-    bool script_end=0;
-    bool message_is_running=0;
-    bool at_end=0;
+    bool script_ended = 0;
+    bool continuation_message_running = 0;
+    bool script_part_ended = 0;
 }dialogue_text;
 
 struct optionMenu {
@@ -71,6 +71,7 @@ void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Recta
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
 void showContinuationMessage(dialogueText &dialogue_text);
+
 int main()
 {
     // Dialogue box
@@ -306,16 +307,19 @@ int main()
                 }
             }
             // Check if down arrow (later space) key has been pressed
-            if (Keyboard::isKeyPressed(Keyboard::Down) && !dialogue_text.script_end && current_screen == "levels"   )
+            if (Keyboard::isKeyPressed(Keyboard::Down))
             { 
-                if(dialogue_text.new_script[dialogue_text.current_script_index]==dialogue_text.new_script.back())
+                if (!dialogue_text.script_ended && current_screen == "levels" && dialogue_text.script_part_ended)
                 {
-                    dialogue_text.script_end=1;
-                }    
-                // Clear the current text and reset the script to the next string
-                dialogue_text.text_1.setString("");
-                dialogue_text.script = dialogue_text.new_script[dialogue_text.current_script_index];
-                dialogue_text.current_script_index++;
+                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    {
+                        dialogue_text.script_ended = 1;
+                    }    
+                    // Clear the current text and reset the script_content to the next string
+                    dialogue_text.script_text.setString("");
+                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index];
+                    dialogue_text.current_script_index++;
+                }
             }
         }
         window.clear(Color(223, 221, 221));
@@ -337,12 +341,12 @@ int main()
             showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
             showContinuationMessage(dialogue_text);
-            window.draw(dialogue_box.shape_1);
-            window.draw(dialogue_box.shape_2);
+            window.draw(dialogue_box.body_shape);
+            window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
-            window.draw(dialogue_text.text_1);
-            window.draw(dialogue_text.text_2);
+            window.draw(dialogue_text.script_text);
+            window.draw(dialogue_text.continuation_text);
             window.draw(cli_text);
             window.draw(cli_text_final);
             window.draw(vol_status_button);
@@ -372,18 +376,18 @@ int main()
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
 {
     //Dialogue box (big)
-    dialogue_box.shape_1.setSize(Vector2f(750,300));
-    dialogue_box.shape_1.setFillColor(Color(44,240,83));
-    dialogue_box.shape_1.setOutlineThickness(5);
-    dialogue_box.shape_1.setOutlineColor(Color::Black);
-    dialogue_box.shape_1.setPosition((window.getSize().x - dialogue_box.shape_1.getSize().x) / 2, window.getSize().y - dialogue_box.shape_1.getSize().y);
+    dialogue_box.body_shape.setSize(Vector2f(750,300));
+    dialogue_box.body_shape.setFillColor(Color(44,240,83));
+    dialogue_box.body_shape.setOutlineThickness(5);
+    dialogue_box.body_shape.setOutlineColor(Color::Black);
+    dialogue_box.body_shape.setPosition((window.getSize().x - dialogue_box.body_shape.getSize().x) / 2, window.getSize().y - dialogue_box.body_shape.getSize().y);
     
     //Dialogue box (small)
-    dialogue_box.shape_2.setSize(Vector2f(750,65));
-    dialogue_box.shape_2.setFillColor(Color(95,219,120));
-    dialogue_box.shape_2.setOutlineThickness(0.8f);
-    dialogue_box.shape_2.setOutlineColor(Color(72,84,74));
-    dialogue_box.shape_2.setPosition((window.getSize().x - dialogue_box.shape_2.getSize().x) / 2, window.getSize().y - dialogue_box.shape_2.getSize().y-235);
+    dialogue_box.title_shape.setSize(Vector2f(750,65));
+    dialogue_box.title_shape.setFillColor(Color(95,219,120));
+    dialogue_box.title_shape.setOutlineThickness(0.8f);
+    dialogue_box.title_shape.setOutlineColor(Color(72,84,74));
+    dialogue_box.title_shape.setPosition((window.getSize().x - dialogue_box.title_shape.getSize().x) / 2, window.getSize().y - dialogue_box.title_shape.getSize().y-235);
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
@@ -398,55 +402,57 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
     dialogue_box.title.setPosition(630, 800);
 }
+
 void showContinuationMessage(dialogueText &dialogue_text)
 {
-        dialogue_text.fade_time+=dialogue_text.fade.restart();
-        if(dialogue_text.fade_time>=seconds(dialogue_text.dalay))
-        {
-            dialogue_text.message_is_running =! dialogue_text.message_is_running;
-            dialogue_text.fade_time = Time::Zero;
-        }
+    dialogue_text.continuation_fade_time += dialogue_text.continuation_fade_clock.restart();
+    if(dialogue_text.continuation_fade_time >= seconds(dialogue_text.continuation_delay))
+    {
+        dialogue_text.continuation_message_running =! dialogue_text.continuation_message_running;
+        dialogue_text.continuation_fade_time = Time::Zero;
+    }
 
-        if(!dialogue_text.script_end && dialogue_text.at_end)
-        {
-            dialogue_text.text_2.setString((dialogue_text.message_is_running ? dialogue_text.cont_text : ""));
-            dialogue_text.text_2.setFont(dialogue_text.font);
-            dialogue_text.text_2.setFillColor(Color(57,60,58));
-            dialogue_text.text_2.setCharacterSize(24);
-            dialogue_text.text_2.setStyle(Text::Italic);
-            dialogue_text.text_2.setPosition(1047, 950);
-        }
-        else if (!dialogue_text.at_end)
-        {
-            dialogue_text.text_2.setFillColor(Color::Transparent);
-        }
+    if(!dialogue_text.script_ended && dialogue_text.script_part_ended)
+    {
+        dialogue_text.continuation_text.setString((dialogue_text.continuation_message_running ? dialogue_text.continuation_content : ""));
+        dialogue_text.continuation_text.setFont(dialogue_text.font);
+        dialogue_text.continuation_text.setFillColor(Color(57,60,58));
+        dialogue_text.continuation_text.setCharacterSize(24);
+        dialogue_text.continuation_text.setStyle(Text::Italic);
+        dialogue_text.continuation_text.setPosition(1047, 950);
+    }
+    else if (!dialogue_text.script_part_ended)
+    {
+        dialogue_text.continuation_text.setFillColor(Color::Transparent);
+    }
 }
+
 void printDialogueText(dialogueText& dialogue_text)
 {
-        dialogue_text.text_1.setFont(dialogue_text.font);
-        dialogue_text.text_1.setFillColor(dialogue_text.color);
-        dialogue_text.text_1.setCharacterSize(dialogue_text.size);
-        dialogue_text.text_1.setPosition(700, 860);
-        dialogue_text.time += dialogue_text.clock.restart();
-        while (dialogue_text.time >= seconds(dialogue_text.speed))
+    dialogue_text.script_text.setFont(dialogue_text.font);
+    dialogue_text.script_text.setFillColor(dialogue_text.color);
+    dialogue_text.script_text.setCharacterSize(dialogue_text.size);
+    dialogue_text.script_text.setPosition(700, 860);
+    dialogue_text.time += dialogue_text.clock.restart();
+    while (dialogue_text.time >= seconds(dialogue_text.script_speed))
+    {
+        dialogue_text.time -= seconds(dialogue_text.script_speed);
+        if (dialogue_text.script_content.getSize() > 0)
         {
-            dialogue_text.time -= seconds(dialogue_text.speed);
-            if (dialogue_text.script.getSize() > 0)
+            // Start from index zero
+            dialogue_text.script_text.setString(dialogue_text.script_text.getString() + dialogue_text.script_content[0]); 
+            // Pop front
+            dialogue_text.script_content = dialogue_text.script_content.toAnsiString().substr(1);
+            if (dialogue_text.script_content.isEmpty())
             {
-                // Start from index zero
-                dialogue_text.text_1.setString(dialogue_text.text_1.getString() + dialogue_text.script[0]); 
-                // pop front
-                dialogue_text.script = dialogue_text.script.toAnsiString().substr(1);
-                if (dialogue_text.script.isEmpty())
-                {
-                    dialogue_text.at_end=1;
-                }
-                else
-                {
-                    dialogue_text.at_end=0;
-                }
-            } 
-        }  
+                dialogue_text.script_part_ended = 1;
+            }
+            else
+            {
+                dialogue_text.script_part_ended = 0;
+            }
+        } 
+    }  
 }
 
 void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time) {
