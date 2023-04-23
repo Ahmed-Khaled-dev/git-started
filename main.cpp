@@ -5,12 +5,11 @@
 
 using namespace std;
 using namespace sf;
-
-const int WINDOW_WIDTH = 1920;
+const int WINDOW_WIDTH = 1980;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
 
-RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
+RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
 struct dialogueBox
 {
@@ -80,6 +79,8 @@ void showContinuationMessage(dialogueText &dialogue_text);
 
 int main()
 {
+
+  
     // Dialogue box
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
@@ -99,6 +100,10 @@ int main()
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
+     View view;
+    //FloatRect((1700/2).f, (1080/2).f, 2400.f, 1400.f))
+    view.setCenter(sf::Vector2f(WINDOW_WIDTH/2, (WINDOW_HEIGHT/2)));
+    view.setSize(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
 
     // Music
     Music music;
@@ -138,7 +143,7 @@ int main()
     //save button
     RectangleShape save_button(Vector2f(120, 50));
     Text save_text("Save", cli_font , 35);
-    setButtonProperties(save_button, Color(2,118,36), 500, 700);
+    setButtonProperties(save_button, Color(2,118,36), 535,670);
     setButtonTextProperties(save_button, save_text, Color::Black);
     
 
@@ -448,9 +453,11 @@ int main()
                 }
             }
         }
+        window.setView(view);
         window.clear(Color(223, 221, 221));
         if(current_screen == "main menu")
         {
+           
             window.draw(main_menu);
             window.draw(start_button);
             window.draw(options_button);
@@ -461,7 +468,7 @@ int main()
             window.draw(game_title);
         }
         else if(current_screen == "levels")
-        {
+        {   
         drawDialogue(window, dialogue_box);
         createCommandShape(command_shape);
         createEditWindowShape(edit_window_shape);
@@ -473,6 +480,7 @@ int main()
             showContinuationMessage(dialogue_text);
             window.draw(dialogue_box.body_shape);
         setEditWindowText(edit_window_text,user_edit_input,show_edit_cursor,edit_window_shape);
+        window.clear(Color::Black);
         window.draw(edit_window_shape);
         window.draw(command_shape);
         window.draw(cli_shape);
@@ -529,7 +537,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
     dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(450, 750);
+    dialogue_box.sprite.setPosition(50, 800);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
@@ -697,39 +705,39 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     // Shape of cursor
     cli_text.setString( user_cli_input + (show_cursor ? '|' : ' ')); 
     cli_text.setPosition(rectangle.getPosition());
-    cli_text_final.setFillColor(Color(50,50,50));
+    cli_text_final.setFillColor(Color::White);
     cli_text_final.setString(final_cli_input);
-    cli_text_final.setPosition(rectangle_upper.getPosition());
+    cli_text_final.setPosition(rectangle_upper.getPosition().x+7,rectangle_upper.getPosition().y+7);
 }
 
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
     edit_text.setString(edit_input+ (show_cursor ? '|' : ' '));
-    edit_text.setPosition(rectangle.getPosition());
+    edit_text.setPosition(rectangle.getPosition().x+7,rectangle.getPosition().y+7);
     edit_text.setFillColor(Color(110,164,197));
 }
 
 void createEditWindowShape(RectangleShape &form){
-    form.setSize(Vector2f(450,600));
+    form.setSize(Vector2f(500,600));
     form.setFillColor(Color(0,116,184));
-    form.setOutlineThickness(5);
+    form.setOutlineThickness(8);
     form.setOutlineColor(Color::Black);
-    form.setPosition(300,150);
+    form.setPosition(100,100);
 }
 
 void createCliShape(RectangleShape &form){
-    form.setSize(Vector2f(350,60));
+    form.setSize(Vector2f(650,60));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(8);
+    form.setOutlineThickness(5);
     form.setOutlineColor(Color(241, 196, 15));
-    form.setPosition(1200,700);
+    form.setPosition(1200,900);
 }
 
 void createCommandShape(RectangleShape &form){
-    form.setSize(Vector2f(350,200));
+    form.setSize(Vector2f(650,200));
     form.setFillColor(Color::Black);
-    form.setOutlineThickness(8);
+    form.setOutlineThickness(5);
     form.setOutlineColor(Color(241, 196, 15));
-    form.setPosition(1200,500);
+    form.setPosition(1200,700);
 }
 
 bool check_string(string&  user_edit_input,string&checker){
