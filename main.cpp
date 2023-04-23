@@ -45,7 +45,7 @@ struct optionMenu {
     const int short  size = 60;
 };
 
-// Functions definition 
+// Functions declaration
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
 void playMusicFromFile(string file_path, Music& music);
@@ -54,10 +54,11 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
 void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time);
 void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor);
-void setOptionsTextProperties (optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
-void soundAndMusicTextsControls (optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
-void optionExitButtonControlsAndProperties (Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
-void soundAndMusicControls (optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
+void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
+void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
+void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
+
 int main()
 {
     // Dialogue box
@@ -140,29 +141,28 @@ int main()
     option_menu_texture.setSmooth(true);
     options_exit_button_texture.setSmooth(true);
     Sprite slider_bar[2], option_menu, options_exit_button;
-    for (int i = 0; i < 2; i++)
+    CircleShape slider[2];
+    for (int i = 0; i < 2; i++){
         slider_bar[i].setTexture(slider_bar_texture);
+        slider[i].setRadius(15);
+        slider[i].setOrigin(15, 15);
+    }
     option_menu.setTexture(option_menu_texture);
     options_exit_button.setTexture(options_exit_button_texture);
     option_menu.setOrigin(400, 300);
     option_menu.setPosition(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
+    options_exit_button.setPosition(option_menu.getGlobalBounds().left + 739, option_menu.getGlobalBounds().top + 16);
     SoundBuffer pop_effect;
     pop_effect.loadFromFile("resources/sound_effects/pop.wav");
     Sound pop;
     pop.setBuffer(pop_effect);
     optionMenu sfx_text, music_text;
-    Text das;
-    das.setString("DA");
-    CircleShape slider[2];
-    for (int i = 0; i < 2; i++)
-       slider[i].setRadius(15);
     slider[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 414);
     slider[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 245);
-    for (int i = 0; i < 2; i++)
-        slider[i].setOrigin(15, 15);
-    bool left_mouse_is_clicked;    
+    slider_bar[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 409);
+    slider_bar[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 240);
     pop.setVolume(0);
-    setOptionsTextProperties (sfx_text, music_text, option_menu);
+    setSfxAndMusicTexts(sfx_text, music_text, option_menu);
     // Option menu
 
     Event event;
@@ -171,7 +171,6 @@ int main()
         Mouse mouse;
         Vector2i position = mouse.getPosition(window);
         mouse_cursor.setPosition(position.x, position.y);
-        left_mouse_is_clicked = Mouse::isButtonPressed(Mouse::Left);
         while (window.pollEvent(event))
         {
             if (event.type == Event::Closed || current_screen == "close") 
@@ -328,9 +327,9 @@ int main()
         }
         else if(current_screen == "options")
         {
-            optionExitButtonControlsAndProperties (options_exit_button, mouse_cursor, option_menu);   
-            soundAndMusicTextsControls (sfx_text, music_text, mouse_cursor, pop);
-            soundAndMusicControls (sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
+            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
+            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
             window.draw(main_menu);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)     
@@ -436,7 +435,7 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setPosition(x_position, y_position);
 }
 
-void setOptionsTextProperties (optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
+void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
     music_text.font.loadFromFile(sfx_text.option_font_type);
     sfx_text.font.loadFromFile(sfx_text.option_font_type);
     music_text.text.setFont(music_text.font);
@@ -451,18 +450,17 @@ void setOptionsTextProperties (optionMenu& sfx_text, optionMenu& music_text, Spr
     music_text.text.setPosition(option_menu.getGlobalBounds().left + 327, option_menu.getGlobalBounds().top + 163);
 }
 
-void optionExitButtonControlsAndProperties (Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu){
-    options_exit_button.setPosition(option_menu.getGlobalBounds().left + 739, option_menu.getGlobalBounds().top + 16);
+void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu){
     if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
-         options_exit_button.setColor(Color :: Red);
-         if (Mouse::isButtonPressed(Mouse::Left))
-             current_screen = "main menu";
+        options_exit_button.setColor(Color :: Red);
+        if (Mouse::isButtonPressed(Mouse::Left))
+            current_screen = "main menu";
     } 
     else
-         options_exit_button.setColor(Color :: White);
+        options_exit_button.setColor(Color :: White);
 }
 
-void soundAndMusicTextsControls (optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop){
+void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop){
     if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
         sfx_text.text.setFillColor(Color :: Red);
     else
@@ -475,12 +473,11 @@ void soundAndMusicTextsControls (optionMenu& sfx_text, optionMenu& music_text, R
         pop.play();
 }
 
-//This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar. As the X-coordinate increases, the volume will also increase accordingly.
-void soundAndMusicControls (optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
+// This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
+// As the X-coordinate increases, the volume will also increase accordingly.
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
     Mouse mouse;
     Vector2i po = mouse.getPosition();
-    slider_bar[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 409);
-    slider_bar[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 240);
         if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
             slider[0].setPosition(po.x, slider[0].getPosition().y);
             pop.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
