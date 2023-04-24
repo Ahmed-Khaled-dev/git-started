@@ -90,16 +90,15 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor);
 void showContinuationMessage(dialogueText &dialogue_text);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
-void headDeflection(Sprite& head, bool& window_collision, bool& go_back);
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& go_back);
 void headIdleAnimation(Sprite& head, bool& go_back);
 void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
 void headAnimationAndMovement(Sprite& head);
-void headGoToTheNewestCommit(Sprite& head, bool& go_back);
-void makeSmoke(Sprite& smoke, bool& create_smoke);
-
+void moveHeadToLatestCommit(Sprite& head, bool& go_back);
+void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 
 int main()
 {
@@ -251,8 +250,8 @@ int main()
     head.setOrigin(100.125, 150.5);
     head.setPosition(200, 200);
     bool go_back = 0;
-    bool window_collision = 1;
-    bool create_smoke = 0;
+    bool window_collision_mode = 1;
+    bool should_create_smoke = 0;
     unsigned short int commits_count = 0;
     const unsigned short int MAX_COMMITS = 100;
     SoundBuffer pop_buff;
@@ -275,8 +274,8 @@ int main()
             if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
                 addCommit(commits_count, commits, commit_textures, "initial commit");
                 pop_commit.play();
-                window_collision = 0;
-                create_smoke = 1;
+                window_collision_mode = 0;
+                should_create_smoke = 1;
                 if (index_of_the_last_commit == 0)
                     head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
                 else if (index_of_the_last_commit == 1) {
@@ -292,7 +291,7 @@ int main()
             {
                 window.close();
             }
-            //mouse click cli
+            // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
                     if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
@@ -512,9 +511,9 @@ int main()
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
             showContinuationMessage(dialogue_text);
             setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
-            headIdleAnimation (head, go_back);
-            headDeflection(head, window_collision, go_back);
-            headGoToTheNewestCommit(head, go_back);
+            headIdleAnimation(head, go_back);
+            headBorderDeflection(head, window_collision_mode, go_back);
+            moveHeadToLatestCommit(head, go_back);
             calculateHeadDistance(head, position, commits);
             headAnimationAndMovement(head);
             window.draw(dialogue_box.body_shape);
@@ -540,8 +539,8 @@ int main()
             for (unsigned short int i = 0; i < commits_count; i++)
                 window.draw(commits[i].sprite);
             window.draw(head);
-            if (create_smoke){
-                makeSmoke (smoke, create_smoke);
+            if (should_create_smoke){
+                makeSmoke(smoke, should_create_smoke);
                 window.draw(smoke);
             }
         }
@@ -819,20 +818,18 @@ void createCliInputShape(RectangleShape &form){
     form.setPosition(1200,700);
 }
 
-void makeSmoke (Sprite& smoke, bool& create_smoke){
-    if (create_smoke){
-        smoke.setScale(0.2, 0.2);
-        smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
-        smoke.setPosition(window.getSize().x / 2.0 - 90, window.getSize().y / 3.0 - 170);
-        graph_smoke_animation_delay++;
-        if (graph_smoke_animation_delay >= 3){
-            current_smoke_animation_frame++;
-            graph_smoke_animation_delay = 0;
+void makeSmoke(Sprite& smoke, bool& should_create_smoke){
+    smoke.setScale(0.2, 0.2);
+    smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
+    smoke.setPosition(window.getSize().x / 2.0 - 90, window.getSize().y / 3.0 - 170);
+    graph_smoke_animation_delay++;
+    if (graph_smoke_animation_delay >= 3){
+        current_smoke_animation_frame++;
+        graph_smoke_animation_delay = 0;
     }
-        if (current_smoke_animation_frame > 6){
-            current_smoke_animation_frame = 0;
-            create_smoke = 0;
-        }
+    if (current_smoke_animation_frame > 6){
+        current_smoke_animation_frame = 0;
+        should_create_smoke = 0;
     }
 }
 
@@ -867,7 +864,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commits[commits_count] = new_commit;
     commits_count++;
 }
-void headGoToTheNewestCommit(Sprite& head, bool& go_back) {
+void moveHeadToLatestCommit(Sprite& head, bool& go_back) {
     if (go_back)
     {
         graph_head.latest_commit_movement_delay++;
@@ -885,11 +882,12 @@ void headGoToTheNewestCommit(Sprite& head, bool& go_back) {
     }
 }
 
-void headDeflection(Sprite& head, bool& window_collision, bool& go_back){
-     if (!go_back) //Sprite animation
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& go_back){
+    //Sprite animation
+    if (!go_back) 
     {
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
-        if (window_collision) {
+        if (window_collision_mode) {
             head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
             if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(window.getSize().x - (50 * 0.8)))
                 graph_head.x_border_deflection_velocity *= -1;
@@ -898,9 +896,9 @@ void headDeflection(Sprite& head, bool& window_collision, bool& go_back){
         }
     }
 }
-void headIdleAnimation (Sprite& head, bool& go_back){
+void headIdleAnimation(Sprite& head, bool& go_back){
     if (!go_back){
-         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
+        head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         graph_head.idle_animation_delay++;
         if (graph_head.idle_animation_delay >= 20){
             graph_head.current_animation_frame++;
@@ -935,8 +933,8 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
     }
 }
 
-void headAnimationAndMovement (Sprite& head){
-     if (graph_head.distance_to_checkout_commit < 0)
+void headAnimationAndMovement(Sprite& head){
+    if (graph_head.distance_to_checkout_commit < 0)
     {
         head.move(5, 0);
         head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
