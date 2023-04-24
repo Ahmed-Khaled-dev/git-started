@@ -224,7 +224,7 @@ int main()
     option_menu.setTexture(option_menu_texture);
     options_exit_button.setTexture(options_exit_button_texture);
     option_menu.setOrigin(400, 300);
-    option_menu.setPosition(window.getSize().x / 2.0, window.getSize().y / 2.0);
+    option_menu.setPosition(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
     options_exit_button.setPosition(option_menu.getGlobalBounds().left + 739, option_menu.getGlobalBounds().top + 16);
     optionMenu sfx_text, music_text;
     slider[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 414);
@@ -825,7 +825,7 @@ void createCliInputShape(RectangleShape &form){
 void makeSmoke(Sprite& smoke, bool& should_create_smoke){
     smoke.setScale(0.2, 0.2);
     smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
-    smoke.setPosition(window.getSize().x / 2.0 - 90 + 800, window.getSize().y / 3.0 - 170);
+    smoke.setPosition(WINDOW_WIDTH / 2.0 - 90 + 800, WINDOW_HEIGHT / 3.0 - 170);
     graph_smoke_animation_delay++;
     if (graph_smoke_animation_delay >= 3){
         current_smoke_animation_frame++;
@@ -849,7 +849,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     {
         // I cut from the texture a circle **without** an arrow
         commit_sprite.setTextureRect(IntRect(287, 70, 156, 156));
-        commit_sprite.setPosition(window.getSize().x / 2.0 + 800, window.getSize().y / 3.0);
+        commit_sprite.setPosition(WINDOW_WIDTH / 2.0 + 800, WINDOW_HEIGHT / 3.0);
     }
     else
     {
@@ -893,9 +893,9 @@ void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& addit
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         if (window_collision_mode) {
             head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
-            if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(window.getSize().x - (50 * 0.8)))
+            if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(WINDOW_WIDTH - (50 * 0.8)))
                 graph_head.x_border_deflection_velocity *= -1;
-            if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(window.getSize().y - (100 * 0.8)))
+            if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(WINDOW_HEIGHT - (100 * 0.8)))
                 graph_head.y_border_deflection_velocity *= -1;
         }
     }
