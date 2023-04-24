@@ -5,12 +5,29 @@
 
 using namespace std;
 using namespace sf;
+
+unsigned short int graph_smoke_animation_delay = 0, current_smoke_animation_frame = 0;
+short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
+
+struct graphHead{
+    // We have 4 animation frames for the octocat movement (0, 1, 2, 3)
+    unsigned short int current_animation_frame = 0, idle_animation_delay = 0;
+    unsigned short int latest_commit_movement_delay = 0;
+    short int distance_to_checkout_commit = 0, distance_to_latest_commit = (50 + 135);
+    short int x_border_deflection_velocity = 3, y_border_deflection_velocity = 3;
+}graph_head;
+
+struct commit {
+    string message;
+    Sprite sprite;
+};
+
 struct dialogueBox
 {
     Font font;
@@ -73,8 +90,15 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor);
 void showContinuationMessage(dialogueText &dialogue_text);
+void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created);
+void headIdleAnimation(Sprite& head, bool& additional_commit_created);
+void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
+void headAnimationAndMovement(Sprite& head);
+void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
+void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 
 int main()
 {
@@ -200,35 +224,74 @@ int main()
     option_menu.setTexture(option_menu_texture);
     options_exit_button.setTexture(options_exit_button_texture);
     option_menu.setOrigin(400, 300);
-    option_menu.setPosition(window.getSize().x / 2.0, window.getSize().y / 2.0);
+    option_menu.setPosition(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
     options_exit_button.setPosition(option_menu.getGlobalBounds().left + 739, option_menu.getGlobalBounds().top + 16);
-    SoundBuffer pop_effect;
-    pop_effect.loadFromFile("resources/sound_effects/pop.wav");
-    Sound pop;
-    pop.setBuffer(pop_effect);
     optionMenu sfx_text, music_text;
     slider[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 414);
     slider[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 245);
     slider_bar[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 409);
     slider_bar[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 240);
-    pop.setVolume(0);
     setSfxAndMusicTexts(sfx_text, music_text, option_menu);
     // Option menu
+
+    // Graph
+    Sprite head, smoke;
+    Texture octacat, commit_textures, smoke_texture;
+    octacat.loadFromFile("resources/sprites/octocat.png");
+    octacat.setSmooth(true);
+    commit_textures.loadFromFile("resources/sprites/commits_sprites.png");
+    commit_textures.setSmooth(true);
+    smoke_texture.loadFromFile("resources/sprites/smoke.png");
+    smoke_texture.setSmooth(true);
+    smoke.setTexture(smoke_texture);
+    head.setTexture(octacat);
+    head.setTextureRect(IntRect(0, 0, 200.25, 301));
+    head.setScale(0.8, 0.8);
+    head.setOrigin(100.125, 150.5);
+    head.setPosition(200, 200);
+    bool additional_commit_created = 0;
+    bool window_collision_mode = 1;
+    bool should_create_smoke = 0;
+    unsigned short int commits_count = 0;
+    const unsigned short int MAX_COMMITS = 100;
+    SoundBuffer pop_buff;
+    pop_buff.loadFromFile("resources/audio/pop.wav");
+    Sound pop_commit;
+    pop_commit.setBuffer(pop_buff);
+    pop_commit.setVolume(0);
+    commit commits[MAX_COMMITS];
+    window.setFramerateLimit(60);
 
     Event event;
     while (window.isOpen())
     {
         Mouse mouse;
         Vector2i position = mouse.getPosition(window);
-        Vector2f worldPos = window.mapPixelToCoords(position);
-        mouse_cursor.setPosition(worldPos.x, worldPos.y);
+        Vector2f world_pos = window.mapPixelToCoords(position);
+        mouse_cursor.setPosition(world_pos.x, world_pos.y);
         while (window.pollEvent(event))
         {
+            if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
+                addCommit(commits_count, commits, commit_textures, "initial commit");
+                pop_commit.play();
+                window_collision_mode = 0;
+                should_create_smoke = 1;
+                if (index_of_the_last_commit == 0)
+                    head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
+                else if (index_of_the_last_commit == 1) {
+                    head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
+                    additional_commit_created = 1;
+                }
+                else {
+                    head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
+                    additional_commit_created = 1;
+                }
+            }
             if (event.type == Event::Closed || current_screen == "close") 
             {
                 window.close();
             }
-            //mouse click cli
+            // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
                     if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
@@ -448,6 +511,11 @@ int main()
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
             showContinuationMessage(dialogue_text);
             setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
+            headIdleAnimation(head, additional_commit_created);
+            headBorderDeflection(head, window_collision_mode, additional_commit_created);
+            moveHeadToLatestCommit(head, additional_commit_created);
+            calculateHeadDistance(head, position, commits);
+            headAnimationAndMovement(head);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
@@ -467,13 +535,20 @@ int main()
             window.draw(game_window_options_button);
             window.draw(game_window_options_text); 
             window.draw(edit_window_title);
-            window.draw(edit_window_title_text);   
+            window.draw(edit_window_title_text);
+            for (unsigned short int i = 0; i < commits_count; i++)
+                window.draw(commits[i].sprite);
+            window.draw(head);
+            if (should_create_smoke){
+                makeSmoke(smoke, should_create_smoke);
+                window.draw(smoke);
+            }
         }
         else if(current_screen == "options")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
-            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
+            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop_commit);
+            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor);
             window.draw(main_menu);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)     
@@ -485,12 +560,13 @@ int main()
         else if(current_screen == "options_in_game")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
-            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
+            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop_commit);
+            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor);
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
+            headIdleAnimation(head, additional_commit_created);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
@@ -505,6 +581,9 @@ int main()
             window.draw(cli_text_final); 
             window.draw(edit_window_title);
             window.draw(edit_window_title_text);
+            for (unsigned short int i = 0; i < commits_count; i++)
+                window.draw(commits[i].sprite);
+            window.draw(head);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)     
                 window.draw(slider[i]);;
@@ -693,15 +772,15 @@ void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Recta
 
 // This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
 // As the X-coordinate increases, the volume will also increase accordingly.
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
-        if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
-            slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
-            pop.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
-            }
-        if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
-             slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
-             music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
-        }
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
+    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
+        slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
+        pop_commit.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+    }
+    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
+        slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
+        music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+    }
 }
 
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
@@ -741,6 +820,136 @@ void createCliInputShape(RectangleShape &form){
     form.setOutlineThickness(5);
     form.setOutlineColor(Color(241, 196, 15));
     form.setPosition(1200,700);
+}
+
+void makeSmoke(Sprite& smoke, bool& should_create_smoke){
+    smoke.setScale(0.2, 0.2);
+    smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
+    smoke.setPosition(WINDOW_WIDTH / 2.0 - 90 + 800, WINDOW_HEIGHT / 3.0 - 170);
+    graph_smoke_animation_delay++;
+    if (graph_smoke_animation_delay >= 3){
+        current_smoke_animation_frame++;
+        graph_smoke_animation_delay = 0;
+    }
+    if (current_smoke_animation_frame > 6){
+        current_smoke_animation_frame = 0;
+        should_create_smoke = 0;
+    }
+}
+
+void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message) {
+    // All the following are the same for both conditions
+    Sprite commit_sprite;
+    commit_sprite.setColor({ 43, 45, 47 });
+    commit_sprite.setTexture(commit_textures);
+    const float COMMIT_SCALING = 0.5;
+    commit_sprite.scale(Vector2f(COMMIT_SCALING, COMMIT_SCALING));
+
+    if (commits_count == 0)
+    {
+        // I cut from the texture a circle **without** an arrow
+        commit_sprite.setTextureRect(IntRect(287, 70, 156, 156));
+        commit_sprite.setPosition(WINDOW_WIDTH / 2.0 + 800, WINDOW_HEIGHT / 3.0);
+    }
+    else
+    {
+        const unsigned short int CIRCLE_LENGTH = 60;
+        const unsigned short int ARROW_LENGTH = 125;
+        for (unsigned short int i = 0; i < commits_count; i++)
+        {
+            commits[i].sprite.move(Vector2f(-(CIRCLE_LENGTH + ARROW_LENGTH), 0));
+            index_of_the_last_commit = commits_count;
+        }
+        // I cut from the texture a circle **with** an arrow
+        commit_sprite.setTextureRect(IntRect(37, 278, 406, 432));
+        commit_sprite.setPosition(1920 / 2 - ARROW_LENGTH + 800, 1080 / 3);
+    }
+
+    commit new_commit = { commit_message, commit_sprite };
+    commits[commits_count] = new_commit;
+    commits_count++;
+}
+void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created) {
+    if (additional_commit_created)
+    {
+        graph_head.latest_commit_movement_delay++;
+        if (graph_head.distance_to_latest_commit > 0 && graph_head.latest_commit_movement_delay >= 10)
+        {
+            head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
+            head.move(5, 0);
+            graph_head.distance_to_latest_commit -= 5;
+        }
+        if (graph_head.distance_to_latest_commit <= 0) {
+            graph_head.distance_to_latest_commit = (50 + 135);
+            additional_commit_created = 0;
+            graph_head.latest_commit_movement_delay = 0;
+        }
+    }
+}
+
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created){
+    if (!additional_commit_created) 
+    {
+        head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
+        if (window_collision_mode) {
+            head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
+            if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(WINDOW_WIDTH - (50 * 0.8)))
+                graph_head.x_border_deflection_velocity *= -1;
+            if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(WINDOW_HEIGHT - (100 * 0.8)))
+                graph_head.y_border_deflection_velocity *= -1;
+        }
+    }
+}
+void headIdleAnimation(Sprite& head, bool& additional_commit_created){
+    if (!additional_commit_created){
+        head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
+        graph_head.idle_animation_delay++;
+        if (graph_head.idle_animation_delay >= 20){
+            graph_head.current_animation_frame++;
+            graph_head.idle_animation_delay = 0;
+        }
+        if (graph_head.current_animation_frame == 2)
+            graph_head.current_animation_frame = 0;
+    }
+}
+
+void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[])
+{ 
+    for (short int i = 0; i < 100; i++)
+    {
+        if (commit[i].sprite.getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && (Mouse::isButtonPressed(Mouse::Left))) {
+            if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0) {
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
+            }
+            else if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x > 0)
+            {
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
+            }
+            else if (i != 0 && head.getPosition().x - commit[i].sprite.getPosition().x > 0)
+            {
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
+            }
+            else if (i != 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0)
+            {
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
+            }
+        }
+    }
+}
+
+void headAnimationAndMovement(Sprite& head){
+    if (graph_head.distance_to_checkout_commit < 0)
+    {
+        head.move(5, 0);
+        head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
+        graph_head.distance_to_checkout_commit += 5;
+    }
+    else if (graph_head.distance_to_checkout_commit > 0)
+    {
+        head.move(-5, 0);
+        head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
+        graph_head.distance_to_checkout_commit -= 5;
+    }
 }
 
 bool checkInputEquality(string& edit_window_input, string& checker){
