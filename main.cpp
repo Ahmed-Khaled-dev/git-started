@@ -230,7 +230,7 @@ int main()
             //mouse click cli
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
                     {
                         cli_selected = true;
                     }
@@ -240,7 +240,7 @@ int main()
                         show_cli_cursor = false;
                     }
                     // Mouse clicked on edit window
-                    if (edit_window_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (edit_window_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
                     {
                         edit_window_selected = true;
                     }
@@ -249,15 +249,15 @@ int main()
                         edit_window_selected = false;
                         show_edit_window_cursor = false;
                     }
-                    if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                    if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
                         checkInputEquality(edit_window_input, checker);
                     }
-                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
                         current_screen = "main menu";
                     }
-                    if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                    if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
                         current_screen = "options";
                     }
@@ -276,7 +276,7 @@ int main()
             }
             if (event.type == Event::TextEntered) 
             { 
-                if (edit_window_selected)
+                if (edit_window_selected && current_screen == "levels")
                 {
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
@@ -301,7 +301,7 @@ int main()
                         edit_window_selected = false;
                 }
                 // Filter out symbols (only characters in ascii code enters)
-                if (cli_selected)
+                if (cli_selected && current_screen == "levels")
                 {
                     if (isprint(event.text.unicode))     
                         user_cli_input += event.text.unicode;
