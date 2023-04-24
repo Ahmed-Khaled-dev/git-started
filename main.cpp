@@ -469,7 +469,12 @@ int main()
                 else if (dialogue_text.new_script[dialogue_text.current_script_index].first==1 && correct_command==1)
                 {
                     dialogue_text.new_script[dialogue_text.current_script_index].first=0;
-                    continuation_message.sub_script_ended=1; //**// 
+                    dialogue_text.script_text.setString("");
+                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
+                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    {
+                        dialogue_text.script_ended = 1;
+                    }    
                 }
             }
         }
@@ -607,7 +612,7 @@ void showContinuationMessage(continuationMessage& continuation_message)
         continuation_message.continuation_fade_time = Time::Zero;
     }
 
-    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && dialogue_text.new_script[dialogue_text.current_script_index].first==0)
+    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (gitdialogue_text.new_script[dialogue_text.current_script_index].first==0 || correct_command==1))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
