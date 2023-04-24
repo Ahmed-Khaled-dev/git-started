@@ -119,7 +119,7 @@ int main()
     string user_cli_input, final_cli_input,check_cli_input,cli_commit="git commit";
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0;
+    bool show_cli_cursor = 0, cli_selected = 0,check=0;
     Clock cursor_clock;
     
     
@@ -283,8 +283,14 @@ int main()
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
+                        if (isprint(event.text.unicode) && (check)){     
+                            edit_window_input += event.text.unicode;
+
+                        }
+                        
                         if (isprint(event.text.unicode))     
                             edit_window_input += event.text.unicode;
+                        
                         // Bounds for text
                         Vector2f pos = edit_window_text.findCharacterPos(edit_window_input.size());  
                         
@@ -328,17 +334,24 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                        
+                        if((!user_cli_input.empty())&&check){
+                            
+                            final_cli_input="commit successful\n";
+                            string commit_message=user_cli_input;
+                            user_cli_input.clear();
+                            check=false;
+                        }
+                        if(!user_cli_input.empty()){
                         final_cli_input += ("$ "+ user_cli_input + "\n");
                         check_cli_input=user_cli_input;
-                        bool check= checkInputEquality(check_cli_input,cli_commit);
+                        check= checkInputEquality(check_cli_input,cli_commit);
                         if(check){
                             final_cli_input.clear();
                             final_cli_input = (cli_text_commitm+'\n');
                 
                          } 
                         user_cli_input.clear();
-
+                        }
 
                     }
                 }
