@@ -5,12 +5,11 @@
 
 using namespace std;
 using namespace sf;
-
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
 
-RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Git Started!");
+RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
 struct dialogueBox
 {
@@ -58,14 +57,19 @@ struct optionMenu {
 };
 
 // Functions declaration
+bool checkInputEquality(string& edit_window_input, string&);
+void createCliInputShape(RectangleShape &form);
+void createCliOutputShape(RectangleShape &form);
+void createEditWindowShape(RectangleShape &form);
+void setEditWindowText(Text & edit_text, string& edit_input, bool&, RectangleShape& rectangle);
+void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape&);
+void showCursor(Clock& cursor_clock, bool& show_cursor,bool& , Time& cursor_time);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
 void playMusicFromFile(string file_path, Music& music);
 void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
-void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time);
-void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor);
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
@@ -89,32 +93,64 @@ int main()
         cout << "Error has happened while loading the game title font" << endl;
     }
     Font cli_font;
+    //cli_font.loadFromFile("resources/fonts/arial.ttf");
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
+
+    Font arial;
+    if (!arial.loadFromFile("resources/fonts/arial.ttf")) {
+        cout << "Error has happened while loading arial font" << endl;
+    }
+
+    // View
+    View view;
+    //FloatRect((1700/2).f, (1080/2).f, 2400.f, 1400.f))
+    view.setCenter(sf::Vector2f(WINDOW_WIDTH/2, (WINDOW_HEIGHT/2)));
+    view.setSize(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
 
     // Music
     Music music;
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
-    RectangleShape vol_dec_button(Vector2f(150, 50)), vol_status_button(Vector2f(225,50)), vol_inc_button(Vector2f(150, 50));
-    setButtonProperties(vol_dec_button, Color::Blue, 100, 50);
-    setButtonProperties(vol_status_button, Color::White, 300, 50);
-    setButtonProperties(vol_inc_button, Color::Red, 500, 50);
-    // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text vol_status_text("Hello", buttons_font , 35), vol_inc_text("+vol", buttons_font , 35);
-    Text vol_dec_text("-vol", buttons_font , 35);
-    setButtonTextProperties(vol_status_button, vol_status_text, Color::Black);
-    setButtonTextProperties(vol_inc_button, vol_inc_text, Color::Black);
-    setButtonTextProperties(vol_dec_button, vol_dec_text, Color::Black);
 
-    // Command line
+    // Command line interface (CLI)
     string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
-    Time cli_cursor_time;
-    bool show_cursor;
+    bool show_cli_cursor = 0, cli_selected = 0;
     Clock cursor_clock;
+    RectangleShape cli_output_shape, cli_input_shape;
+    
+    // Edit Window
+    RectangleShape edit_window_shape;
+    string edit_window_input = "type here", checker = "Hi, this is for check";
+    Text edit_window_text(edit_window_input ,cli_font);
+    edit_window_text.setCharacterSize(22);
+    Time cursor_time;
+    bool edit_window_selected = 0, show_edit_window_cursor = 0;
+    // Save button
+    RectangleShape edit_window_save_button(Vector2f(120, 50));
+    Text edit_window_save_text("Save", arial , 35);
+    setButtonProperties(edit_window_save_button, Color(2,118,36), 522, 621);
+    setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::White);
+    // Game window is the window containing the dialogue box, edit window, cli etc.
+    // Back button
+    RectangleShape game_window_back_button(Vector2f(140, 50));
+    Text game_window_back_text("Back", buttons_font,35);
+    setButtonProperties(game_window_back_button, Color::Blue, 1600, 40);
+    setButtonTextProperties(game_window_back_button, game_window_back_text, Color::Black);    
+    // Options button
+    RectangleShape game_window_options_button(Vector2f(200, 50));
+    Text game_window_options_text("Options", buttons_font, 35);
+    setButtonProperties(game_window_options_button, Color::Yellow, 1800, 40);
+    setButtonTextProperties(game_window_options_button, game_window_options_text, Color::Black);
+    // Main.cpp Rectangle 
+    RectangleShape edit_window_title(Vector2f(500, 80));
+    Text edit_window_title_text("Main.cpp", cli_font, 35);
+    setButtonProperties(edit_window_title, Color(110, 164, 198), 330, 85);
+    setButtonTextProperties(edit_window_title, edit_window_title_text, Color::Black);  
 
+    // Main Menu
     Text game_title;
     game_title.setString("\t  Git \n Started");
     game_title.setFont(game_title_font);
@@ -131,15 +167,16 @@ int main()
     Dark grey fill Color(50, 50, 50)*/
 
     // Main Menu Screen buttons 
-    RectangleShape start_button(Vector2f(406,121)),options_button(Vector2f(323,80)),close_button(Vector2f(230,75));
-    setButtonProperties(start_button, Color::Green, 960, 520);
-    setButtonProperties(options_button, Color::Yellow, 960, 670);
-    setButtonProperties(close_button, Color::Red, 1720, 180);
-    Text start_text("Start", buttons_font , 53), options_text("Options", buttons_font , 40);
-    Text close_text("Close", buttons_font , 33);
-    setButtonTextProperties(start_button, start_text, Color::Black);
-    setButtonTextProperties(options_button, options_text, Color::Black);
-    setButtonTextProperties(close_button, close_text, Color::Black);
+    RectangleShape main_menu_start_button(Vector2f(406,121)),main_menu_options_button(Vector2f(323,80));
+    RectangleShape main_menu_close_button(Vector2f(230,75));
+    setButtonProperties(main_menu_start_button, Color::Green, 960, 520);
+    setButtonProperties(main_menu_options_button, Color::Yellow, 960, 670);
+    setButtonProperties(main_menu_close_button, Color::Red, 1720, 180);
+    Text main_menu_start_text("Start", buttons_font , 53), main_menu_options_text("Options", buttons_font , 40);
+    Text main_menu_close_text("Close", buttons_font , 33);
+    setButtonTextProperties(main_menu_start_button, main_menu_start_text, Color::Black);
+    setButtonTextProperties(main_menu_options_button, main_menu_options_text, Color::Black);
+    setButtonTextProperties(main_menu_close_button, main_menu_close_text, Color::Black);
     
     Texture main_menu_bg;
     main_menu_bg.loadFromFile("resources/sprites/main_menu_bg.png");
@@ -190,120 +227,182 @@ int main()
             {
                 window.close();
             }
-            // Take input from user
+            //mouse click cli
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+            {
+                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
+                    {
+                        cli_selected = true;
+                    }
+                    else
+                    {
+                        cli_selected = false;
+                        show_cli_cursor = false;
+                    }
+                    // Mouse clicked on edit window
+                    if (edit_window_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
+                    {
+                        edit_window_selected = true;
+                    }
+                    else
+                    {
+                        edit_window_selected = false;
+                        show_edit_window_cursor = false;
+                    }
+                    if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
+                    {
+                        checkInputEquality(edit_window_input, checker);
+                    }
+                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
+                    {
+                        current_screen = "main menu";
+                    }
+                    if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
+                    {
+                        current_screen = "options_in_game";
+                    }
+                    if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
+                    {
+                        current_screen = "levels";
+                    }
+                    if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
+                    {
+                        current_screen = "options";
+                    }
+                    if (main_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
+                    {
+                        current_screen = "close";
+                    }
+            }
             if (event.type == Event::TextEntered) 
             { 
+                if (edit_window_selected && current_screen == "levels")
+                {
+                    const short int edit_window_max_chars = 600;
+                    if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
+                    {
+                        if (isprint(event.text.unicode))     
+                            edit_window_input += event.text.unicode;
+                        // Bounds for text
+                        Vector2f pos = edit_window_text.findCharacterPos(edit_window_input.size());  
+                        
+                        if(!((edit_window_shape.getGlobalBounds()).contains(pos))){
+                            char temp_last = edit_window_input[edit_window_input.size()-1];
+                            char temp_b_last = edit_window_input[edit_window_input.size()-2];
+                            edit_window_input.pop_back();
+                            edit_window_input.pop_back();
+                            edit_window_input += ("\n");
+                        
+                            edit_window_input += temp_b_last;
+                            edit_window_input += temp_last;
+                        }
+                    }
+                    else
+                        edit_window_selected = false;
+                }
                 // Filter out symbols (only characters in ascii code enters)
-                if (isprint(event.text.unicode))     
-                    user_cli_input += event.text.unicode;
+                if (cli_selected && current_screen == "levels")
+                {
+                    if (isprint(event.text.unicode))     
+                        user_cli_input += event.text.unicode;
+                         
+                        Vector2f pst = cli_text.findCharacterPos(user_cli_input.size());  
+                        
+                        if (!(cli_output_shape.getGlobalBounds().contains(pst)))
+                        {
+                            user_cli_input.pop_back();
+                        }
+                }
             }
             // If user wants to erase what he wrote
             if (event.type == Event::KeyPressed) 
             {    
-                if (event.key.code == Keyboard::BackSpace) 
-                {
-                    if (!user_cli_input.empty())
-                        user_cli_input.pop_back();
-                }
-                // User clicks enter and the text will be transfered at the top of the screen
-                if (event.key.code == Keyboard::Return) 
-                {
-                    final_cli_input += (user_cli_input + "\n");
-                    user_cli_input.clear();
-                }
-            }
-            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) 
-            {
-                if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    if (music.getStatus() == SoundSource::Status::Playing) 
+                if(cli_selected){
+                     if (event.key.code == Keyboard::BackSpace) 
+                     {
+                        if (!user_cli_input.empty())
+                            user_cli_input.pop_back();
+                     }
+                    // User clicks enter and the text will be transfered at the top of the screen
+                    if (event.key.code == Keyboard::Return) 
                     {
-                        music.pause();   
-                        updateButtonText(vol_status_button, vol_status_text, "Paused");
-                    }
-                    else if (music.getStatus() == SoundSource::Status::Paused) 
-                    {
-                        music.play();
-                        updateButtonText(vol_status_button, vol_status_text, "Playing");
+                        final_cli_input += ("$ "+ user_cli_input + "\n");
+                        user_cli_input.clear();
                     }
                 }
-                if (vol_inc_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                if(edit_window_selected)
                 {
-                    music.setVolume(music.getVolume() + 10); //new volume = current volume+10
-                }
-                if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    music.setVolume(music.getVolume() - 10);
-                }
-                if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
-                {
-                    current_screen = "levels";
-                }
-                if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
-                {
-                    current_screen = "options";
-                }
-                if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
-                {
-                    current_screen = "close";
+                    if (event.key.code == Keyboard::BackSpace) 
+                    {
+                        if (!edit_window_input.empty())
+                            edit_window_input.pop_back();
+                    }
+                    if (event.key.code == Keyboard::Return) 
+                    {
+                        edit_window_input += ( "\n");  
+                    }
                 }
             }
             if (event.type == Event::MouseMoved) {
-                if (vol_status_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    // When you hover on the rectangle a function changes its color
-                    vol_status_button.setFillColor(Color::Yellow); 
+                    main_menu_start_button.setFillColor(Color(34, 139, 34));
+                    main_menu_start_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
-                    vol_status_button.setFillColor(Color::Magenta);
+                    main_menu_start_button.setFillColor(Color::Green);
+                    main_menu_start_button.setScale(1.0f, 1.0f);
                 }
-                if (vol_inc_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    vol_inc_button.setFillColor(Color::Cyan);
-                }
-                else 
-                {
-                    vol_inc_button.setFillColor(Color::Red);
-                }
-                if (vol_dec_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    vol_dec_button.setFillColor(Color::Cyan);
+                    main_menu_options_button.setFillColor(Color(153, 153, 0));
+                    main_menu_options_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
-                    vol_dec_button.setFillColor(Color::Blue);
-
+                    main_menu_options_button.setFillColor(Color::Yellow);
+                    main_menu_options_button.setScale(1.0f, 1.0f);
                 }
-                if (start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                if (main_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    start_button.setFillColor(Color(34, 139, 34));
-                    start_button.setScale(0.9f, 0.9f);
-                }
-                else 
-                {
-                    start_button.setFillColor(Color::Green);
-                    start_button.setScale(1.0f, 1.0f);
-                }
-                if (options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
-                {
-                    options_button.setFillColor(Color(153, 153, 0));
-                    options_button.setScale(0.9f, 0.9f);
+                    main_menu_close_button.setFillColor(Color(139, 0, 0));
+                    main_menu_close_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
-                    options_button.setFillColor(Color::Yellow);
-                    options_button.setScale(1.0f, 1.0f);
+                    main_menu_close_button.setFillColor(Color::Red);
+                    main_menu_close_button.setScale(1.0f, 1.0f);
                 }
-                if (close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
                 {
-                    close_button.setFillColor(Color(139, 0, 0));
-                    close_button.setScale(0.9f, 0.9f);
+                    edit_window_save_button.setFillColor(Color(34, 139, 34));
+                    edit_window_save_button.setScale(0.9f, 0.9f);
                 }
                 else 
                 {
-                    close_button.setFillColor(Color::Red);
-                    close_button.setScale(1.0f, 1.0f);
+                    edit_window_save_button.setFillColor(Color(2,118,36));
+                    edit_window_save_button.setScale(1.0f, 1.0f);
+                }
+                if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    game_window_options_button.setFillColor(Color(153, 153, 0));
+                    game_window_options_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    game_window_options_button.setFillColor(Color::Yellow);
+                    game_window_options_button.setScale(1.0f, 1.0f);
+                }
+                if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) 
+                {
+                    game_window_back_button.setFillColor(Color(153, 153, 0));
+                    game_window_back_button.setScale(0.9f, 0.9f);
+                }
+                else 
+                {
+                    game_window_back_button.setFillColor(Color::Yellow);
+                    game_window_back_button.setScale(1.0f, 1.0f);
                 }
             }
             // Check if down arrow (later space) key has been pressed
@@ -322,39 +421,52 @@ int main()
                 }
             }
         }
+        window.setView(view);
         window.clear(Color(223, 221, 221));
         if(current_screen == "main menu")
         {
+           
             window.draw(main_menu);
-            window.draw(start_button);
-            window.draw(options_button);
-            window.draw(close_button);
-            window.draw(start_text);
-            window.draw(options_text);
-            window.draw(close_text);
+            window.draw(main_menu_start_button);
+            window.draw(main_menu_options_button);
+            window.draw(main_menu_close_button);
+            window.draw(main_menu_start_text);
+            window.draw(main_menu_options_text);
+            window.draw(main_menu_close_text);
             window.draw(game_title);
         }
         else if(current_screen == "levels")
-        {
+        {   
             drawDialogue(window, dialogue_box);
+            createCliInputShape(cli_input_shape);
+            createEditWindowShape(edit_window_shape);
+            createCliOutputShape(cli_output_shape);
             printDialogueText(dialogue_text);
-            showCliCursor(cursor_clock, show_cursor, cli_cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cursor);
+            showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
+            showCursor(cursor_clock, show_edit_window_cursor,edit_window_selected, cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
             showContinuationMessage(dialogue_text);
+            setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
             window.draw(dialogue_box.body_shape);
+            window.draw(edit_window_shape);
+            window.draw(cli_input_shape);
+            window.draw(cli_output_shape);
             window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
             window.draw(dialogue_text.continuation_text);
+            window.draw(edit_window_text);
             window.draw(cli_text);
-            window.draw(cli_text_final);
-            window.draw(vol_status_button);
-            window.draw(vol_inc_button);
-            window.draw(vol_dec_button);
-            window.draw(vol_status_text);
-            window.draw(vol_inc_text);
-            window.draw(vol_dec_text);
+            window.draw(edit_window_save_button);
+            window.draw(edit_window_save_text);
+            window.draw(cli_text_final);  
+            window.draw(game_window_back_button);
+            window.draw(game_window_back_text);   
+            window.draw(game_window_options_button);
+            window.draw(game_window_options_text); 
+            window.draw(edit_window_title);
+            window.draw(edit_window_title_text);   
         }
         else if(current_screen == "options")
         {
@@ -369,6 +481,36 @@ int main()
             window.draw(music_text.text);
             window.draw(options_exit_button);
         }
+        else if(current_screen == "options_in_game")
+        {
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
+            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
+            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
+            drawDialogue(window, dialogue_box);
+            createCliInputShape(cli_input_shape);
+            createEditWindowShape(edit_window_shape);
+            createCliOutputShape(cli_output_shape);
+            window.draw(dialogue_box.body_shape);
+            window.draw(edit_window_shape);
+            window.draw(cli_input_shape);
+            window.draw(cli_output_shape);
+            window.draw(dialogue_box.title_shape);
+            window.draw(dialogue_box.title);   
+            window.draw(dialogue_box.sprite);
+            window.draw(dialogue_text.script_text);
+            window.draw(dialogue_text.continuation_text);
+            window.draw(edit_window_text);
+            window.draw(cli_text);
+            window.draw(cli_text_final); 
+            window.draw(edit_window_title);
+            window.draw(edit_window_title_text);
+            window.draw(option_menu);
+            for (int i = 0; i < 2; i++)     
+                window.draw(slider[i]);;
+            window.draw(sfx_text.text);
+            window.draw(music_text.text);
+            window.draw(options_exit_button);
+        }
         window.display();
     }
     }
@@ -376,23 +518,23 @@ int main()
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box) 
 {
     //Dialogue box (big)
-    dialogue_box.body_shape.setSize(Vector2f(750,300));
+    dialogue_box.body_shape.setSize(Vector2f(900,260));
     dialogue_box.body_shape.setFillColor(Color(44,240,83));
     dialogue_box.body_shape.setOutlineThickness(5);
     dialogue_box.body_shape.setOutlineColor(Color::Black);
-    dialogue_box.body_shape.setPosition((window.getSize().x - dialogue_box.body_shape.getSize().x) / 2, window.getSize().y - dialogue_box.body_shape.getSize().y);
+    dialogue_box.body_shape.setPosition(80,700);
     
     //Dialogue box (small)
-    dialogue_box.title_shape.setSize(Vector2f(750,65));
+    dialogue_box.title_shape.setSize(Vector2f(900,65));
     dialogue_box.title_shape.setFillColor(Color(95,219,120));
     dialogue_box.title_shape.setOutlineThickness(0.8f);
     dialogue_box.title_shape.setOutlineColor(Color(72,84,74));
-    dialogue_box.title_shape.setPosition((window.getSize().x - dialogue_box.title_shape.getSize().x) / 2, window.getSize().y - dialogue_box.title_shape.getSize().y-235);
+    dialogue_box.title_shape.setPosition(80, 700);
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
     dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(450, 750);
+    dialogue_box.sprite.setPosition(15, 630);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
@@ -400,7 +542,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setFillColor(Color(57,60,58));
     dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
-    dialogue_box.title.setPosition(630, 800);
+    dialogue_box.title.setPosition(220, 720);
 }
 
 void showContinuationMessage(dialogueText &dialogue_text)
@@ -419,7 +561,7 @@ void showContinuationMessage(dialogueText &dialogue_text)
         dialogue_text.continuation_text.setFillColor(Color(57,60,58));
         dialogue_text.continuation_text.setCharacterSize(24);
         dialogue_text.continuation_text.setStyle(Text::Italic);
-        dialogue_text.continuation_text.setPosition(1047, 950);
+        dialogue_text.continuation_text.setPosition(670, 925);
     }
     else if (!dialogue_text.script_part_ended)
     {
@@ -432,7 +574,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFont(dialogue_text.font);
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
-    dialogue_text.script_text.setPosition(700, 860);
+    dialogue_text.script_text.setPosition(250, 780);
     dialogue_text.time += dialogue_text.clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
     {
@@ -455,24 +597,17 @@ void printDialogueText(dialogueText& dialogue_text)
     }  
 }
 
-void showCliCursor(Clock& cursor_clock, bool& show_cursor, Time& cli_cursor_time) {
-    cli_cursor_time += cursor_clock.restart();
-    // Cursor time to appear
-    if (cli_cursor_time >= seconds(0.5f)) 
+void showCursor(Clock& cursor_clock, bool& show_cursor, bool& selected, Time& cursor_time) {
+    if(selected)
     {
-        show_cursor = !show_cursor;
-        cli_cursor_time = Time::Zero;
+        cursor_time += cursor_clock.restart();
+        // Cursor time to appear    
+        if (cursor_time >= seconds(0.5f)) 
+        {
+            show_cursor = !show_cursor;
+            cursor_time = Time::Zero;
+        }
     }
-}
-
-void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor) {
-    // Shape of cursor
-    cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(1500, 940);
-    cli_text.setFillColor(Color::Black);
-    cli_text_final.setString(final_cli_input);
-    cli_text_final.setFillColor(Color::Black);
-    cli_text_final.setPosition(1500, 500);
 }
 
 void playMusicFromFile(const string file_path, Music& music) {
@@ -491,7 +626,7 @@ void updateButtonText(RectangleShape& rectangle, Text& text, string new_text) {
 }
 
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color) {
-    text.setFillColor(Color::Black);
+    text.setFillColor(color);
     // Making the center of the text at its center
     text.setOrigin(text.getLocalBounds().left + text.getLocalBounds().width / 2, text.getLocalBounds().top + text.getLocalBounds().height / 2);
     // Assigning the text with the center of the button
@@ -522,10 +657,20 @@ void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& o
 }
 
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu){
-    if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
+    if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
+    {
         options_exit_button.setColor(Color :: Red);
         if (Mouse::isButtonPressed(Mouse::Left))
-            current_screen = "main menu";
+        {
+            if (current_screen == "options_in_game")
+            {
+                current_screen = "levels";
+            }
+            else if (current_screen == "options")
+            {
+                current_screen = "main menu";
+            }
+        }
     } 
     else
         options_exit_button.setColor(Color :: White);
@@ -557,4 +702,56 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
              slider[1].setPosition(po.x, slider[1].getPosition().y);
              music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
         }
+}
+
+void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
+    // Shape of cursor
+    cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
+    cli_text.setPosition(rectangle.getPosition());
+    cli_text_final.setFillColor(Color::White);
+    cli_text_final.setString(final_cli_input);
+    cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+7);
+}
+
+void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
+    edit_text.setString(edit_input + (show_cursor ? '|' : ' '));
+    edit_text.setPosition(rectangle.getPosition().x+7, rectangle.getPosition().y+90);
+    edit_text.setFillColor(Color::White);
+}
+
+void createEditWindowShape(RectangleShape &form){
+    form.setSize(Vector2f(500,600));
+    form.setFillColor(Color(0,116,185));
+    form.setOutlineThickness(8);
+    form.setOutlineColor(Color::Black);
+    form.setPosition(80,45);
+}
+
+void createCliOutputShape(RectangleShape &form){
+    form.setSize(Vector2f(650,60));
+    form.setFillColor(Color::Black);
+    form.setOutlineThickness(5);
+    form.setOutlineColor(Color(241, 196, 15));
+    form.setPosition(1200,900);
+}
+
+void createCliInputShape(RectangleShape &form){
+    form.setSize(Vector2f(650,200));
+    form.setFillColor(Color::Black);
+    form.setOutlineThickness(5);
+    form.setOutlineColor(Color(241, 196, 15));
+    form.setPosition(1200,700);
+}
+
+bool checkInputEquality(string& edit_window_input, string& checker){
+    if(edit_window_input == checker)
+    {
+        // cout<<"ye";
+        return 1; 
+    }
+    else
+    {
+        // cout<<"da";
+        return 0;
+    }
 }
