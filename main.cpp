@@ -115,11 +115,13 @@ int main()
     music.setVolume(0);
 
     // Command line interface (CLI)
-    string user_cli_input, final_cli_input;
+    RectangleShape cli_output_shape, cli_input_shape;
+    string user_cli_input, final_cli_input,check_cli_input,cli_commit="git commit";
     Text cli_text("", cli_font), cli_text_final("", cli_font);
+    string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
     bool show_cli_cursor = 0, cli_selected = 0;
     Clock cursor_clock;
-    RectangleShape cli_output_shape, cli_input_shape;
+    
     
     // Edit Window
     RectangleShape edit_window_shape;
@@ -326,8 +328,18 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
+                        
                         final_cli_input += ("$ "+ user_cli_input + "\n");
+                        check_cli_input=user_cli_input;
+                        bool check= checkInputEquality(check_cli_input,cli_commit);
+                        if(check){
+                            final_cli_input.clear();
+                            final_cli_input = (cli_text_commitm+'\n');
+                
+                         } 
                         user_cli_input.clear();
+
+
                     }
                 }
                 if(edit_window_selected)
@@ -437,6 +449,7 @@ int main()
         }
         else if(current_screen == "levels")
         {   
+            
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
             createEditWindowShape(edit_window_shape);
@@ -460,7 +473,8 @@ int main()
             window.draw(cli_text);
             window.draw(edit_window_save_button);
             window.draw(edit_window_save_text);
-            window.draw(cli_text_final);  
+            window.draw(cli_text_final); 
+
             window.draw(game_window_back_button);
             window.draw(game_window_back_text);   
             window.draw(game_window_options_button);
@@ -707,10 +721,11 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
     // Shape of cursor
     cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(rectangle.getPosition());
+    cli_text.setPosition(rectangle.getPosition().x+7, rectangle.getPosition().y+7);
     cli_text_final.setFillColor(Color::White);
     cli_text_final.setString(final_cli_input);
     cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+7);
+   // cout<<user_cli_input<<'\n'<<final_cli_input;
 }
 
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
@@ -746,7 +761,7 @@ void createCliInputShape(RectangleShape &form){
 bool checkInputEquality(string& edit_window_input, string& checker){
     if(edit_window_input == checker)
     {
-        // cout<<"ye";
+       //  cout<<"ye";
         return 1; 
     }
     else
