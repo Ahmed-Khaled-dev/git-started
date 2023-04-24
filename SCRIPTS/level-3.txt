@@ -1,0 +1,10 @@
+Look at all the commits you have; you must be proud of yourself!
+Now as mentioned before our friend (the Head) is looking at our current code.
+But now you need to look at a previous version of your code, what do we need to do?
+We need to move the Head to the commit we want.
+Each commit has a specified number to show it, this number is called "commit hash"
+We will use a new command which is (git checkout <commit hash>)
+Now, we want to checkout to our first commit.
+Write in the console: "git checkout" and the "hash" of that commit.  (Wait for user input).
+Great job! Now let's checkout again to our last commit.
+The "git checkout" command has a lot of benefits that you will discover more into the next levels.
