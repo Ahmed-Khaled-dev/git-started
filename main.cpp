@@ -259,7 +259,7 @@ int main()
                     }
                     if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
-                        current_screen = "options";
+                        current_screen = "options_in_game";
                     }
                     if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "main menu") 
                     {
@@ -481,6 +481,36 @@ int main()
             window.draw(music_text.text);
             window.draw(options_exit_button);
         }
+        else if(current_screen == "options_in_game")
+        {
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
+            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop);
+            controlSfxAndMusicVolume(sfx_text, music , pop, slider_bar, slider, option_menu, mouse_cursor);
+            drawDialogue(window, dialogue_box);
+            createCliInputShape(cli_input_shape);
+            createEditWindowShape(edit_window_shape);
+            createCliOutputShape(cli_output_shape);
+            window.draw(dialogue_box.body_shape);
+            window.draw(edit_window_shape);
+            window.draw(cli_input_shape);
+            window.draw(cli_output_shape);
+            window.draw(dialogue_box.title_shape);
+            window.draw(dialogue_box.title);   
+            window.draw(dialogue_box.sprite);
+            window.draw(dialogue_text.script_text);
+            window.draw(dialogue_text.continuation_text);
+            window.draw(edit_window_text);
+            window.draw(cli_text);
+            window.draw(cli_text_final); 
+            window.draw(edit_window_title);
+            window.draw(edit_window_title_text);
+            window.draw(option_menu);
+            for (int i = 0; i < 2; i++)     
+                window.draw(slider[i]);;
+            window.draw(sfx_text.text);
+            window.draw(music_text.text);
+            window.draw(options_exit_button);
+        }
         window.display();
     }
     }
@@ -627,10 +657,20 @@ void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& o
 }
 
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu){
-    if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
+    if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
+    {
         options_exit_button.setColor(Color :: Red);
         if (Mouse::isButtonPressed(Mouse::Left))
-            current_screen = "main menu";
+        {
+            if (current_screen == "options_in_game")
+            {
+                current_screen = "levels";
+            }
+            else if (current_screen == "options")
+            {
+                current_screen = "main menu";
+            }
+        }
     } 
     else
         options_exit_button.setColor(Color :: White);
