@@ -129,7 +129,7 @@ int main()
     string user_cli_input, final_cli_input,check_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0;
+    bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_check=0;
     Clock cursor_clock;
     deque <string> command_check={"git init", "git commit","git checkout","git pull"};
     
@@ -345,29 +345,40 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                        if((!user_cli_input.empty()) && correct_command && command_check[0]=="git commit")
+                        if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit")
                         {
                             final_cli_input="commit successful \n"; 
                             string commit_message=user_cli_input;
                             user_cli_input.clear();
+                            command_check.push_back(command_check[0]);
                             command_check.pop_front();
                             correct_command=0;
                         }
                         if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                         {
-                        final_cli_input += ("$ "+ user_cli_input + "\n");
-                        check_cli_input=user_cli_input;
-                        correct_command= checkInputEquality(check_cli_input,command_check[0]);
+                             check_cli_input=user_cli_input;
+                             correct_command= checkInputEquality(check_cli_input,command_check[0]);
+
+                            if(correct_command){
+                                final_cli_input += ("$ "+ user_cli_input + "\n");
+                                
+                            }
+                            else
+                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                       
+                        
                         if(correct_command)
                         {
+                            command_check.push_back(command_check[0]);
                             if(command_check[0]=="git commit")
                             {
                             final_cli_input.clear();
                             final_cli_input = (cli_text_commitm+'\n');
+                            commit_check=1;
                             }
                             else 
                             {
-                            final_cli_input+= "\t\t that was successful \n"; 
+                            //command_check.push_back(command_check[0]);
                             command_check.pop_front();
                             correct_command=1;
                             }
