@@ -2,6 +2,8 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
+#include <deque>
+#include <vector>
 
 using namespace std;
 using namespace sf;
@@ -55,9 +57,9 @@ struct optionMenu {
     String option_font_type = "resources/fonts/minecraft_font.ttf";
     const int short  size = 60;
 };
-
+bool correct_command=0;
 // Functions declaration
-bool checkInputEquality(string& edit_window_input, string&);
+bool checkInputEquality(string& edit_window_input, string&command_check);
 void createCliInputShape(RectangleShape &form);
 void createCliOutputShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
@@ -116,12 +118,12 @@ int main()
 
     // Command line interface (CLI)
     RectangleShape cli_output_shape, cli_input_shape;
-    string user_cli_input, final_cli_input,check_cli_input,cli_commit="git commit";
+    string user_cli_input, final_cli_input,check_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0,check=0;
+    bool show_cli_cursor = 0, cli_selected = 0;
     Clock cursor_clock;
-    
+    deque <string>command_check={"git init", "git commit","git checkout","git pull"};
     
     // Edit Window
     RectangleShape edit_window_shape;
@@ -283,7 +285,7 @@ int main()
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
-                        if (isprint(event.text.unicode) && (check)){     
+                        if (isprint(event.text.unicode) && (correct_command)){     
                             edit_window_input += event.text.unicode;
 
                         }
@@ -334,20 +336,31 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                        if((!user_cli_input.empty())&&check){
+                        if((!user_cli_input.empty())&&correct_command && command_check[0]=="git commit"){
                             
-                            final_cli_input="commit successful\n";
+                            final_cli_input="commit successful \n"; 
                             string commit_message=user_cli_input;
                             user_cli_input.clear();
-                            check=false;
+                            command_check.pop_front();
+                            correct_command=false;
                         }
                         if(!user_cli_input.empty()){
                         final_cli_input += ("$ "+ user_cli_input + "\n");
                         check_cli_input=user_cli_input;
-                        check= checkInputEquality(check_cli_input,cli_commit);
-                        if(check){
+                        correct_command= checkInputEquality(check_cli_input,command_check[0]);
+                        if(correct_command){
+   
+                            if(command_check[0]=="git commit"){
                             final_cli_input.clear();
                             final_cli_input = (cli_text_commitm+'\n');
+                            }
+                            else 
+                            {
+                            final_cli_input+= "\t\t that was successful \n"; 
+                            command_check.pop_front();
+                            correct_command=false;
+                            }
+
                 
                          } 
                         user_cli_input.clear();
@@ -771,8 +784,8 @@ void createCliInputShape(RectangleShape &form){
     form.setPosition(1200,700);
 }
 
-bool checkInputEquality(string& edit_window_input, string& checker){
-    if(edit_window_input == checker)
+bool checkInputEquality(string& edit_window_input, string& command_check){
+    if(edit_window_input == command_check)
     {
        //  cout<<"ye";
         return 1; 
