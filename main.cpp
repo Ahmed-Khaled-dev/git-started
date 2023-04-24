@@ -200,7 +200,7 @@ int main()
     option_menu.setTexture(option_menu_texture);
     options_exit_button.setTexture(options_exit_button_texture);
     option_menu.setOrigin(400, 300);
-    option_menu.setPosition(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
+    option_menu.setPosition(window.getSize().x / 2.0, window.getSize().y / 2.0);
     options_exit_button.setPosition(option_menu.getGlobalBounds().left + 739, option_menu.getGlobalBounds().top + 16);
     SoundBuffer pop_effect;
     pop_effect.loadFromFile("resources/sound_effects/pop.wav");
@@ -694,8 +694,6 @@ void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Recta
 // This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
 // As the X-coordinate increases, the volume will also increase accordingly.
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
-    Mouse mouse;
-    Vector2i po = mouse.getPosition();
         if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
             slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
             pop.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
