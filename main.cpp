@@ -267,8 +267,8 @@ int main()
     {
         Mouse mouse;
         Vector2i position = mouse.getPosition(window);
-        Vector2f worldPos = window.mapPixelToCoords(position);
-        mouse_cursor.setPosition(worldPos.x, worldPos.y);
+        Vector2f world_pos = window.mapPixelToCoords(position);
+        mouse_cursor.setPosition(world_pos.x, world_pos.y);
         while (window.pollEvent(event))
         {
             if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
