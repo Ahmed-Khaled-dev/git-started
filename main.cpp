@@ -220,7 +220,8 @@ int main()
     {
         Mouse mouse;
         Vector2i position = mouse.getPosition(window);
-        mouse_cursor.setPosition(position.x, position.y);
+        Vector2f worldPos = window.mapPixelToCoords(position);
+        mouse_cursor.setPosition(worldPos.x, worldPos.y);
         while (window.pollEvent(event))
         {
             if (event.type == Event::Closed || current_screen == "close") 
@@ -421,7 +422,7 @@ int main()
                 }
             }
         }
-        window.setView(view);
+        
         window.clear(Color(223, 221, 221));
         if(current_screen == "main menu")
         {
@@ -511,6 +512,7 @@ int main()
             window.draw(music_text.text);
             window.draw(options_exit_button);
         }
+        window.setView(view);
         window.display();
     }
     }
@@ -695,11 +697,11 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sp
     Mouse mouse;
     Vector2i po = mouse.getPosition();
         if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
-            slider[0].setPosition(po.x, slider[0].getPosition().y);
+            slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
             pop.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
             }
         if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
-             slider[1].setPosition(po.x, slider[1].getPosition().y);
+             slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
              music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
         }
 }
