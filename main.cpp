@@ -87,10 +87,11 @@ void playMusicFromFile(string file_path, Music& music);
 void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
-void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
-void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
+void setSfxAndMusicTexts(optionMenu& sfx_text, Sprite& option_menu);
+void controlSfxAndMusicTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& Event);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor);
+void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
 void showContinuationMessage(dialogueText &dialogue_text);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created);
@@ -226,12 +227,13 @@ int main()
     option_menu.setOrigin(400, 300);
     option_menu.setPosition(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
     options_exit_button.setPosition(option_menu.getGlobalBounds().left + 739, option_menu.getGlobalBounds().top + 16);
-    optionMenu sfx_text, music_text;
+    optionMenu sfx_text;
     slider[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 414);
     slider[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 245);
     slider_bar[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 409);
     slider_bar[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 240);
-    setSfxAndMusicTexts(sfx_text, music_text, option_menu);
+    bool change_music_volume = 0, change_sfx_volume = 0;
+    setSfxAndMusicTexts(sfx_text, option_menu);
     // Option menu
 
     // Graph
@@ -547,21 +549,22 @@ int main()
         else if(current_screen == "options")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop_commit);
-            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor);
+            controlSfxAndMusicTexts(sfx_text, mouse_cursor, pop_commit, event);
+            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
+            setSliderMoveLimits(slider_bar, slider);
             window.draw(main_menu);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)     
                 window.draw(slider[i]);;
             window.draw(sfx_text.text);
-            window.draw(music_text.text);
             window.draw(options_exit_button);
         }
         else if(current_screen == "options_in_game")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, music_text, mouse_cursor, pop_commit);
-            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor);
+            controlSfxAndMusicTexts(sfx_text, mouse_cursor, pop_commit, event);
+            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
+            setSliderMoveLimits(slider_bar, slider);
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
             createEditWindowShape(edit_window_shape);
@@ -588,7 +591,6 @@ int main()
             for (int i = 0; i < 2; i++)     
                 window.draw(slider[i]);;
             window.draw(sfx_text.text);
-            window.draw(music_text.text);
             window.draw(options_exit_button);
         }
         window.setView(view);
@@ -722,19 +724,13 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setPosition(x_position, y_position);
 }
 
-void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu){
-    music_text.font.loadFromFile(sfx_text.option_font_type);
+void setSfxAndMusicTexts(optionMenu& sfx_text, Sprite& option_menu){
     sfx_text.font.loadFromFile(sfx_text.option_font_type);
-    music_text.text.setFont(music_text.font);
     sfx_text.text.setFont(sfx_text.font);
-    music_text.text.setString("MUSIC");
     sfx_text.text.setString("SFX");
-    music_text.text.setFillColor(Color :: White);
     sfx_text.text.setFillColor(Color :: White);
-    music_text.text.setCharacterSize(music_text.size);
     sfx_text.text.setCharacterSize(sfx_text.size);
-    sfx_text.text.setPosition(option_menu.getGlobalBounds().left + 375, option_menu.getGlobalBounds().top + 321);
-    music_text.text.setPosition(option_menu.getGlobalBounds().left + 327, option_menu.getGlobalBounds().top + 163);
+    sfx_text.text.setPosition(option_menu.getGlobalBounds().left + 357, option_menu.getGlobalBounds().top + 321);
 }
 
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu){
@@ -757,31 +753,49 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
         options_exit_button.setColor(Color :: White);
 }
 
-void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop){
+void controlSfxAndMusicTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& event){
     if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
-        sfx_text.text.setFillColor(Color :: Red);
+        sfx_text.text.setFillColor({50, 50, 50});
     else
-        sfx_text.text.setFillColor(Color :: White);
-    if (music_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
-        music_text.text.setFillColor(Color :: Red);
-    else
-        music_text.text.setFillColor(Color :: White);
+        sfx_text.text.setFillColor(Color :: Black);
     if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)))
-        pop.play();
+            pop.play();
+}
+
+void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]){
+    if (slider[0].getPosition().x < slider_bar[0].getGlobalBounds().left)
+        slider[0].setPosition(slider_bar[0].getGlobalBounds().left, slider[0].getPosition().y);
+    if (slider[0].getPosition().x > (slider_bar[0].getGlobalBounds().left + 499))
+        slider[0].setPosition(slider_bar[0].getGlobalBounds().left + 499, slider[0].getPosition().y);
+    if (slider[1].getPosition().x < slider_bar[1].getGlobalBounds().left)
+        slider[1].setPosition(slider_bar[1].getGlobalBounds().left, slider[1].getPosition().y);
+    if (slider[1].getPosition().x > (slider_bar[1].getGlobalBounds().left + 499))
+        slider[1].setPosition(slider_bar[1].getGlobalBounds().left + 499, slider[1].getPosition().y);
 }
 
 // This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
 // As the X-coordinate increases, the volume will also increase accordingly.
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
-    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume){
+    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)))
+        change_sfx_volume = 1;
+    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)))
+        change_music_volume = 1;
+    if (event.type == Event :: MouseButtonReleased && change_music_volume)
+        change_music_volume = 0;
+    if (event.type == Event :: MouseButtonReleased && change_sfx_volume)
+        change_sfx_volume = 0;
+    if (change_sfx_volume && !change_music_volume){
         slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
         pop_commit.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
     }
-    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
+    if (change_music_volume && !change_sfx_volume){
         slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
         music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
     }
+
+    
 }
+
 
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
     // Shape of cursor
