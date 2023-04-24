@@ -40,7 +40,3 @@ tempCodeRunnerFile.cpp
 *.exe
 *.out
 *.app
-<<<<<<< HEAD
-=======
-*.sh
->>>>>>> a879673 (Added ability to create first commit/circle)

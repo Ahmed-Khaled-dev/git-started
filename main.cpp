@@ -6,21 +6,28 @@
 using namespace std;
 using namespace sf;
 
-unsigned short int head_frame_index_in_the_sprite = 0, delay_for_idle_animation = 0, delay_for_the_movment_to_the_lastest_commit = 0; //used for the animation
-unsigned short int delay_for_smoke_animation = 0, smokeFrameInTheSprite = 0;
-short int head_travel_distance = 0, distance_to_the_newest_commit = (50 + 135); //distance between the head and the commit
-short int index_of_the_last_commit = 0; //To get the coordinates of the last commit
-short int Xvelocity = 3, Yvelocity = 3;
+unsigned short int graph_smoke_animation_delay = 0, current_smoke_animation_frame = 0;
+short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
+
+struct graphHead{
+    // We have 4 animation frames for the octocat movement (0, 1, 2, 3)
+    unsigned short int current_animation_frame = 0, idle_animation_delay = 0;
+    unsigned short int latest_commit_movement_delay = 0;
+    short int distance_to_checkout_commit = 0, distance_to_latest_commit = (50 + 135);
+    short int x_border_deflection_velocity = 3, y_border_deflection_velocity = 3;
+}graph_head;
+
 struct commit {
     string message;
     Sprite sprite;
 };
+
 struct dialogueBox
 {
     Font font;
@@ -87,11 +94,11 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, So
 void showContinuationMessage(dialogueText &dialogue_text);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void headDeflection(Sprite& head, bool& window_collision, bool& go_back);
-void headIdleAnimation (Sprite& head, bool& go_back);
+void headIdleAnimation(Sprite& head, bool& go_back);
 void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
-void headAnimationAndMovement (Sprite& head, short int& head_travel_distance);
+void headAnimationAndMovement(Sprite& head);
 void headGoToTheNewestCommit(Sprite& head, bool& go_back);
-void makeSmoke (Sprite& smoke, bool& create_smoke);
+void makeSmoke(Sprite& smoke, bool& create_smoke);
 
 
 int main()
@@ -514,7 +521,7 @@ int main()
             headDeflection(head, window_collision, go_back);
             headGoToTheNewestCommit(head, go_back);
             calculateHeadDistance(head, position, commits);
-            headAnimationAndMovement (head, head_travel_distance);
+            headAnimationAndMovement(head);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
@@ -768,15 +775,15 @@ void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Recta
 // This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
 // As the X-coordinate increases, the volume will also increase accordingly.
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor){
-        if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
-            slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
-            pop.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
-            pop_commit.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
-            }
-        if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
-             slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
-             music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
-        }
+    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
+        slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
+        pop.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+        pop_commit.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+    }
+    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){
+            slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
+            music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+    }
 }
 
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
@@ -821,15 +828,15 @@ void createCliInputShape(RectangleShape &form){
 void makeSmoke (Sprite& smoke, bool& create_smoke){
     if (create_smoke){
         smoke.setScale(0.2, 0.2);
-        smoke.setTextureRect(IntRect(smokeFrameInTheSprite * 1380.571428571429, 0, 1380.571428571429, 2000.000));
+        smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
         smoke.setPosition(window.getSize().x / 2.0 - 90, window.getSize().y / 3.0 - 170);
-        delay_for_smoke_animation++;
-        if (delay_for_smoke_animation >= 3){
-            smokeFrameInTheSprite++;
-            delay_for_smoke_animation = 0;
+        graph_smoke_animation_delay++;
+        if (graph_smoke_animation_delay >= 3){
+            current_smoke_animation_frame++;
+            graph_smoke_animation_delay = 0;
     }
-        if (smokeFrameInTheSprite > 6){
-            smokeFrameInTheSprite = 0;
+        if (current_smoke_animation_frame > 6){
+            current_smoke_animation_frame = 0;
             create_smoke = 0;
         }
     }
@@ -869,17 +876,17 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
 void headGoToTheNewestCommit(Sprite& head, bool& go_back) {
     if (go_back)
     {
-        delay_for_the_movment_to_the_lastest_commit++;
-        if (distance_to_the_newest_commit > 0 && delay_for_the_movment_to_the_lastest_commit >= 10)
+        graph_head.latest_commit_movement_delay++;
+        if (graph_head.distance_to_latest_commit > 0 && graph_head.latest_commit_movement_delay >= 10)
         {
             head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
             head.move(5, 0);
-            distance_to_the_newest_commit -= 5;
+            graph_head.distance_to_latest_commit -= 5;
         }
-        if (distance_to_the_newest_commit <= 0) {
-            distance_to_the_newest_commit = (50 + 135);
+        if (graph_head.distance_to_latest_commit <= 0) {
+            graph_head.distance_to_latest_commit = (50 + 135);
             go_back = 0;
-            delay_for_the_movment_to_the_lastest_commit = 0;
+            graph_head.latest_commit_movement_delay = 0;
         }
     }
 }
@@ -887,26 +894,26 @@ void headGoToTheNewestCommit(Sprite& head, bool& go_back) {
 void headDeflection(Sprite& head, bool& window_collision, bool& go_back){
      if (!go_back) //Sprite animation
     {
-        head.setTextureRect(IntRect(head_frame_index_in_the_sprite * 200.25, 0, 200.25, 301));
+        head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         if (window_collision) {
-            head.setPosition(head.getPosition().x + Xvelocity, head.getPosition().y + Yvelocity);
+            head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
             if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(window.getSize().x - (50 * 0.8)))
-                Xvelocity *= -1;
+                graph_head.x_border_deflection_velocity *= -1;
             if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(window.getSize().y - (100 * 0.8)))
-                Yvelocity *= -1;
+                graph_head.y_border_deflection_velocity *= -1;
         }
     }
 }
 void headIdleAnimation (Sprite& head, bool& go_back){
     if (!go_back){
-         head.setTextureRect(IntRect(head_frame_index_in_the_sprite * 200.25, 0, 200.25, 301));
-        delay_for_idle_animation++;
-        if (delay_for_idle_animation >= 20){
-            head_frame_index_in_the_sprite++;
-            delay_for_idle_animation = 0;
+         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
+        graph_head.idle_animation_delay++;
+        if (graph_head.idle_animation_delay >= 20){
+            graph_head.current_animation_frame++;
+            graph_head.idle_animation_delay = 0;
         }
-        if (head_frame_index_in_the_sprite == 2)
-            head_frame_index_in_the_sprite = 0;
+        if (graph_head.current_animation_frame == 2)
+            graph_head.current_animation_frame = 0;
     }
 }
 
@@ -916,36 +923,36 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
     {
         if (commit[i].sprite.getGlobalBounds().contains(Vector2f(position_of_mouse.x, position_of_mouse.y)) && (Mouse::isButtonPressed(Mouse::Left))) {
             if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0) {
-                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
             }
             else if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x > 0)
             {
-                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - 40;
             }
             else if (i != 0 && head.getPosition().x - commit[i].sprite.getPosition().x > 0)
             {
-                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
             }
             else if (i != 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0)
             {
-                head_travel_distance = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
+                graph_head.distance_to_checkout_commit = head.getPosition().x - commit[i].sprite.getPosition().x - (40 + 125);
             }
         }
     }
 }
 
-void headAnimationAndMovement (Sprite& head, short int& head_travel_distance){
-     if (head_travel_distance < 0)
+void headAnimationAndMovement (Sprite& head){
+     if (graph_head.distance_to_checkout_commit < 0)
     {
         head.move(5, 0);
         head.setTextureRect(IntRect(2 * 200.25, 0, 200.25, 301));
-        head_travel_distance += 5;
+        graph_head.distance_to_checkout_commit += 5;
     }
-    else if (head_travel_distance > 0)
+    else if (graph_head.distance_to_checkout_commit > 0)
     {
         head.move(-5, 0);
         head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
-        head_travel_distance -= 5;
+        graph_head.distance_to_checkout_commit -= 5;
     }
 }
 
