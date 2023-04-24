@@ -64,7 +64,7 @@ struct optionMenu {
     const int short  size = 60;
 };
 
-bool correct_command =0;
+bool correct_command =0,stop_writing=0;
 // Functions declaration
 bool checkInputEquality(string& edit_window_input, string&command_check);
 void createCliInputShape(RectangleShape &form);
@@ -345,7 +345,7 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                        if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit")
+                        if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit"&&(!stop_writing))
                         {
                             final_cli_input="commit successful \n"; 
                             string commit_message=user_cli_input;
@@ -354,13 +354,14 @@ int main()
                             command_check.pop_front();
                             correct_command=0;
                         }
-                        if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
+                        if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1 &&(!stop_writing))
                         {
                              check_cli_input=user_cli_input;
                              correct_command= checkInputEquality(check_cli_input,command_check[0]);
 
                             if(correct_command){
                                 final_cli_input += ("$ "+ user_cli_input + "\n");
+                                stop_writing=1;
                                 
                             }
                             else
@@ -623,7 +624,7 @@ void showContinuationMessage(continuationMessage& continuation_message)
         continuation_message.continuation_fade_time = Time::Zero;
     }
 
-    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (gitdialogue_text.new_script[dialogue_text.current_script_index].first==0 || correct_command==1))
+    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (dialogue_text.new_script[dialogue_text.current_script_index].first==0 || correct_command==1))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
