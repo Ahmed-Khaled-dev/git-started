@@ -674,7 +674,7 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
 
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
     edit_text.setString(edit_input + (show_cursor ? '|' : ' '));
-    edit_text.setPosition(rectangle.getPosition().x+7, rectangle.getPosition().y+7);
+    edit_text.setPosition(rectangle.getPosition().x+7, rectangle.getPosition().y+90);
     edit_text.setFillColor(Color::White);
 }
 
