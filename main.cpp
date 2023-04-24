@@ -278,7 +278,8 @@ int main()
             { 
                 if (edit_window_selected)
                 {
-                    if (edit_window_input.length() < 580 && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
+                    const short int edit_window_max_chars = 600;
+                    if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
                         if (isprint(event.text.unicode))     
                             edit_window_input += event.text.unicode;
