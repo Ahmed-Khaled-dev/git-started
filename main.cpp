@@ -343,6 +343,8 @@ int main()
                             user_cli_input.pop_back();
                      }
                     // User clicks enter and the text will be transfered at the top of the screen
+                    if(dialogue_text.new_script[dialogue_text.current_script_index+1].first)
+                        stop_writing=0;
                     if (event.key.code == Keyboard::Return) 
                     {
                         if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit"&&(!stop_writing))
