@@ -123,7 +123,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
 void headDeflection(Sprite& head, bool& window_collision, bool& go_back);
 void headIdleAnimation (Sprite& head, bool& go_back);
 void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
-void headAnimationAndMovment (Sprite& head, short int& head_travel_distance);
+void headAnimationAndMovement (Sprite& head, short int& head_travel_distance);
 void headGoToTheNewestCommit(Sprite& head, bool& go_back);
 void makeSmoke (Sprite& smoke, bool& create_smoke);
 
@@ -635,7 +635,7 @@ int main()
             headDeflection(head, window_collision, go_back);
             headGoToTheNewestCommit(head, go_back);
             calculateHeadDistance(head, position, commits);
-            headAnimationAndMovment (head, head_travel_distance);
+            headAnimationAndMovement (head, head_travel_distance);
             window.draw(dialogue_box.shape);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
@@ -1086,7 +1086,7 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
     }
 }
 
-void headAnimationAndMovment (Sprite& head, short int& head_travel_distance){
+void headAnimationAndMovement (Sprite& head, short int& head_travel_distance){
      if (head_travel_distance < 0)
     {
 
