@@ -93,11 +93,11 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor);
 void showContinuationMessage(dialogueText &dialogue_text);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
-void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_ball_created);
-void headIdleAnimation(Sprite& head, bool& additional_ball_created);
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created);
+void headIdleAnimation(Sprite& head, bool& additional_commit_created);
 void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
 void headAnimationAndMovement(Sprite& head);
-void moveHeadToLatestCommit(Sprite& head, bool& additional_ball_created);
+void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 
 int main()
@@ -249,7 +249,7 @@ int main()
     head.setScale(0.8, 0.8);
     head.setOrigin(100.125, 150.5);
     head.setPosition(200, 200);
-    bool additional_ball_created = 0;
+    bool additional_commit_created = 0;
     bool window_collision_mode = 1;
     bool should_create_smoke = 0;
     unsigned short int commits_count = 0;
@@ -280,11 +280,11 @@ int main()
                     head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
                 else if (index_of_the_last_commit == 1) {
                     head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
-                    additional_ball_created = 1;
+                    additional_commit_created = 1;
                 }
                 else {
                     head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
-                    additional_ball_created = 1;
+                    additional_commit_created = 1;
                 }
             }
             if (event.type == Event::Closed || current_screen == "close") 
@@ -511,9 +511,9 @@ int main()
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
             showContinuationMessage(dialogue_text);
             setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
-            headIdleAnimation(head, additional_ball_created);
-            headBorderDeflection(head, window_collision_mode, additional_ball_created);
-            moveHeadToLatestCommit(head, additional_ball_created);
+            headIdleAnimation(head, additional_commit_created);
+            headBorderDeflection(head, window_collision_mode, additional_commit_created);
+            moveHeadToLatestCommit(head, additional_commit_created);
             calculateHeadDistance(head, position, commits);
             headAnimationAndMovement(head);
             window.draw(dialogue_box.body_shape);
@@ -566,6 +566,7 @@ int main()
             createCliInputShape(cli_input_shape);
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
+            headIdleAnimation(head, additional_commit_created);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
@@ -580,6 +581,9 @@ int main()
             window.draw(cli_text_final); 
             window.draw(edit_window_title);
             window.draw(edit_window_title_text);
+            for (unsigned short int i = 0; i < commits_count; i++)
+                window.draw(commits[i].sprite);
+            window.draw(head);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)     
                 window.draw(slider[i]);;
@@ -865,8 +869,8 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commits[commits_count] = new_commit;
     commits_count++;
 }
-void moveHeadToLatestCommit(Sprite& head, bool& additional_ball_created) {
-    if (additional_ball_created)
+void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created) {
+    if (additional_commit_created)
     {
         graph_head.latest_commit_movement_delay++;
         if (graph_head.distance_to_latest_commit > 0 && graph_head.latest_commit_movement_delay >= 10)
@@ -877,14 +881,14 @@ void moveHeadToLatestCommit(Sprite& head, bool& additional_ball_created) {
         }
         if (graph_head.distance_to_latest_commit <= 0) {
             graph_head.distance_to_latest_commit = (50 + 135);
-            additional_ball_created = 0;
+            additional_commit_created = 0;
             graph_head.latest_commit_movement_delay = 0;
         }
     }
 }
 
-void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_ball_created){
-    if (!additional_ball_created) 
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created){
+    if (!additional_commit_created) 
     {
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         if (window_collision_mode) {
@@ -896,8 +900,8 @@ void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& addit
         }
     }
 }
-void headIdleAnimation(Sprite& head, bool& additional_ball_created){
-    if (!additional_ball_created){
+void headIdleAnimation(Sprite& head, bool& additional_commit_created){
+    if (!additional_commit_created){
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         graph_head.idle_animation_delay++;
         if (graph_head.idle_animation_delay >= 20){
