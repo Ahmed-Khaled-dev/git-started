@@ -850,7 +850,7 @@ bool checkInputEquality(string& input, string& correct_string ,bool& check_edit_
     {
        // cout<<"ye";
         correct_string=input;
-        cout<<input;
+        //cout<<input;
         return 1; 
     }
     else
