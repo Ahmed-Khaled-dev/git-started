@@ -54,7 +54,7 @@ struct dialogueText
     vector <pair<bool,string>> new_script  =  /* if bool = 0 then no command upcoming */
     {{0 ,"This is our game git-started\nwelcome"},{0 ,"try typing the command git init"},{1 ,"congrats that was correct!"}};
     int current_script_index = 0;
-    bool script_ended = 0;     // the whole vector                                    
+    bool script_ended = 0;     // the whole vector                                   
 }dialogue_text;
 
 struct optionMenu {
@@ -66,7 +66,7 @@ struct optionMenu {
 
 bool correct_command =0,stop_writing=0;
 // Functions declaration
-bool checkInputEquality(string& edit_window_input, string&command_check);
+bool checkInputEquality(string& edit_window_input, string&correct_string);
 void createCliInputShape(RectangleShape &form);
 void createCliOutputShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
@@ -129,10 +129,9 @@ int main()
     string user_cli_input, final_cli_input,check_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_check=0;
+    bool show_cli_cursor = 0, cli_selected = 0,commit_command_entered=0;
     Clock cursor_clock;
-    deque <string> command_check={"git init", "git commit","git checkout","git pull"};
-    
+    deque <string> all_lvls_commands = {"git init", "git commit","git checkout","git pull"};
     // Edit Window
     RectangleShape edit_window_shape;
     string edit_window_input = "type here", checker = "Hi, this is for check";
@@ -347,19 +346,19 @@ int main()
                         stop_writing=0;
                     if (event.key.code == Keyboard::Return) 
                     {
-                        if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit"&&(!stop_writing))
+                        if((!user_cli_input.empty()) && correct_command &&commit_command_entered && all_lvls_commands[0]=="git commit"&&(!stop_writing))
                         {
                             final_cli_input="commit successful \n"; 
                             string commit_message=user_cli_input;
                             user_cli_input.clear();
-                            command_check.push_back(command_check[0]);
-                            command_check.pop_front();
+                            all_lvls_commands.push_back(all_lvls_commands[0]);
+                            all_lvls_commands.pop_front();
                             correct_command=0;
                         }
                         if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1 &&(!stop_writing))
                         {
                              check_cli_input=user_cli_input;
-                             correct_command= checkInputEquality(check_cli_input,command_check[0]);
+                             correct_command= checkInputEquality(check_cli_input,all_lvls_commands[0]);
 
                             if(correct_command){
                                 final_cli_input += ("$ "+ user_cli_input + "\n");
@@ -372,17 +371,17 @@ int main()
                         
                         if(correct_command)
                         {
-                            command_check.push_back(command_check[0]);
-                            if(command_check[0]=="git commit")
+                            all_lvls_commands.push_back(all_lvls_commands[0]);
+                            if(all_lvls_commands[0]=="git commit")
                             {
                             final_cli_input.clear();
                             final_cli_input = (cli_text_commitm+'\n');
-                            commit_check=1;
+                            commit_command_entered=1;
                             }
                             else 
                             {
-                            //command_check.push_back(command_check[0]);
-                            command_check.pop_front();
+                            //all_lvls_commands.push_back(all_lvls_commands[0]);
+                            all_lvls_commands.pop_front();
                             correct_command=1;
                             }
                          } 
@@ -816,8 +815,8 @@ void createCliInputShape(RectangleShape &form){
     form.setPosition(1200,700);
 }
 
-bool checkInputEquality(string& edit_window_input, string& command_check){
-    if(edit_window_input == command_check)
+bool checkInputEquality(string& input, string& correct_string){
+    if(input == correct_string)
     {
        //  cout<<"ye";
         return 1; 
