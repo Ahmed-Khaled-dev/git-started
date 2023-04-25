@@ -477,7 +477,6 @@ int main()
                 }
             }
            // Check if down arrow (later space) key has been pressed
-           cout<<check_edit_window_changes<<"\n";
             if (Keyboard::isKeyPressed(Keyboard::Down))
             { 
 
