@@ -38,6 +38,7 @@ struct continuationMessage
     bool continuation_message_running = 0;
     bool sub_script_ended = 0;   // for the sub-strings inside vector
     string font_type = "resources/fonts/Roboto-Black.ttf";
+    bool commands_flag =0;
 }continuation_message;
 
 struct dialogueText
@@ -51,10 +52,10 @@ struct dialogueText
     double size = 32;
     double script_speed = 0.09f;
     String script_content = " ";
-    vector <pair<bool,string>> new_script  =  /* if bool = 0 then no command upcoming */
-    {{0 ,"This is our game git-started\nwelcome"},{0 ,"try typing the command git init"},{1 ,"congrats that was correct!"}};
+    vector <pair<bool,string>> new_script  =  /* if bool = 1 yeb2a paused untill el command el ablo is correct */
+    {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command *git init* without\nthe asterisks..."},{1 ,"try typing the command *git commit* without\nthe asterisks, then write commit name..."},{1 ,"congrats that was correct!"}};
     int current_script_index = 0;
-    bool script_ended = 0;     // the whole vector                                    
+    bool script_ended = 0;     // the whole vector 
 }dialogue_text;
 
 struct optionMenu {
@@ -64,7 +65,8 @@ struct optionMenu {
     const int short  size = 60;
 };
 
-bool correct_command =0;
+
+
 // Functions declaration
 bool checkInputEquality(string& edit_window_input, string&command_check);
 void createCliInputShape(RectangleShape &form);
@@ -132,7 +134,8 @@ int main()
     bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_check=0;
     Clock cursor_clock;
     deque <string> command_check={"git init", "git commit","git checkout","git pull"};
-    
+    bool correct_command =0;
+
     // Edit Window
     RectangleShape edit_window_shape;
     string edit_window_input = "type here", checker = "Hi, this is for check";
@@ -295,9 +298,7 @@ int main()
                     {
                         if (isprint(event.text.unicode) && (correct_command)){     
                             edit_window_input += event.text.unicode;
-
                         }
-                        
                         if (isprint(event.text.unicode))     
                             edit_window_input += event.text.unicode;
                         
@@ -345,7 +346,7 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return) 
                     {
-                        if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit")
+                        if((!user_cli_input.empty()) && correct_command &&commit_check && command_check[0]=="git commit") // add -m ?
                         {
                             final_cli_input="commit successful \n"; 
                             string commit_message=user_cli_input;
@@ -353,39 +354,43 @@ int main()
                             command_check.push_back(command_check[0]);
                             command_check.pop_front();
                             correct_command=0;
+                            continuation_message.commands_flag = 1;
                         }
                         if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                         {
-                             check_cli_input=user_cli_input;
-                             correct_command= checkInputEquality(check_cli_input,command_check[0]);
-
-                            if(correct_command){
+                            check_cli_input = user_cli_input;
+                            correct_command = checkInputEquality(check_cli_input,command_check[0]);
+                            if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
+                            {
                                 final_cli_input += ("$ "+ user_cli_input + "\n");
-                                
+                                continuation_message.commands_flag = 1; 
                             }
                             else
+                            {
                                 final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                                //continuation_message.commands_flag = 0; 
+                            }
                        
-                        
-                        if(correct_command)
-                        {
-                            command_check.push_back(command_check[0]);
-                            if(command_check[0]=="git commit")
+                             if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                             {
-                            final_cli_input.clear();
-                            final_cli_input = (cli_text_commitm+'\n');
-                            commit_check=1;
-                            }
-                            else 
-                            {
-                            //command_check.push_back(command_check[0]);
-                            command_check.pop_front();
-                            correct_command=1;
-                            }
-                         } 
-                        user_cli_input.clear();
+                                command_check.push_back(command_check[0]);
+                                if(command_check[0]=="git commit")
+                                {
+                                    final_cli_input.clear();
+                                    final_cli_input = (cli_text_commitm+'\n');
+                                    commit_check=1;
+                                    continuation_message.commands_flag = 0;
+                                }
+                                else 
+                                {
+                                    //command_check.push_back(command_check[0]);
+                                    command_check.pop_front();
+                                    correct_command=1;
+                                    continuation_message.commands_flag = 1;
+                                }
+                            } 
+                            user_cli_input.clear();
                         }
-
                     }
                 }
                 if(edit_window_selected)
@@ -477,16 +482,18 @@ int main()
                     dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++;
                 }
-                else if (dialogue_text.new_script[dialogue_text.current_script_index].first==1 && correct_command==1)
-                {
-                    dialogue_text.new_script[dialogue_text.current_script_index].first=0;
-                    dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
-                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    else if (dialogue_text.new_script[dialogue_text.current_script_index].first==1 && continuation_message.commands_flag==1)
                     {
+                        if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                     {
                         dialogue_text.script_ended = 1;
-                    }    
-                }
+                     } 
+                        dialogue_text.new_script[dialogue_text.current_script_index].first=0;
+                        dialogue_text.script_text.setString("");
+                        dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
+                        dialogue_text.current_script_index++;
+                        continuation_message.commands_flag = 0;
+                    }
             }
         }
         window.setView(view);
@@ -623,7 +630,7 @@ void showContinuationMessage(continuationMessage& continuation_message)
         continuation_message.continuation_fade_time = Time::Zero;
     }
 
-    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (gitdialogue_text.new_script[dialogue_text.current_script_index].first==0 || correct_command==1))
+    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (dialogue_text.new_script[dialogue_text.current_script_index].first==0 || continuation_message.commands_flag ==1))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
