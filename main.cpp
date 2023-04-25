@@ -758,8 +758,9 @@ void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& 
         sfx_text.text.setFillColor({50, 50, 50});
     else
         sfx_text.text.setFillColor(Color :: Black);
-    if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)))
+    if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){       
             pop.play();
+    }
 }
 
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]){
@@ -776,24 +777,25 @@ void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]){
 // This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
 // As the X-coordinate increases, the volume will also increase accordingly.
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume){
-    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)))
+    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (event.type == Event :: MouseButtonPressed))
         change_sfx_volume = 1;
-    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)))
+    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (event.type == Event :: MouseButtonPressed))
         change_music_volume = 1;
     if (event.type == Event :: MouseButtonReleased && change_music_volume)
         change_music_volume = 0;
     if (event.type == Event :: MouseButtonReleased && change_sfx_volume)
         change_sfx_volume = 0;
-    if (change_sfx_volume && !change_music_volume){
+    if (change_sfx_volume){
         slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
-        pop_commit.setVolume(((slider[0].getPosition().x - (option_menu.getGlobalBounds().left + 151) ) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+        pop_commit.setVolume(((slider[0].getPosition().x - (slider_bar[0].getGlobalBounds().left) ) * 100) / (option_menu.getGlobalBounds().left + 499));
+        change_music_volume = 0;
+        
     }
-    if (change_music_volume && !change_sfx_volume){
+    if (change_music_volume){
         slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
-        music.setVolume(((slider[1].getPosition().x - (option_menu.getGlobalBounds().left + 151)) * 100.0) / (option_menu.getGlobalBounds().left + 151 + 499.0));
+        music.setVolume(((slider[1].getPosition().x - (slider_bar[1].getGlobalBounds().left)) * 100) / (option_menu.getGlobalBounds().left + 499));
+        change_sfx_volume = 0;
     }
-
-    
 }
 
 
