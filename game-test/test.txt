@@ -28,4 +28,5 @@
 
 6- Git Graph: when you press on the "up" arrow, a new commit should appear and the head would stand over it, when you press on another commit the head moves there.
 # Would recommend creating a limit to the commits since it overrides the edit window when they are a lot.
+# Would recommend replacing the arrows with something else, it seems like the head is moving back to the first commit not the most recent one.
 # Bug: when I click back and go to the main menu screen then press start, the head moves to the commit that has the same place as the start button, even though I didn't press on it.
