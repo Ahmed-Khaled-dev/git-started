@@ -70,7 +70,7 @@ struct optionMenu {
     Font font;
     Text text;
     String option_font_type = "resources/fonts/minecraft_font.ttf";
-    const int short  size = 60;
+    const int short  size = 64;
 };
 
 // Functions declaration
@@ -87,8 +87,8 @@ void playMusicFromFile(string file_path, Music& music);
 void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
 void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_position, float y_position);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
-void setSfxAndMusicTexts(optionMenu& sfx_text, Sprite& option_menu);
-void controlSfxAndMusicTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& Event);
+void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu);
+void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& Event);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
@@ -233,7 +233,7 @@ int main()
     slider_bar[0].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 409);
     slider_bar[1].setPosition(option_menu.getGlobalBounds().left + 151, option_menu.getGlobalBounds().top + 240);
     bool change_music_volume = 0, change_sfx_volume = 0;
-    setSfxAndMusicTexts(sfx_text, option_menu);
+    setSfxTexts(sfx_text, option_menu);
     // Option menu
 
     // Graph
@@ -549,7 +549,7 @@ int main()
         else if(current_screen == "options")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, mouse_cursor, pop_commit, event);
+            controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
             controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
             setSliderMoveLimits(slider_bar, slider);
             window.draw(main_menu);
@@ -562,7 +562,7 @@ int main()
         else if(current_screen == "options_in_game")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
-            controlSfxAndMusicTexts(sfx_text, mouse_cursor, pop_commit, event);
+            controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
             controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
             setSliderMoveLimits(slider_bar, slider);
             drawDialogue(window, dialogue_box);
@@ -724,7 +724,7 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
     rectangle.setPosition(x_position, y_position);
 }
 
-void setSfxAndMusicTexts(optionMenu& sfx_text, Sprite& option_menu){
+void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu){
     sfx_text.font.loadFromFile(sfx_text.option_font_type);
     sfx_text.text.setFont(sfx_text.font);
     sfx_text.text.setString("SFX");
@@ -753,7 +753,7 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
         options_exit_button.setColor(Color :: White);
 }
 
-void controlSfxAndMusicTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& event){
+void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& event){
     if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
         sfx_text.text.setFillColor({50, 50, 50});
     else
