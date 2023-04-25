@@ -54,8 +54,8 @@ struct dialogueText
     String script_content = " ";
     vector <pair<bool,string>> new_script  =  /* if bool = 1 yeb2a paused untill el command el ablo is correct */
     {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},
-    {1 ,"try typing the command git commit, then write commit name..."},{1 ,"try typing the command git checkout..."},
-    {1,"congrats that was correct!"},{0,"you did it!"},{0,"555555555!"},{0,"999999999!"}};
+    {1 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
+    {1,"congrats that was correct!"},{0,"you did it!"},{0,"now wait for other commands"}};
     int current_script_index = 0;
     bool script_ended = 0;     // the whole vector 
 }dialogue_text;
@@ -69,7 +69,7 @@ struct optionMenu {
 
 
 // Functions declaration
-bool checkInputEquality(string& edit_window_input, string&command_check);
+bool checkInputEquality(string& edit_window_input, string&correct_string);
 void createCliInputShape(RectangleShape &form);
 void createCliOutputShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
@@ -132,7 +132,8 @@ int main()
     string user_cli_input, final_cli_input,check_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_check=0,correct_command =0;
+    string commit_message;
+    bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_command_entered=0,correct_command =0;
     Clock cursor_clock;
     deque <string> command_check={"git init", "git commit","git checkout","git pull"};
 
@@ -321,10 +322,11 @@ int main()
                 }
                 // Filter out symbols (only characters in ascii code enters)
                 if (cli_selected && current_screen == "levels")
+                         //user inputs in the cli
                     if (isprint(event.text.unicode))    
                     { 
                         user_cli_input += event.text.unicode;
-                         
+                         //bounds for the cli text
                         Vector2f pst = cli_text.findCharacterPos(user_cli_input.size());  
                         
                         if (!(cli_output_shape.getGlobalBounds().contains(pst)))
@@ -333,68 +335,64 @@ int main()
                         }
                 }
             }
-            // If user wants to erase what he wrote
             if (event.type == Event::KeyPressed) 
             {    
                 if(cli_selected)
                 {
+                    //delete option
                      if (event.key.code == Keyboard::BackSpace) 
                      {
                         if (!user_cli_input.empty())
                             user_cli_input.pop_back();
                      }
                     // User clicks enter and the text will be transfered at the top of the screen
-                    if (event.key.code == Keyboard::Return) 
+                    if (event.key.code == Keyboard::Return&&(!dialogue_text.script_ended)) 
                     {
-                        if((!user_cli_input.empty()) && correct_command && commit_check && command_check[0]=="git commit" && !continuation_message.commands_flag)
+                        //commit message
+
+                        if((!user_cli_input.empty()) && correct_command && commit_command_entered && command_check[0]=="git commit" && !continuation_message.commands_flag)
                         {
                             final_cli_input="commit successful \n"; 
-                            string commit_message=user_cli_input;
+                            commit_message=user_cli_input;
                             user_cli_input.clear();
-                            command_check.push_back(command_check[0]);
                             command_check.pop_front();
                             correct_command=0;
                             continuation_message.commands_flag = 1;
                         }
+
+
                         if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1 && !continuation_message.commands_flag)
+                        //continuation flag is used for stopping input from user after the correct command
                         {
                             check_cli_input = user_cli_input;
                             correct_command = checkInputEquality(check_cli_input,command_check[0]);
-                            if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1 && continuation_message.commands_flag ==0 ) 
+                            if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1) 
                             {
-                                final_cli_input += ("$ "+ user_cli_input + "\n");
-                                continuation_message.commands_flag = 1;
-                            }
-                            else
-                            {
-                                if (dialogue_text.script_ended)
-                                {
-                                    correct_command = 1;
-                                }
-                                else
-                                {
-                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
-                                }
-                            }
-                       
-                             if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
-                            {
-                                command_check.push_back(command_check[0]);
-                                if(command_check[0]=="git commit")
+                                //this condition needs a follow up, each command is special,so we use this if condition
+                                //to adjust the uniqueness of each one
+                                 if(command_check[0]=="git commit")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_text_commitm+'\n');
-                                    commit_check=1;
+                                    commit_command_entered=1;
                                     continuation_message.commands_flag = 0;
                                 }
-                                else 
-                                {
-                                    //command_check.push_back(command_check[0]);
-                                    command_check.pop_front();
-                                    correct_command=1;
-                                    continuation_message.commands_flag = 1;
+
+                                else {
+
+                                final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
+                                continuation_message.commands_flag = 1;
+                                command_check.pop_front();
+                                   
                                 }
-                            } 
+                            }
+                            else
+                            {
+
+                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                                
+                            }
+
                             user_cli_input.clear();
                         }
                     }
@@ -477,7 +475,8 @@ int main()
            // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             { 
-                if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && dialogue_text.new_script[dialogue_text.current_script_index].first==0)
+                    
+                if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && continuation_message.commands_flag==0 && dialogue_text.new_script[dialogue_text.current_script_index].first==0)
                 {
                     continuation_message.commands_flag = 0;
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
@@ -489,7 +488,8 @@ int main()
                     dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++; 
                 }
-                else if (dialogue_text.new_script[dialogue_text.current_script_index].first == 1 && continuation_message.commands_flag == 1)
+                    
+                else if ( continuation_message.commands_flag == 1 && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                 {
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
@@ -827,8 +827,8 @@ void createCliInputShape(RectangleShape &form){
     form.setPosition(1200,700);
 }
 
-bool checkInputEquality(string& edit_window_input, string& command_check){
-    if(edit_window_input == command_check)
+bool checkInputEquality(string& input, string& correct_string){
+    if(input == correct_string)
     {
        //  cout<<"ye";
         return 1; 
