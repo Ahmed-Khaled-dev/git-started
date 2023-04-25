@@ -139,7 +139,7 @@ int main()
 
     // Edit Window
     RectangleShape edit_window_shape;
-    string edit_window_input = "type here", checker = "Hi, this is for check";
+    string edit_window_input = "type here", old_edit_window_input = "type here";
     Text edit_window_text(edit_window_input ,cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
@@ -267,7 +267,7 @@ int main()
                     }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
-                        checkInputEquality(edit_window_input, checker);
+                        checkInputEquality(edit_window_input, old_edit_window_input);
                     }
                     if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
@@ -297,7 +297,7 @@ int main()
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
-                        if (isprint(event.text.unicode) && (correct_command)){     
+                        if (isprint(event.text.unicode)){     
                             edit_window_input += event.text.unicode;
                         }
                         if (isprint(event.text.unicode))     
@@ -826,9 +826,11 @@ void createCliInputShape(RectangleShape &form){
 }
 
 bool checkInputEquality(string& input, string& correct_string){
-    if(input == correct_string)
+    if(input != correct_string)
     {
-       //  cout<<"ye";
+       // cout<<"ye";
+        correct_string=input;
+        cout<<input;
         return 1; 
     }
     else
