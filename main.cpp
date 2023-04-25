@@ -54,8 +54,8 @@ struct dialogueText
     String script_content = " ";
     vector <pair<bool,string>> new_script  =  /* if bool = 1 yeb2a paused untill el command el ablo is correct */
     {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},
-    {1 ,"try typing the command git commit, then write commit name..."},{1 ,"try typing the command git checkout..."},
-    {1,"congrats that was correct!"},{0,"you did it!"},{0,"555555555!"},{0,"999999999!"}};
+    {1 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
+    {1,"congrats that was correct!"},{0,"you did it!"},{0,"now wait for other commands"}};
     int current_script_index = 0;
     bool script_ended = 0;     // the whole vector 
 }dialogue_text;
@@ -475,7 +475,8 @@ int main()
            // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             { 
-                if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && continuation_message.commands_flag==0)
+                    
+                if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && continuation_message.commands_flag==0 && dialogue_text.new_script[dialogue_text.current_script_index].first==0)
                 {
                     continuation_message.commands_flag = 0;
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
@@ -487,7 +488,8 @@ int main()
                     dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++; 
                 }
-                else if ( continuation_message.commands_flag == 1)
+                    
+                else if ( continuation_message.commands_flag == 1 && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                 {
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
