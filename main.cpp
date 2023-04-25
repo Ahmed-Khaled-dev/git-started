@@ -11,6 +11,8 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
+string windows[10];
+
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
@@ -108,6 +110,10 @@ void setTextOriginAndPosition(Text& text, float x_position, float y_position);
 
 int main()
 {
+    windows[0] = "main menu";
+    windows[1] = "levels menu";
+    windows[2] = "levels";
+
     // Dialogue box
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
@@ -115,8 +121,8 @@ int main()
 
     // Fonts
     Font buttons_font;
-    if (!buttons_font.loadFromFile("resources/fonts/minecraft_font.ttf")) {
-        cout << "Error has happened while loading the font" << endl;
+    if (!buttons_font.loadFromFile("resources/fonts/Righteous-Regular.ttf")) {
+        cout << "Error has happened while loading the buttons font" << endl;
     }
     Font game_title_font;
     if (!game_title_font.loadFromFile("resources/fonts/Glitch inside.otf")) {
@@ -144,17 +150,15 @@ int main()
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
 
-    RectangleShape level_buttons_bg(Vector2f(750, 850)), back_button(Vector2f(125, 60));
-    RectangleShape init_level_button(Vector2f(700, 100)), add_level_button(Vector2f(700, 100)), commit_level_button(Vector2f(700, 100));
-    RectangleShape checkout_level_button(Vector2f(700, 100)), branch_level_button(Vector2f(700, 100));
+    RectangleShape back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
+    RectangleShape init_level_button(Vector2f(1000, 150)), commit_level_button(Vector2f(1000, 150)), checkout_level_button(Vector2f(1000, 150));
 
-    setButtonProperties(back_button, 54, 69, 79, 77, 45);
-    setButtonProperties(level_buttons_bg, 0, 31, 63, 960, 540);
-    setButtonProperties(init_level_button, 112, 128, 144, 960, 200);
-    setButtonProperties(add_level_button, 112, 128, 144, 960, 325);
-    setButtonProperties(commit_level_button, 112, 128, 144, 960, 500);
-    setButtonProperties(checkout_level_button, 112, 128, 144, 960, 625);
-    setButtonProperties(branch_level_button, 112, 128, 144, 960, 800);
+    setButtonProperties(back_button, 46, 139, 87, 77, 45);
+    setButtonProperties(level_buttons_bg, 200, 200, 200, 960, 510);
+    setButtonProperties(init_level_button, 112, 128, 144, 960, 245);
+    setButtonProperties(intro_level_button, 112, 128, 144, 960, 430);
+    setButtonProperties(commit_level_button, 112, 128, 144, 960, 650);
+    setButtonProperties(checkout_level_button, 112, 128, 144, 960, 825);
 
     Texture levels_menu;
     if (!levels_menu.loadFromFile("resources/sprites/levels-menu.jpg")) {
@@ -163,30 +167,29 @@ int main()
     Sprite levels_menu_bg;
     levels_menu_bg.setTexture(levels_menu);
     levels_menu_bg.setOrigin(levels_menu_bg.getLocalBounds().width / 2.0f, levels_menu_bg.getLocalBounds().height / 2.0f);
-    levels_menu_bg.setPosition(960, 540);
-    levels_menu_bg.setScale(0.33f, 0.33f);
+    levels_menu_bg.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+    levels_menu_bg.setScale(1.52f, 1.52f);
 
     // Command line interface (CLI)
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text back_button_text("Back", buttons_font, 32), intro_levels_cateogry("Intro", buttons_font, 32);
-    Text commits_levels_cateogry("Commits", buttons_font, 32), branches_levels_cateogry("Branches", buttons_font, 32);
-    Text init_level_text("Tragic Failure: The Cost of Poor Organization (git init)", buttons_font, 18);
-    Text add_level_text("Stage and Shine: Unleash Your Staging Prowess! (git add)", buttons_font, 17);
-    Text commit_level_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 17);
-    Text checkout_level_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 20);
-    Text branch_level_text("Branching Out: Conquer the Code Chaos! (git branch)", buttons_font, 19);
+    Text back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
+    Text commits_levels_category("Commits", buttons_font, 32);
+    Text init_level_text("Tragic Failure: The Cost of Poor Organization (intro)", buttons_font, 29);
+    Text add_level_text("Stage and Shine: Unleash Your Staging Prowess! (git init)", buttons_font, 29);
+    Text commit_level_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 29);
+    Text checkout_level_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 29);
+
+    commits_levels_category.setFillColor(Color::Black);
+    intro_levels_category.setFillColor(Color::Black);
 
     setButtonTextProperties(back_button, back_button_text, Color::Black);
-    setButtonTextProperties(init_level_button, init_level_text, Color::Black);
-    setButtonTextProperties(add_level_button, add_level_text, Color::Black);
-    setButtonTextProperties(commit_level_button, commit_level_text, Color::Black);
-    setButtonTextProperties(checkout_level_button, checkout_level_text, Color::Black);
-    setButtonTextProperties(branch_level_button, branch_level_text, Color::Black);
+    setButtonTextProperties(init_level_button, init_level_text, Color::White);
+    setButtonTextProperties(intro_level_button, add_level_text, Color::White);
+    setButtonTextProperties(commit_level_button, commit_level_text, Color::White);
+    setButtonTextProperties(checkout_level_button, checkout_level_text, Color::White);
 
-
-    setTextOriginAndPosition(intro_levels_cateogry, 960, 125);
-    setTextOriginAndPosition(commits_levels_cateogry, 960, 425);
-    setTextOriginAndPosition(branches_levels_cateogry, 960, 725);
+    setTextOriginAndPosition(intro_levels_category, 960, 140);
+    setTextOriginAndPosition(commits_levels_category, 960, 545);
 
     // Command line
     string user_cli_input, final_cli_input;
@@ -380,7 +383,7 @@ int main()
 
                     if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "levels menu";
+                        current_screen = windows[1];
                     }
                     if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -395,27 +398,23 @@ int main()
 
                     if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "main menu";
+                        current_screen = windows[0];
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "levels";
+                        current_screen = windows[2];
                     }
-                    else if (add_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "levels";
+                        current_screen = windows[2];
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "levels";
+                        current_screen = windows[2];
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "levels";
-                    }
-                    else if (branch_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels";
+                        current_screen = windows[2];
                     }
                 }
             }
@@ -558,7 +557,7 @@ int main()
                 }
                 else
                 {
-                    back_button.setFillColor(Color(200, 200, 200));
+                    back_button.setFillColor(Color(46, 139, 87));
                     back_button.setScale(1.0f, 1.0f);
                 }
                 if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
@@ -573,23 +572,23 @@ int main()
                     init_level_button.setScale(1.0f, 1.0f);
 
                 }
-                if (add_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
-                    add_level_button.setFillColor(Color(140, 140, 140));
-                    add_level_button.setScale(0.9f, 0.9f);
+                    intro_level_button.setFillColor(Color(140, 140, 140));
+                    intro_level_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    add_level_button.setFillColor(Color(112, 128, 144));
-                    add_level_button.setScale(1.0f, 1.0f);
+                    intro_level_button.setFillColor(Color(112, 128, 144));
+                    intro_level_button.setScale(1.0f, 1.0f);
 
                 }
                 if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
                     commit_level_button.setFillColor(Color(140, 140, 140));
-                    commit_level_button.setScale(0.9f, 0.9f);
+                    commit_level_button.setScale(0.92f, 0.92f);
                 }
                 else
                 {
@@ -607,18 +606,6 @@ int main()
                 {
                     checkout_level_button.setFillColor(Color(112, 128, 144));
                     checkout_level_button.setScale(1.0f, 1.0f);
-
-                }
-                if (branch_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                {
-
-                    branch_level_button.setFillColor(Color(140, 140, 140));
-                    branch_level_button.setScale(0.9f, 0.9f);
-                }
-                else
-                {
-                    branch_level_button.setFillColor(Color(112, 128, 144));
-                    branch_level_button.setScale(1.0f, 1.0f);
 
                 }
             }
@@ -749,20 +736,17 @@ int main()
             window.draw(levels_menu_bg);
             window.draw(back_button);
             window.draw(level_buttons_bg);
+            window.draw(intro_level_button);
             window.draw(init_level_button);
-            window.draw(add_level_button);
             window.draw(commit_level_button);
             window.draw(checkout_level_button);
-            window.draw(branch_level_button);
             window.draw(back_button_text);
-            window.draw(intro_levels_cateogry);
-            window.draw(commits_levels_cateogry);
-            window.draw(branches_levels_cateogry);
+            window.draw(intro_levels_category);
+            window.draw(commits_levels_category);
             window.draw(init_level_text);
             window.draw(add_level_text);
             window.draw(commit_level_text);
             window.draw(checkout_level_text);
-            window.draw(branch_level_text);
 
         }
 
@@ -898,6 +882,8 @@ void setTextOriginAndPosition(Text& text, float x_position, float y_position) {
 void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position)
 {
     rectangle.setFillColor(Color(red_intensity, green_intensity, blue_intensity));
+    rectangle.setOutlineThickness(5);
+    rectangle.setOutlineColor(Color::Black);
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setPosition(x_position, y_position);
     rectangle.setOutlineThickness(5);
