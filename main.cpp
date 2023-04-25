@@ -52,9 +52,9 @@ struct dialogueText
     double size = 32;
     double script_speed = 0.09f;
     String script_content = " ";
-    vector <pair<bool,string>> new_script  =  /* if bool = 1 yeb2a paused untill el command el ablo is correct */
-    {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},
-    {1 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
+    vector <pair<int,string>> new_script  =  /* if bool = 1 yeb2a paused untill el command el ablo is correct */
+    {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},{1 ,"try editing"},
+    {2 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
     {1,"congrats that was correct!"},{0,"you did it!"},{0,"now wait for other commands"}};
     int current_script_index = 0;
     bool script_ended = 0;     // the whole vector 
@@ -69,7 +69,7 @@ struct optionMenu {
 
 
 // Functions declaration
-bool checkInputEquality(string& edit_window_input, string&correct_string);
+bool checkInputEquality(string& edit_window_input, string&correct_string, bool& check_edit_window_changes);
 void createCliInputShape(RectangleShape &form);
 void createCliOutputShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
@@ -86,7 +86,7 @@ void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& o
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop, Sprite slider_bar[], CircleShape contoroller[], Sprite& option_menu, RectangleShape& mouse_cursor);
-void showContinuationMessage(continuationMessage& continuation_message);
+void showContinuationMessage(continuationMessage& continuation_message,bool& check_edit_window_changes);
 
 int main()
 {
@@ -143,7 +143,7 @@ int main()
     Text edit_window_text(edit_window_input ,cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
-    bool edit_window_selected = 0, show_edit_window_cursor = 0;
+    bool edit_window_selected = 0, show_edit_window_cursor = 0,check_edit_window_changes=0;
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial , 35);
@@ -267,7 +267,7 @@ int main()
                     }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
-                        checkInputEquality(edit_window_input, old_edit_window_input);
+                       check_edit_window_changes= checkInputEquality(edit_window_input, old_edit_window_input,check_edit_window_changes);
                     }
                     if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
@@ -292,16 +292,15 @@ int main()
             }
             if (event.type == Event::TextEntered) 
             { 
-                if (edit_window_selected && current_screen == "levels")
+                if (edit_window_selected && current_screen == "levels"&& dialogue_text.new_script[dialogue_text.current_script_index].first==2)
                 {
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
+                        //write in edit window
                         if (isprint(event.text.unicode)){     
                             edit_window_input += event.text.unicode;
                         }
-                        if (isprint(event.text.unicode))     
-                            edit_window_input += event.text.unicode;
                         
                         // Bounds for text
                         Vector2f pos = edit_window_text.findCharacterPos(edit_window_input.size());  
@@ -349,8 +348,7 @@ int main()
                     if (event.key.code == Keyboard::Return&&(!dialogue_text.script_ended)) 
                     {
                         //commit message
-
-                        if((!user_cli_input.empty()) && correct_command && commit_command_entered && command_check[0]=="git commit" && !continuation_message.commands_flag)
+                        if((!user_cli_input.empty()) && correct_command && commit_command_entered && command_check[0]=="git commit" && !continuation_message.commands_flag )
                         {
                             final_cli_input="commit successful \n"; 
                             commit_message=user_cli_input;
@@ -365,12 +363,16 @@ int main()
                         //continuation flag is used for stopping input from user after the correct command
                         {
                             check_cli_input = user_cli_input;
-                            correct_command = checkInputEquality(check_cli_input,command_check[0]);
+                            if(check_cli_input==command_check[0])
+                                correct_command=1;
+                            else 
+                                correct_command=0;
+
                             if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1) 
                             {
                                 //this condition needs a follow up, each command is special,so we use this if condition
                                 //to adjust the uniqueness of each one
-                                 if(command_check[0]=="git commit")
+                                if(command_check[0]=="git commit")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_text_commitm+'\n');
@@ -378,12 +380,13 @@ int main()
                                     continuation_message.commands_flag = 0;
                                 }
 
-                                else {
+                                else 
+                                {
 
-                                final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
-                                continuation_message.commands_flag = 1;
-                                command_check.pop_front();
-                                   
+                                    final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
+                                    continuation_message.commands_flag = 1;
+                                    command_check.pop_front();
+                                    
                                 }
                             }
                             else
@@ -397,14 +400,15 @@ int main()
                         }
                     }
                 }
-                if(edit_window_selected)
+                //delete and enter for edit window
+                if(edit_window_selected && dialogue_text.new_script[dialogue_text.current_script_index].first==2)
                 {
-                    if (event.key.code == Keyboard::BackSpace) 
+                    if (event.key.code == Keyboard::BackSpace && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
                     {
                         if (!edit_window_input.empty())
                             edit_window_input.pop_back();
                     }
-                    if (event.key.code == Keyboard::Return) 
+                    if (event.key.code == Keyboard::Return && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
                     {
                         edit_window_input += ( "\n");  
                     }
@@ -473,8 +477,10 @@ int main()
                 }
             }
            // Check if down arrow (later space) key has been pressed
+           cout<<check_edit_window_changes<<"\n";
             if (Keyboard::isKeyPressed(Keyboard::Down))
             { 
+
                     
                 if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && continuation_message.commands_flag==0 && dialogue_text.new_script[dialogue_text.current_script_index].first==0)
                 {
@@ -500,6 +506,19 @@ int main()
                     dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
                     dialogue_text.current_script_index++;
                     continuation_message.commands_flag = 0;
+                }
+                
+                else if(check_edit_window_changes==1 && dialogue_text.new_script[dialogue_text.current_script_index].first==2 )
+                {
+                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    {
+                        dialogue_text.script_ended = 1;
+                    } 
+                    dialogue_text.new_script[dialogue_text.current_script_index].first=0;
+                    dialogue_text.script_text.setString("");
+                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
+                    dialogue_text.current_script_index++;
+                    check_edit_window_changes=0;
                 }
             }
         }
@@ -528,7 +547,7 @@ int main()
             showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
             showCursor(cursor_clock, show_edit_window_cursor,edit_window_selected, cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
-            showContinuationMessage(continuation_message);
+            showContinuationMessage(continuation_message,check_edit_window_changes);
             setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
@@ -628,7 +647,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setPosition(220, 720);
 }
 
-void showContinuationMessage(continuationMessage& continuation_message)
+void showContinuationMessage(continuationMessage& continuation_message, bool& check_edit_window_changes) 
 {
     continuation_message.continuation_fade_time += continuation_message.continuation_fade_clock.restart();
     if(continuation_message.continuation_fade_time >= seconds(continuation_message.continuation_delay))
@@ -637,7 +656,7 @@ void showContinuationMessage(continuationMessage& continuation_message)
         continuation_message.continuation_fade_time = Time::Zero;
     }
 
-    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (dialogue_text.new_script[dialogue_text.current_script_index].first==0 || continuation_message.commands_flag ==1))
+    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (dialogue_text.new_script[dialogue_text.current_script_index].first==0 || continuation_message.commands_flag ==1|| check_edit_window_changes==1))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
@@ -827,8 +846,8 @@ void createCliInputShape(RectangleShape &form){
     form.setPosition(1200,700);
 }
 
-bool checkInputEquality(string& input, string& correct_string){
-    if(input != correct_string)
+bool checkInputEquality(string& input, string& correct_string ,bool& check_edit_window_changes ){
+    if(input != correct_string || (check_edit_window_changes==1 && (input == correct_string)))
     {
        // cout<<"ye";
         correct_string=input;
@@ -840,4 +859,5 @@ bool checkInputEquality(string& input, string& correct_string){
         // cout<<"da";
         return 0;
     }
+    
 }
