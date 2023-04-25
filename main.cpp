@@ -89,7 +89,7 @@ void setButtonProperties(RectangleShape& rectangle, Color fillcolor, float x_pos
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
 void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu);
 void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& Event);
-void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
+void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu, bool& change_sfx_volume, bool& change_music_volume);
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
 void showContinuationMessage(dialogueText &dialogue_text);
@@ -273,6 +273,8 @@ int main()
         mouse_cursor.setPosition(world_pos.x, world_pos.y);
         while (window.pollEvent(event))
         {
+            if (current_screen == "options" || current_screen == "options_in_game")
+                controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
             if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
                 addCommit(commits_count, commits, commit_textures, "initial commit");
                 pop_commit.play();
@@ -548,9 +550,8 @@ int main()
         }
         else if(current_screen == "options")
         {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu, change_sfx_volume, change_music_volume);   
             controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
-            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
             setSliderMoveLimits(slider_bar, slider);
             window.draw(main_menu);
             window.draw(option_menu);
@@ -561,9 +562,8 @@ int main()
         }
         else if(current_screen == "options_in_game")
         {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);   
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu, change_sfx_volume, change_music_volume);   
             controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
-            controlSfxAndMusicVolume(sfx_text, music , pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
             setSliderMoveLimits(slider_bar, slider);
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
@@ -730,11 +730,11 @@ void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu){
     sfx_text.text.setString("SFX");
     sfx_text.text.setFillColor(Color :: White);
     sfx_text.text.setCharacterSize(sfx_text.size);
-    sfx_text.text.setPosition(option_menu.getGlobalBounds().left + 357, option_menu.getGlobalBounds().top + 321);
+    sfx_text.text.setPosition(option_menu.getGlobalBounds().left + 340, option_menu.getGlobalBounds().top + 321);
 }
 
-void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu){
-    if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
+void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu, bool& change_sfx_volume, bool& change_music_volume){
+    if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && !change_sfx_volume && !change_music_volume)
     {
         options_exit_button.setColor(Color :: Red);
         if (Mouse::isButtonPressed(Mouse::Left))
@@ -755,12 +755,9 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
 
 void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& event){
     if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
-        sfx_text.text.setFillColor({50, 50, 50});
+        sfx_text.text.setFillColor({52, 111, 69});
     else
         sfx_text.text.setFillColor(Color :: Black);
-    if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left))){       
-            pop.play();
-    }
 }
 
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]){
@@ -777,25 +774,27 @@ void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]){
 // This function is designed to adjust the volume of the slider based on its X-coordinate within the slider bar
 // As the X-coordinate increases, the volume will also increase accordingly.
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume){
-    if(slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (event.type == Event :: MouseButtonPressed))
+    if((slider_bar[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) || slider[0].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())) && (Mouse :: isButtonPressed(Mouse :: Left)))
         change_sfx_volume = 1;
-    if (slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (event.type == Event :: MouseButtonPressed))
+    if ((slider_bar[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) || slider[1].getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())) && (Mouse :: isButtonPressed(Mouse :: Left)))
         change_music_volume = 1;
-    if (event.type == Event :: MouseButtonReleased && change_music_volume)
-        change_music_volume = 0;
-    if (event.type == Event :: MouseButtonReleased && change_sfx_volume)
-        change_sfx_volume = 0;
     if (change_sfx_volume){
         slider[0].setPosition(mouse_cursor.getPosition().x, slider[0].getPosition().y);
-        pop_commit.setVolume(((slider[0].getPosition().x - (slider_bar[0].getGlobalBounds().left) ) * 100) / (option_menu.getGlobalBounds().left + 499));
+        pop_commit.setVolume((int)(((slider[0].getPosition().x - (slider_bar[0].getGlobalBounds().left) ) * 100) / (499)));
         change_music_volume = 0;
         
     }
     if (change_music_volume){
         slider[1].setPosition(mouse_cursor.getPosition().x, slider[1].getPosition().y);
-        music.setVolume(((slider[1].getPosition().x - (slider_bar[1].getGlobalBounds().left)) * 100) / (option_menu.getGlobalBounds().left + 499));
+        music.setVolume((int)(((slider[1].getPosition().x - (slider_bar[1].getGlobalBounds().left)) * 100) / (499)));
         change_sfx_volume = 0;
     }
+    if (event.type == Event :: MouseButtonReleased && change_music_volume)
+        change_music_volume = 0;
+    if (event.type == Event :: MouseButtonReleased && change_sfx_volume)
+        change_sfx_volume = 0;
+    if (sfx_text.text.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()) && (Mouse :: isButtonPressed(Mouse :: Left)) && !change_music_volume && !change_sfx_volume)    
+            pop_commit.play();
 }
 
 
