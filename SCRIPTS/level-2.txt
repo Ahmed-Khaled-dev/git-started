@@ -1,15 +1,21 @@
-Now that you've created your first repository, you'll start by writing your code.
-Throughout each step, you will need to keep track of your history.
+Now that you've created your first repository (which we will call "repo" from now), you'll start by writing your code.
+Throughout each big step, you will need to keep track of your history.
+Imagine this; you are working on a huge project with your team,
+One of your team mates messed up a part of their code, they can't remember what part got messed up,
+Neither can they go back to the code that worked fine, Scary to imagine right?
 That's where "commits" come in hand.
-"commits" are like checkpoints of your code.
-We will use the "git commit -m <commit_message>" command.
+"commits" are like checkpoints in games but for your code.
+We will use the "git commit <commit_message>" command.
 But first, let's write some code together!
 In the "main.cpp" edit window, we need to write code using C++
-For example, try writing: "int i = 5;"
-Now you need to commit your changes.
-In the command line write: git commit -m "First Variable!"
+For example, try writing: "int i = 5;" (-e)
+Now you need to commit your changes to mark this checkpoint!
+In the command line write: git commit "First Variable!" (-c)
 Congratulations! you have just written your first commit.
+The circle that just appeared represents our commit.
 As you can see, our Head (Octocat) has appeared above our commit.
-He will be standing on the commit that we're currently looking on.
+He will be standing on the latest commit we create.
 It's your turn to write another piece of code and commit your changes!
+Try adding another variable in "main.cpp" edit window. (-e)
+Commit your changes with the message that describes it best! (-c) 
 Notice that the Head moves onto your new commit.
