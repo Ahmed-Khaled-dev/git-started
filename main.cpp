@@ -1,12 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 
 using namespace std;
 using namespace sf;
 
+const int levels_num = 4;
+bool level_status[levels_num] = { false };
 unsigned short int graph_smoke_animation_delay = 0, current_smoke_animation_frame = 0;
 short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
@@ -181,10 +184,16 @@ void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 void commandsInputChecker(string& user_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit);
 void setTextOriginAndPosition(Text& text, float x_position, float y_position);
+
 void showContinuationMessage(continuationMessage& continuation_message,bool& edit_window_changed);
+void readProgressFile(string file_name, bool level_status[], int levels_num);
+void updateProgressFile(string file_name, bool level_status[], int levels_num);
 
 int main()
 {
+
+    readProgressFile("progress.txt", level_status, levels_num);
+
     // Dialogue box
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
@@ -252,7 +261,7 @@ int main()
     Sprite levels_menu_bg;
     levels_menu_bg.setTexture(levels_menu);
     levels_menu_bg.setOrigin(levels_menu_bg.getLocalBounds().width / 2.0f, levels_menu_bg.getLocalBounds().height / 2.0f);
-    levels_menu_bg.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+    levels_menu_bg.setPosition(960, 540);
     levels_menu_bg.setScale(1.52f, 1.52f);
 
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
@@ -1468,4 +1477,31 @@ bool checkInputEquality(string& input, string& correct_string ,bool& edit_window
         // cout<<"da";
         return 0;
     }
+}
+void readProgressFile(string file_name, bool level_status[], int levels_num) {
+    ifstream infile(file_name); //infile refers to an input file which is a file that is being read by a program.
+    string line; // string to accept the text input in each line in the text file each line represents the state of a level.
+    int level = 0;
+    while (getline(infile, line) && level < levels_num) { //accepting lines from the text file equal to the number of levels to determine the levels status.
+        if (line == "completed") {
+            level_status[level] = true;
+        }
+        else {
+            level_status[level] = false;
+        }
+        level++;
+    }
+    infile.close();// close the text file after the process.
+}
+void updateProgressFile(string file_name, bool level_status[], int levels_num) {
+    ofstream outfile(file_name); //outfile refers to an output file which is a file that is being written to by a program.
+    for (int i = 0; i < levels_num; i++) {
+        if (level_status[i]) {
+            outfile << "completed" << endl; //edits the file according to the state of each level.
+        }
+        else {
+            outfile << "incomplete" << endl;
+        }
+    }
+    outfile.close();
 }
