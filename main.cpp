@@ -129,13 +129,13 @@ int main()
 
     // Command line interface (CLI)
     RectangleShape cli_output_shape, cli_input_shape;
-    string user_cli_input, final_cli_input,check_cli_input;
+    string user_cli_input, final_cli_input,check_cli_input, commit_message;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    string commit_message;
     bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_command_entered=0,correct_command =0;
     Clock cursor_clock;
-    deque <string> command_check={"git init", "git commit","git checkout","git pull"};
+    string allCommandlvls[5] = {"git init", "git commit","git checkout","git pull"};
+    int allCommandlvlsCounter=0;
 
     // Edit Window
     RectangleShape edit_window_shape;
@@ -295,7 +295,7 @@ int main()
                 if (edit_window_selected && current_screen == "levels"&& dialogue_text.new_script[dialogue_text.current_script_index].first==2)
                 {
                     const short int edit_window_max_chars = 600;
-                    if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
+                    if ( (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
                         //write in edit window
                         if (isprint(event.text.unicode)){     
@@ -307,12 +307,11 @@ int main()
                         
                         if(!((edit_window_shape.getGlobalBounds()).contains(pos))){
                             char temp_last = edit_window_input[edit_window_input.size()-1];
-                            char temp_b_last = edit_window_input[edit_window_input.size()-2];
+                            char temp_Before_last = edit_window_input[edit_window_input.size()-2];
                             edit_window_input.pop_back();
                             edit_window_input.pop_back();
                             edit_window_input += ("\n");
-                        
-                            edit_window_input += temp_b_last;
+                            edit_window_input += temp_Before_last;
                             edit_window_input += temp_last;
                         }
                     }
@@ -345,34 +344,36 @@ int main()
                             user_cli_input.pop_back();
                      }
                     // User clicks enter and the text will be transfered at the top of the screen
-                    if (event.key.code == Keyboard::Return&&(!dialogue_text.script_ended)) 
+                    if (event.key.code == Keyboard::Return&&(!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
                     {
-                        //commit message
-                        if((!user_cli_input.empty()) && correct_command && commit_command_entered && command_check[0]=="git commit" && !continuation_message.commands_flag )
-                        {
-                            final_cli_input="commit successful \n"; 
-                            commit_message=user_cli_input;
-                            user_cli_input.clear();
-                            command_check.pop_front();
-                            correct_command=0;
-                            continuation_message.commands_flag = 1;
-                        }
 
 
-                        if(!user_cli_input.empty() && dialogue_text.new_script[dialogue_text.current_script_index].first==1 && !continuation_message.commands_flag)
+
+                        if( dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                         //continuation flag is used for stopping input from user after the correct command
                         {
                             check_cli_input = user_cli_input;
-                            if(check_cli_input==command_check[0])
+                            if(check_cli_input==allCommandlvls[allCommandlvlsCounter] ||(commit_command_entered))
                                 correct_command=1;
                             else 
                                 correct_command=0;
 
-                            if(correct_command && dialogue_text.new_script[dialogue_text.current_script_index].first==1) 
+                            if(correct_command) 
                             {
+                                //commit message
+                                if(commit_command_entered && allCommandlvls[allCommandlvlsCounter]=="git commit")
+                                {
+                                    final_cli_input="commit successful \n"; 
+                                    commit_message=user_cli_input;
+                                    user_cli_input.clear();
+                                    allCommandlvlsCounter++;
+                                    correct_command=0;
+                                    commit_command_entered=0;
+                                    continuation_message.commands_flag = 1;
+                                }
                                 //this condition needs a follow up, each command is special,so we use this if condition
                                 //to adjust the uniqueness of each one
-                                if(command_check[0]=="git commit")
+                                else if(allCommandlvls[allCommandlvlsCounter]=="git commit")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_text_commitm+'\n');
@@ -385,7 +386,7 @@ int main()
 
                                     final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
                                     continuation_message.commands_flag = 1;
-                                    command_check.pop_front();
+                                    allCommandlvlsCounter++;
                                     
                                 }
                             }
