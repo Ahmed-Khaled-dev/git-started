@@ -11,13 +11,11 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
-string windows[10];
-
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
 
-struct graphHead {
+struct graphHead{
     // We have 4 animation frames for the octocat movement (0, 1, 2, 3)
     unsigned short int current_animation_frame = 0, idle_animation_delay = 0;
     unsigned short int latest_commit_movement_delay = 0;
@@ -25,13 +23,12 @@ struct graphHead {
     short int x_border_deflection_velocity = 3, y_border_deflection_velocity = 3;
 }graph_head;
 
-struct commit {
+struct commit{
     string message;
     Sprite sprite;
 };
 
-struct dialogueBox
-{
+struct dialogueBox{
     Font font;
     Texture texture;
     Sprite sprite;
@@ -42,11 +39,9 @@ struct dialogueBox
     string font_type = "resources/fonts/Roboto-Black.ttf";
     RectangleShape body_shape;
     RectangleShape title_shape;
-    RectangleShape shape;
 }dialogue_box;
 
-struct dialogueText
-{
+struct dialogueText{
     Font font;
     Time time;
     Time continuation_fade_time;
@@ -55,7 +50,6 @@ struct dialogueText
     Text script_text;
     Text continuation_text;
     string font_type = "resources/fonts/Roboto-Black.ttf";
-    double script_speed = 0.09f;
     double continuation_delay = 0.8f;
     String script_content = " ";
     string continuation_content = "Press down to continue...";
@@ -66,13 +60,13 @@ struct dialogueText
     bool continuation_message_running = 0;
     bool script_part_ended = 0;
     Text text;
-    Color color = { 0, 0, 0 };
-    double size = 35;
-    double speed = 0.09f;
+    Color color = {0, 0, 0};
+    double size = 32;
+    double script_speed = 0.09f;
     String script = "This is our game\ngit-started\nwelcome boo!";
 }dialogue_text;
 
-struct optionMenu {
+struct optionMenu{
     Font font;
     Text text;
     String option_font_type = "resources/fonts/minecraft_font.ttf";
@@ -110,10 +104,6 @@ void setTextOriginAndPosition(Text& text, float x_position, float y_position);
 
 int main()
 {
-    windows[0] = "main menu";
-    windows[1] = "levels menu";
-    windows[2] = "levels";
-
     // Dialogue box
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
@@ -133,7 +123,6 @@ int main()
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
-
     Font arial;
     if (!arial.loadFromFile("resources/fonts/arial.ttf")) {
         cout << "Error has happened while loading arial font" << endl;
@@ -150,10 +139,11 @@ int main()
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
 
-    RectangleShape back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
+    // Levels menu
+    RectangleShape levels_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
     RectangleShape init_level_button(Vector2f(1000, 150)), commit_level_button(Vector2f(1000, 150)), checkout_level_button(Vector2f(1000, 150));
 
-    setButtonProperties(back_button, 46, 139, 87, 77, 45);
+    setButtonProperties(levels_back_button, 46, 139, 87, 77, 45);
     setButtonProperties(level_buttons_bg, 200, 200, 200, 960, 510);
     setButtonProperties(init_level_button, 112, 128, 144, 960, 245);
     setButtonProperties(intro_level_button, 112, 128, 144, 960, 430);
@@ -167,22 +157,21 @@ int main()
     Sprite levels_menu_bg;
     levels_menu_bg.setTexture(levels_menu);
     levels_menu_bg.setOrigin(levels_menu_bg.getLocalBounds().width / 2.0f, levels_menu_bg.getLocalBounds().height / 2.0f);
-    levels_menu_bg.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+    levels_menu_bg.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
     levels_menu_bg.setScale(1.52f, 1.52f);
 
-    // Command line interface (CLI)
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
+    Text levels_back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
     Text commits_levels_category("Commits", buttons_font, 32);
     Text init_level_text("Tragic Failure: The Cost of Poor Organization (intro)", buttons_font, 29);
-    Text add_level_text("Stage and Shine: Unleash Your Staging Prowess! (git init)", buttons_font, 29);
+    Text add_level_text("The Git Beginning! (git init)", buttons_font, 29);
     Text commit_level_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 29);
     Text checkout_level_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 29);
 
     commits_levels_category.setFillColor(Color::Black);
     intro_levels_category.setFillColor(Color::Black);
 
-    setButtonTextProperties(back_button, back_button_text, Color::Black);
+    setButtonTextProperties(levels_back_button, levels_back_button_text, Color::Black);
     setButtonTextProperties(init_level_button, init_level_text, Color::White);
     setButtonTextProperties(intro_level_button, add_level_text, Color::White);
     setButtonTextProperties(commit_level_button, commit_level_text, Color::White);
@@ -191,7 +180,7 @@ int main()
     setTextOriginAndPosition(intro_levels_category, 960, 140);
     setTextOriginAndPosition(commits_levels_category, 960, 545);
 
-    // Command line
+    // Command line interface (CLI)
     string user_cli_input, final_cli_input;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
     bool show_cli_cursor = 0, cli_selected = 0;
@@ -325,7 +314,7 @@ int main()
         mouse_cursor.setPosition(world_pos.x, world_pos.y);
         while (window.pollEvent(event))
         {
-            if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
+            if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "intro level") {
                 addCommit(commits_count, commits, commit_textures, "initial commit");
                 pop_commit.play();
                 window_collision_mode = 0;
@@ -348,42 +337,43 @@ int main()
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
-                {
-                    cli_selected = true;
+                if (current_screen == "intro level") {
+                    if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        checkInputEquality(edit_window_input, checker);
+                    }
+                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels menu";
+                    }
+                    if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "options_in_game";
+                    }
+                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        cli_selected = true;
+                    }
+                    else
+                    {
+                        cli_selected = false;
+                        show_cli_cursor = false;
+                    }
+                    // Mouse clicked on edit window
+                    if (edit_window_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        edit_window_selected = true;
+                    }
+                    else
+                    {
+                        edit_window_selected = false;
+                        show_edit_window_cursor = false;
+                    }
                 }
-                else
-                {
-                    cli_selected = false;
-                    show_cli_cursor = false;
-                }
-                // Mouse clicked on edit window
-                if (edit_window_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
-                {
-                    edit_window_selected = true;
-                }
-                else
-                {
-                    edit_window_selected = false;
-                    show_edit_window_cursor = false;
-                }
-                if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
-                {
-                    checkInputEquality(edit_window_input, checker);
-                }
-                if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
-                {
-                    current_screen = "levels menu";
-                }
-                if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
-                {
-                    current_screen = "options_in_game";
-                }
-                if (current_screen == "main menu") {
-
+                else if (current_screen == "main menu") {
                     if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = windows[1];
+                        current_screen = "levels menu";
                     }
                     if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -395,32 +385,31 @@ int main()
                     }
                 }
                 else if (current_screen == "levels menu") {
-
-                    if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (levels_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = windows[0];
+                        current_screen = "main menu";
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = windows[2];
+                        current_screen = "intro level";
                     }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = windows[2];
+                        current_screen = "intro level";
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = windows[2];
+                        current_screen = "intro level";
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = windows[2];
+                        current_screen = "intro level";
                     }
                 }
             }
             if (event.type == Event::TextEntered)
             {
-                if (edit_window_selected && current_screen == "levels")
+                if (edit_window_selected && current_screen == "intro level")
                 {
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
@@ -445,7 +434,7 @@ int main()
                         edit_window_selected = false;
                 }
                 // Filter out symbols (only characters in ascii code enters)
-                if (cli_selected && current_screen == "levels")
+                if (cli_selected && current_screen == "intro level")
                 {
                     if (isprint(event.text.unicode))
                         user_cli_input += event.text.unicode;
@@ -550,15 +539,15 @@ int main()
                     game_window_back_button.setFillColor(Color::Yellow);
                     game_window_back_button.setScale(1.0f, 1.0f);
                 }
-                if (back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                if (levels_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    back_button.setFillColor(Color(140, 140, 140));
-                    back_button.setScale(0.9f, 0.9f);
+                    levels_back_button.setFillColor(Color(140, 140, 140));
+                    levels_back_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    back_button.setFillColor(Color(46, 139, 87));
-                    back_button.setScale(1.0f, 1.0f);
+                    levels_back_button.setFillColor(Color(46, 139, 87));
+                    levels_back_button.setScale(1.0f, 1.0f);
                 }
                 if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -612,7 +601,7 @@ int main()
             // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {
-                if (!dialogue_text.script_ended && current_screen == "levels" && dialogue_text.script_part_ended)
+                if (!dialogue_text.script_ended && current_screen == "intro level" && dialogue_text.script_part_ended)
                 {
                     if (dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
@@ -638,7 +627,7 @@ int main()
             window.draw(main_menu_close_text);
             window.draw(game_title);
         }
-        else if (current_screen == "levels")
+        else if (current_screen == "intro level")
         {
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
@@ -730,24 +719,21 @@ int main()
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
         }
-
         else if (current_screen == "levels menu") {
-
             window.draw(levels_menu_bg);
-            window.draw(back_button);
+            window.draw(levels_back_button);
             window.draw(level_buttons_bg);
             window.draw(intro_level_button);
             window.draw(init_level_button);
             window.draw(commit_level_button);
             window.draw(checkout_level_button);
-            window.draw(back_button_text);
+            window.draw(levels_back_button_text);
             window.draw(intro_levels_category);
             window.draw(commits_levels_category);
             window.draw(init_level_text);
             window.draw(add_level_text);
             window.draw(commit_level_text);
             window.draw(checkout_level_text);
-
         }
 
         window.setView(view);
@@ -907,7 +893,7 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
         {
             if (current_screen == "options_in_game")
             {
-                current_screen = "levels";
+                current_screen = "intro level";
             }
             else if (current_screen == "options")
             {
