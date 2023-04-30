@@ -171,14 +171,13 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
+void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, RectangleShape& show_msg, bool& should_show_msg);
 void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created);
 void headIdleAnimation(Sprite& head, bool& additional_commit_created);
 void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[]);
 void headAnimationAndMovement(Sprite& head);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
-void setTextOriginAndPosition(Text& text, float x_position, float y_position);
-void showContinuationMessage(continuationMessage& continuation_message,bool& edit_window_changed);
 
 int main()
 {
@@ -380,6 +379,7 @@ int main()
     // Option menu
 
     // Graph
+    RectangleShape show_msg;
     Sprite head, smoke;
     Texture octacat, commit_textures, smoke_texture;
     octacat.loadFromFile("resources/sprites/octocat.png");
@@ -397,6 +397,7 @@ int main()
     bool additional_commit_created = 0;
     bool window_collision_mode = 1;
     bool should_create_smoke = 0;
+    bool should_show_msg = 0;
     unsigned short int commits_count = 0;
     const unsigned short int MAX_COMMITS = 100;
     SoundBuffer pop_buff;
@@ -406,6 +407,12 @@ int main()
     pop_commit.setVolume(0);
     commit commits[MAX_COMMITS];
     window.setFramerateLimit(60);
+    bool git_init = 0, git_add = 0, git_commit = 0;
+    Font msg_font_type;
+    msg_font_type.loadFromFile("resources/fonts/minecraft_font.ttf");
+    Text msg;
+    msg.setCharacterSize(15);
+    msg.setFont(msg_font_type);
 
     Event event;
     while (window.isOpen())
@@ -417,17 +424,7 @@ int main()
 
         while (window.pollEvent(event))
         {
-            if((Keyboard::isKeyPressed(Keyboard:: Insert)) && current_screen == levels_screens[current_level_screen_index])
-            {
-                dialogue_text.current_script_index = level[current_level_screen].new_script.size() - 1;
-            }
-            if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide")
-            {
-                current_screen = levels_screens[current_level_screen_index];
-                transition_level_texts_index++;
-                transition_text.setString(transition_level_texts[transition_level_texts_index]);
-            }
-            if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == levels_screens[current_level_screen_index]) {
+            if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "levels") {
                 addCommit(commits_count, commits, commit_textures, "initial commit");
                 pop_commit.play();
                 window_collision_mode = 0;
@@ -608,76 +605,20 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
                     {
-                        if(level[current_level_screen].new_script[dialogue_text.current_script_index].first == 1)
-                        // Continuation flag is used for stopping input from user after the correct command
-                        {
-                            if(user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
-                                correct_command = 1;
-                            else 
-                                correct_command = 0;
-
-                            if(correct_command)
-                            {
-                                // Commit message
-                                if(commit_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
-                                {
-                                    final_cli_input = "commit successful \n";
-                                    commit_message = user_cli_input;
-                                    user_cli_input.clear();
-                                    commands_entered_counter++;
-                                    correct_command = 0;
-                                    commit_command_entered = 0;
-                                    continuation_message.commands_flag = 1;
-                                }
-                                else if(checkout_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
-                                {
-                                    final_cli_input = "checkout successful \n"; 
-                                    checkout_id = user_cli_input;
-                                    user_cli_input.clear();
-                                    commands_entered_counter++;
-                                    correct_command = 0;
-                                    checkout_command_entered = 0;
-                                    continuation_message.commands_flag = 1;
-                                }
-                                // This condition needs a follow up, each command is special
-                                // So we use this if condition to adjust the uniqueness of each one
-                                else if(level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
-                                {
-                                    final_cli_input.clear();
-                                    final_cli_input = (cli_commit_msg_request+'\n');
-                                    commit_command_entered = 1;
-                                    continuation_message.commands_flag = 0;
-                                }
-                                else if(level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
-                                {
-                                    final_cli_input.clear();
-                                    final_cli_input = (cli_checkout_message_rqst+'\n');
-                                    checkout_command_entered = 1;
-                                    continuation_message.commands_flag = 0;
-                                }
-                                else 
-                                {
-                                    final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
-                                    continuation_message.commands_flag = 1;
-                                    commands_entered_counter++;   
-                                    //correct_command = 0;
-                                }
-                            }
-                            else
-                            {
-                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";   
-                            }
-                            user_cli_input.clear();
-                        }
+                        final_cli_input += ("$ "+ user_cli_input + "\n");
+                        user_cli_input.clear();
                     }
                 }
-                // Delete and enter for edit window
-                if(edit_window_selected && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2)
+                if(edit_window_selected)
                 {
-                    if (event.key.code == Keyboard::BackSpace && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2) 
+                    if (event.key.code == Keyboard::BackSpace) 
                     {
-                        if (!current_edit_window_input.empty())
-                            current_edit_window_input.pop_back();
+                        if (!edit_window_input.empty())
+                            edit_window_input.pop_back();
+                    }
+                    if (event.key.code == Keyboard::Return) 
+                    {
+                        edit_window_input += ( "\n");  
                     }
                     if (event.key.code == Keyboard::Return && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2) 
                     {
@@ -881,11 +822,11 @@ int main()
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
             printDialogueText(dialogue_text);
-            showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
-            showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_output_shape, cli_input_shape);
-            showContinuationMessage(continuation_message, edit_window_changed);
-            setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
+            showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
+            showCursor(cursor_clock, show_edit_window_cursor,edit_window_selected, cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
+            showContinuationMessage(dialogue_text);
+            setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
             headIdleAnimation(head, additional_commit_created);
             headBorderDeflection(head, window_collision_mode, additional_commit_created);
             moveHeadToLatestCommit(head, additional_commit_created);
@@ -916,15 +857,22 @@ int main()
             }
             window.draw(edit_window_title);
             window.draw(edit_window_title_text);
-            for (unsigned short int i = 0; i < commits_count; i++)
+            if (git_init){
+                headIdleAnimation(head, additional_commit_created);
+                headBorderDeflection(head, window_collision_mode, additional_commit_created);
+                moveHeadToLatestCommit(head, additional_commit_created);
+                calculateHeadDistance(head, position, commits);
+                headAnimationAndMovement(head);
+                window.draw(head);
+                for (unsigned short int i = 0; i < commits_count; i++)
                 window.draw(commits[i].sprite);
             window.draw(head);
-            if (should_create_smoke) {
+            if (should_create_smoke){
                 makeSmoke(smoke, should_create_smoke);
                 window.draw(smoke);
             }
         }
-        else if (current_screen == "options")
+        else if(current_screen == "options")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
             controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
@@ -1241,6 +1189,17 @@ void createCliInputShape(RectangleShape& form) {
     form.setPosition(1200, 700);
 }
 
+void inputChecker(string& user_cli_input, bool& git_init, bool& git_add, bool& git_commit){
+    if (user_cli_input == "git init")
+        git_init = 1;
+    if (user_cli_input == "git add ." ||user_cli_input == "git add Main.cpp")
+        git_add = 1;
+    if (user_cli_input == "git commit")
+        git_commit = 1;
+    if (!git_add)
+        git_commit = 0;
+}
+
 void makeSmoke(Sprite& smoke, bool& should_create_smoke) {
     smoke.setScale(0.2, 0.2);
     smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
@@ -1288,6 +1247,32 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commits[commits_count] = new_commit;
     commits_count++;
 }
+
+void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, RectangleShape& show_msg, bool& should_show_msg){
+    int index = 0;
+    for (int i = 0; i <= index_of_the_last_commit; i++){
+        if (commits[i].sprite.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
+            should_show_msg = 1;
+            index = i;
+            break;
+        }
+    }
+        if (commits[index].sprite.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
+            msg.setString(commits[index].message);
+            msg.setFillColor(Color :: White);
+            show_msg.setSize(Vector2f(commits[index].message.size() * 9, 40));
+            show_msg.setOrigin(show_msg.getLocalBounds().width / 2, show_msg.getLocalBounds().height / 2);
+            msg.setPosition(show_msg.getGlobalBounds().left + 10, show_msg.getGlobalBounds().top + 15);
+            show_msg.setPosition(mouse_cursor.getPosition().x, mouse_cursor.getPosition().y);
+            show_msg.setFillColor(Color :: Black);
+        }
+        else
+            should_show_msg = 0;
+
+}
+    
+
+
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created) {
     if (additional_commit_created)
     {
