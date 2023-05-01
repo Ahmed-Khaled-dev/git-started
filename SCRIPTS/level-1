@@ -10,4 +10,5 @@ Git init is responsible for watching your current folder which we call a git rep
 Let’s try executing it together. Please type “git init” in the command line (the black box) -c
 (head appears)
 Would you look at that!! That’s our head. Does it remind you of something?
-This Octocat symbolizes the head in git. You will get to know more about the “head” in the upcoming levels
+This Octocat symbolizes the head in git. It is inspired from the github logo and it will accompany you throughout the game.  You will get to know more about the “head” in the upcoming levels
+
