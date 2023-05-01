@@ -11,6 +11,8 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
+string levels_screen[10]={"intro level","commit level","checkout level"};
+int current_screen_index = 0;
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
@@ -194,6 +196,11 @@ int main()
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
     bool edit_window_selected = 0, show_edit_window_cursor = 0;
+    // Next button
+    RectangleShape game_window_next_button(Vector2f(140, 50));
+    Text game_window_next_text("Next", buttons_font, 35);
+    setButtonProperties(game_window_next_button, 0, 0, 255, 1600, 40);
+    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial, 35);
@@ -337,7 +344,8 @@ int main()
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (current_screen == "intro level") {
+                if (current_screen != "levels menu" && current_screen != "levels menu") 
+                {
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         checkInputEquality(edit_window_input, checker);
@@ -349,6 +357,10 @@ int main()
                     if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = "options_in_game";
+                    }
+                    if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen_index ++;
                     }
                     if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -395,21 +407,21 @@ int main()
                     }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "intro level";
+                        current_screen = levels_screen[0];
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "intro level";
+                        current_screen = levels_screen[2];
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "intro level";
+                        current_screen = levels_screen[3];
                     }
                 }
             }
             if (event.type == Event::TextEntered)
             {
-                if (edit_window_selected && current_screen == "intro level")
+                if (edit_window_selected && current_screen == levels_screen[0])
                 {
                     const short int edit_window_max_chars = 600;
                     if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
@@ -434,7 +446,7 @@ int main()
                         edit_window_selected = false;
                 }
                 // Filter out symbols (only characters in ascii code enters)
-                if (cli_selected && current_screen == "intro level")
+                if (cli_selected && current_screen == levels_screen[0])
                 {
                     if (isprint(event.text.unicode))
                         user_cli_input += event.text.unicode;
@@ -627,7 +639,7 @@ int main()
             window.draw(main_menu_close_text);
             window.draw(game_title);
         }
-        else if (current_screen == "intro level")
+        else if (current_screen == levels_screen[0])
         {
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
