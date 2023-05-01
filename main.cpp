@@ -363,7 +363,7 @@ int main()
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (current_screen != "main menu" && current_screen != "levels menu" && current_screen != "options" && current_screen != "options""options_in_game") 
+                if (current_screen != "main menu" && current_screen != "levels menu" && current_screen != "options" && current_screen != "options_in_game") 
                 {
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -747,7 +747,7 @@ int main()
             window.draw(game_title);
         }
         // checking if its a level screen
-        else if (current_screen != "main menu" && current_screen != "levels menu" && current_screen != "options" && current_screen != "options""options_in_game")
+        else if (current_screen ==levels_screen[current_screen_index])
         {
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
