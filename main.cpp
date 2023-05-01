@@ -36,28 +36,33 @@ struct continuationMessage
     double continuation_delay = 0.8f;
     string continuation_content = "Press down to continue...";
     bool continuation_message_running = 0;
-    bool sub_script_ended = 0;   // for the sub-strings inside vector
+    bool sub_script_ended = 0;   // For the sub-strings inside the whole script vector
     string font_type = "resources/fonts/Roboto-Black.ttf";
-    bool commands_flag =0;
+    bool commands_flag = 0;
 }continuation_message;
 
 struct dialogueText
 {
     Font font;
     Time time;
-    Clock typewrite_clock; // for the typewriting effect
+    Clock typewrite_clock; // For the typewriting effect
     Text script_text;
     string font_type = "resources/fonts/Roboto-Black.ttf";
     Color color = Color::Black;
     double size = 32;
     double script_speed = 0.09f;
     String script_content = " ";
-    vector <pair<int,string>> new_script  =  /* if bool = 1 yeb2a paused untill el command el ablo is correct */
+    // If bool = 1 
+    // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
+    // If bool = 2
+    // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
+    vector <pair<int,string>> new_script  =
     {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},{1 ,"try editing"},
     {2 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
-    {1,"congrats that was correct!"},{0,"you did it!"},{0,"now wait for other commands"}};
+    {1,"congrats that was correct!"}};
     int current_script_index = 0;
-    bool script_ended = 0;     // the whole vector 
+    // The whole vector/dialogue/script
+    bool script_ended = 0;     
 }dialogue_text;
 
 struct optionMenu {
@@ -66,7 +71,6 @@ struct optionMenu {
     String option_font_type = "resources/fonts/minecraft_font.ttf";
     const int short  size = 60;
 };
-
 
 // Functions declaration
 bool checkInputEquality(string& edit_window_input, string&correct_string, bool& check_edit_window_changes);
@@ -91,8 +95,8 @@ void showContinuationMessage(continuationMessage& continuation_message,bool& che
 int main()
 {
     // Dialogue box
-    dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
+    dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
     continuation_message.font.loadFromFile(continuation_message.font_type);
 
@@ -110,7 +114,6 @@ int main()
     if (!cli_font.loadFromFile("resources/fonts/Roboto-Black.ttf")) {
         cout << "Error has happened while loading the command line font" << endl;
     }
-
     Font arial;
     if (!arial.loadFromFile("resources/fonts/arial.ttf")) {
         cout << "Error has happened while loading arial font" << endl;
@@ -129,21 +132,22 @@ int main()
 
     // Command line interface (CLI)
     RectangleShape cli_output_shape, cli_input_shape;
-    string user_cli_input, final_cli_input,check_cli_input, commit_message;
+    string user_cli_input, final_cli_input, check_cli_input, commit_message;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
-    string cli_text_commitm=" # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0,syntax_command=0,commit_command_entered=0,correct_command =0;
+    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
+    bool show_cli_cursor = 0, cli_selected = 0, syntax_command = 0, commit_command_entered = 0, correct_command = 0;
     Clock cursor_clock;
-    string allCommandlvls[5] = {"git init", "git commit","git checkout","git pull"};
-    int allCommandlvlsCounter=0;
+    string level_1_commands[5] = {"git init", "git commit", "git checkout", "git pull"};
+    int commands_entered_counter = 0;
 
     // Edit Window
     RectangleShape edit_window_shape;
     string edit_window_input = "type here", old_edit_window_input = "type here";
+    const short int EDIT_WINDOW_MAX_CHARS = 600;
     Text edit_window_text(edit_window_input ,cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
-    bool edit_window_selected = 0, show_edit_window_cursor = 0,check_edit_window_changes=0;
+    bool edit_window_selected = 0, show_edit_window_cursor = 0, check_edit_window_changes = 0;
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial , 35);
@@ -267,7 +271,7 @@ int main()
                     }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
-                       check_edit_window_changes= checkInputEquality(edit_window_input, old_edit_window_input,check_edit_window_changes);
+                        check_edit_window_changes = checkInputEquality(edit_window_input, old_edit_window_input, check_edit_window_changes);
                     }
                     if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels") 
                     {
@@ -292,26 +296,25 @@ int main()
             }
             if (event.type == Event::TextEntered) 
             { 
-                if (edit_window_selected && current_screen == "levels"&& dialogue_text.new_script[dialogue_text.current_script_index].first==2)
+                if (edit_window_selected && current_screen == "levels" && dialogue_text.new_script[dialogue_text.current_script_index].first == 2)
                 {
-                    const short int edit_window_max_chars = 600;
                     if ( (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
-                        //write in edit window
+                        // Write in edit window
                         if (isprint(event.text.unicode)){     
                             edit_window_input += event.text.unicode;
                         }
                         
                         // Bounds for text
-                        Vector2f pos = edit_window_text.findCharacterPos(edit_window_input.size());  
+                        Vector2f edit_window_char_pos = edit_window_text.findCharacterPos(edit_window_input.size());  
                         
-                        if(!((edit_window_shape.getGlobalBounds()).contains(pos))){
+                        if(!((edit_window_shape.getGlobalBounds()).contains(edit_window_char_pos))){
                             char temp_last = edit_window_input[edit_window_input.size()-1];
-                            char temp_Before_last = edit_window_input[edit_window_input.size()-2];
+                            char temp_before_last = edit_window_input[edit_window_input.size()-2];
                             edit_window_input.pop_back();
                             edit_window_input.pop_back();
                             edit_window_input += ("\n");
-                            edit_window_input += temp_Before_last;
+                            edit_window_input += temp_before_last;
                             edit_window_input += temp_last;
                         }
                     }
@@ -320,14 +323,14 @@ int main()
                 }
                 // Filter out symbols (only characters in ascii code enters)
                 if (cli_selected && current_screen == "levels")
-                         //user inputs in the cli
+                    // User inputs in the cli
                     if (isprint(event.text.unicode))    
                     { 
                         user_cli_input += event.text.unicode;
-                         //bounds for the cli text
-                        Vector2f pst = cli_text.findCharacterPos(user_cli_input.size());  
+                        // Bounds for the cli text
+                        Vector2f cli_char_pos = cli_text.findCharacterPos(user_cli_input.size());  
                         
-                        if (!(cli_output_shape.getGlobalBounds().contains(pst)))
+                        if (!(cli_output_shape.getGlobalBounds().contains(cli_char_pos)))
                         {
                             user_cli_input.pop_back();
                         }
@@ -337,57 +340,51 @@ int main()
             {    
                 if(cli_selected)
                 {
-                    //delete option
-                     if (event.key.code == Keyboard::BackSpace) 
-                     {
-                        if (!user_cli_input.empty())
-                            user_cli_input.pop_back();
-                     }
-                    // User clicks enter and the text will be transfered at the top of the screen
-                    if (event.key.code == Keyboard::Return&&(!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
+                    // Delete option
+                    if (event.key.code == Keyboard::BackSpace) 
                     {
-
-
-
-                        if( dialogue_text.new_script[dialogue_text.current_script_index].first==1)
-                        //continuation flag is used for stopping input from user after the correct command
+                    if (!user_cli_input.empty())
+                        user_cli_input.pop_back();
+                    }
+                    // User clicks enter and the text will be transfered at the top of the screen
+                    if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
+                    {
+                        if(dialogue_text.new_script[dialogue_text.current_script_index].first == 1)
+                        // Continuation flag is used for stopping input from user after the correct command
                         {
                             check_cli_input = user_cli_input;
-                            if(check_cli_input==allCommandlvls[allCommandlvlsCounter] ||(commit_command_entered))
-                                correct_command=1;
+                            if(check_cli_input == level_1_commands[commands_entered_counter] || (commit_command_entered))
+                                correct_command = 1;
                             else 
-                                correct_command=0;
+                                correct_command = 0;
 
                             if(correct_command) 
                             {
-                                //commit message
-                                if(commit_command_entered && allCommandlvls[allCommandlvlsCounter]=="git commit")
+                                // Commit message
+                                if(commit_command_entered && level_1_commands[commands_entered_counter] == "git commit")
                                 {
-                                    final_cli_input="commit successful \n"; 
-                                    commit_message=user_cli_input;
+                                    final_cli_input = "commit successful \n"; 
+                                    commit_message = user_cli_input;
                                     user_cli_input.clear();
-                                    allCommandlvlsCounter++;
-                                    correct_command=0;
-                                    commit_command_entered=0;
+                                    commands_entered_counter++;
+                                    correct_command = 0;
+                                    commit_command_entered = 0;
                                     continuation_message.commands_flag = 1;
                                 }
-                                //this condition needs a follow up, each command is special,so we use this if condition
-                                //to adjust the uniqueness of each one
-                                else if(allCommandlvls[allCommandlvlsCounter]=="git commit")
+                                // This condition needs a follow up, each command is special
+                                // So we use this if condition to adjust the uniqueness of each one
+                                else if(level_1_commands[commands_entered_counter] == "git commit")
                                 {
                                     final_cli_input.clear();
-                                    final_cli_input = (cli_text_commitm+'\n');
-                                    commit_command_entered=1;
+                                    final_cli_input = (cli_commit_msg_request+'\n');
+                                    commit_command_entered = 1;
                                     continuation_message.commands_flag = 0;
                                 }
-
                                 else 
                                 {
-
                                     final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
                                     continuation_message.commands_flag = 1;
-                                    allCommandlvlsCounter++;
-                                    
+                                    commands_entered_counter++;   
                                 }
                             }
                             else
@@ -479,23 +476,19 @@ int main()
             }
            // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
-            { 
-
-                    
-                if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && continuation_message.commands_flag==0 && dialogue_text.new_script[dialogue_text.current_script_index].first==0)
+            {        
+                if (!dialogue_text.script_ended && current_screen == "levels" && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && dialogue_text.new_script[dialogue_text.current_script_index].first == 0)
                 {
-                    continuation_message.commands_flag = 0;
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }    
-                    // Clear the current text and reset the script_content to the next string
+                    // Clear the current text and reset the script content to the next string
                     dialogue_text.script_text.setString("");
                     dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++; 
-                }
-                    
-                else if ( continuation_message.commands_flag == 1 && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
+                }   
+                else if (continuation_message.commands_flag == 1 && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
                 {
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
@@ -507,7 +500,6 @@ int main()
                     dialogue_text.current_script_index++;
                     continuation_message.commands_flag = 0;
                 }
-                
                 else if(check_edit_window_changes==1 && dialogue_text.new_script[dialogue_text.current_script_index].first==2 )
                 {
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
@@ -518,7 +510,7 @@ int main()
                     dialogue_text.script_text.setString("");
                     dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
                     dialogue_text.current_script_index++;
-                    check_edit_window_changes=0;
+                    check_edit_window_changes = 0;
                 }
             }
         }
