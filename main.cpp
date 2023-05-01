@@ -11,7 +11,7 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
-string levels_screen[10]={"intro level","commit level","checkout level"};
+string levels_screen[10]={"intro level","init level","commit level","checkout level"};
 int current_screen_index = 0;
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
@@ -344,7 +344,7 @@ int main()
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (current_screen != "levels menu" && current_screen != "levels menu") 
+                if (current_screen != "main menu" && current_screen != "levels menu" && current_screen != "options" && current_screen != "options""options_in_game") 
                 {
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -361,6 +361,7 @@ int main()
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen_index ++;
+                        current_screen = levels_screen[current_screen_index];
                     }
                     if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -401,21 +402,25 @@ int main()
                     {
                         current_screen = "main menu";
                     }
-                    else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "intro level";
-                    }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = levels_screen[0];
+                        current_screen_index = 0;
+                    }
+                    else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = levels_screen[1];
+                        current_screen_index = 1;
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = levels_screen[2];
+                        current_screen_index = 2;
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = levels_screen[3];
+                        current_screen_index = 3;
                     }
                 }
             }
@@ -609,11 +614,23 @@ int main()
                     checkout_level_button.setScale(1.0f, 1.0f);
 
                 }
+                if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    game_window_next_button.setFillColor(Color(26, 17, 16));
+                    game_window_next_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    game_window_next_button.setFillColor(Color::Black);
+                    game_window_next_button.setScale(1.0f, 1.0f);
+
+                }
             }
             // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {
-                if (!dialogue_text.script_ended && current_screen == "intro level" && dialogue_text.script_part_ended)
+                if (!dialogue_text.script_ended && current_screen == levels_screen[0] && dialogue_text.script_part_ended)
                 {
                     if (dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
@@ -639,7 +656,8 @@ int main()
             window.draw(main_menu_close_text);
             window.draw(game_title);
         }
-        else if (current_screen == levels_screen[0])
+        // checking if its a level screen
+        else if (current_screen != "main menu" && current_screen != "levels menu" && current_screen != "options" && current_screen != "options""options_in_game")
         {
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
