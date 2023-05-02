@@ -218,8 +218,8 @@ int main()
     // Next button
     RectangleShape game_window_next_button(Vector2f(140, 50));
     Text game_window_next_text("Next", buttons_font, 35);
-    setButtonProperties(game_window_next_button, 0, 0, 255, 1600, 40);
-    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
+    setButtonProperties(game_window_next_button, 0, 0, 255, 1600, 200);
+    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::White);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial, 35);
@@ -363,13 +363,20 @@ int main()
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                
+                if (current_screen == levels_screen[current_screen_index]) 
+                {
+                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = "levels menu";
                         current_screen_index = 0;
                     }
-                if (current_screen == levels_screen[current_screen_index]) 
-                {
+                    if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen_index ++;
+                        current_screen = levels_screen[current_screen_index];
+                    
+                    }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         edit_window_changed = checkInputEquality(current_edit_window_input, old_edit_window_input, edit_window_changed);
@@ -378,11 +385,6 @@ int main()
                     if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = "options_in_game";
-                    }
-                    if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen_index ++;
-                        current_screen = levels_screen[current_screen_index];
                     }
                     if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -447,7 +449,7 @@ int main()
             }
             if (event.type == Event::TextEntered)
             {
-                if (edit_window_selected && current_screen == levels_screen[0] && dialogue_text.new_script[dialogue_text.current_script_index].first == 2)
+                if (edit_window_selected && current_screen == levels_screen[current_screen_index] && dialogue_text.new_script[dialogue_text.current_script_index].first == 2)
                 {
                     if ( (edit_window_text.findCharacterPos(current_edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
@@ -473,7 +475,7 @@ int main()
                         edit_window_selected = false;
                 }
                 // Filter out symbols (only characters in ascii code enters)
-                if (cli_selected && current_screen == levels_screen[0])
+                if (cli_selected && current_screen == levels_screen[current_screen_index])
                     // User inputs in the cli
                     if (isprint(event.text.unicode))    
                     { 
@@ -698,7 +700,7 @@ int main()
            // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {        
-                if (!dialogue_text.script_ended && current_screen == levels_screen[0] && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && dialogue_text.new_script[dialogue_text.current_script_index].first == 0)
+                if (!dialogue_text.script_ended && current_screen == levels_screen[current_screen_index] && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && dialogue_text.new_script[dialogue_text.current_script_index].first == 0)
                 {
                     if (dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
@@ -784,6 +786,8 @@ int main()
             window.draw(game_window_back_text);
             window.draw(game_window_options_button);
             window.draw(game_window_options_text);
+            window.draw(game_window_next_button);
+            window.draw(game_window_next_text);
             window.draw(edit_window_title);
             window.draw(edit_window_title_text);
             for (unsigned short int i = 0; i < commits_count; i++)
