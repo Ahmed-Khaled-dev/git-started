@@ -29,6 +29,17 @@ struct commit{
     Sprite sprite;
 };
 
+struct levelStruct
+{
+    // For the vectors of pairs
+    // If bool = 1 
+    // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
+    // If bool = 2
+    // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
+    vector <pair<int,string>> new_script;
+    string level_commands [5];
+};
+
 struct dialogueBox{
     Font font;
     Texture texture;
@@ -52,7 +63,7 @@ struct continuationMessage
     string continuation_content = "Press down to continue...";
     bool continuation_message_running = 0;
     bool sub_script_ended = 0;   // For the sub-strings inside the whole script vector
-    string font_type = "resources/fonts/Roboto-Black.ttf";
+    string font_type = "resources/fonts/BreeSerif-Regular.ttf";
     bool commands_flag = 0;
 }continuation_message;
 
@@ -62,23 +73,46 @@ struct dialogueText
     Time time;
     Clock typewrite_clock; // For the typewriting effect
     Text script_text;
-    string font_type = "resources/fonts/Roboto-Black.ttf";
+    string font_type = "resources/fonts/BreeSerif-Regular.ttf";
     Color color = Color::Black;
-    double size = 32;
-    double script_speed = 0.09f;
+    double size = 29;
+    double script_speed = 0.07f;
     String script_content = " ";
-    // If bool = 1 
-    // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
-    // If bool = 2
-    // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
-    vector <pair<int,string>> new_script  =
-    {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},{1 ,"try editing"},
-    {2 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
-    {1,"congrats that was correct!"}};
     int current_script_index = 0;
     // The whole vector/dialogue/script
-    bool script_ended = 0;     
+    bool script_ended = 0;
+     
 }dialogue_text;
+// done: 0,2,3
+// not done:1
+int current_level_screen = 1,commands_entered_counter = 0;  
+levelStruct 
+level[4]= {/*level_0*/{{{0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
+    {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
+    {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},{0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
+    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."}, 
+    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code. It is created for the\nsake of aiding us in writing our code."},
+    {0 ," It has useful commands that help us in\nworking with others quickly and efficiently."},{0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
+    {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
+    /*level_1*/{{{0,"Let me show you around our time machine.\nThis blue box is our IDE, where you\nwill write the code you want."},{0,"This black box  is the command line window,\nwhere you will write the suitable \"GIT\" commands\nfor GIT to execute, also known as the \"Console\"."},
+    {0,"Here is your git graph, it is a diagram\nthat shows how the commands are translated and\nmakes it easier to understand how they work."},{0,"After showing you around, let's start our\nadventure by telling you what the word \"command\"\nmeans in \"GIT\"."}
+    ,{0,"\"Commands\" are a set of instructions, each one\nof them is responsible for making a certain job."},{0,"We will start with our first command \"Git init\".\nIt's responsible for watching your current\nfolder called a git repository."},
+    {0,"All of our git commands won't work unless we\ninitialize a repository. That's why\n\"Git init\" has to be the first command to be executed."},{0,"Let's try executing it together. Please type\n\"git init\" in the command line (the black box)"},
+    {1,"Would you look at that!! That's our head.\nDoes it remind you of something?"},{0,"This Octocat symbolizes the head in git.\nIt is inspired from the github logo and it will\naccompany you throughout the game."},{0,"You will get to know more about the\n\"head\" in the upcoming levels..."}},{"git init"}}
+    ,/*level_2*/{{{0,"Now that you've created your first repository\n(which we will call \"repo\" from now),\nyou'll start by writing your code."},{0,"Throughout each big step,\nyou will need to keep track of your history."},
+    {0,"Imagine this; you are working on\na huge project with your team,"},{0,"One of your team mates messed up a part of\ntheir code, they can't remember what part\ngot messed up,"},
+    {0,"Neither can they go back to the code that\nworked fine, Scary to imagine right?"},{0,"That's where \"commits\" come in hand.\n\"commits\" are like checkpoints in games\nbut for your code."},
+    {0,"We will use the \"git commit <commit_message>\"\ncommand."},{0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need\nto write code using C++"},
+    {0,"For example, try writing: \"int i = 5;\""},{2,"Now you need to commit your changes\nto mark this checkpoint!"},{0,"In the command line write:\ngit commit, name it any thing you want\nfor example \"First Variable!\""},
+    {1,"Congratulations! you have just written your\nfirst commit.\nThe circle that just appeared represents our commit."},{0,"As you can see, our Head (Octocat) has appeared\nabove our commit."},
+    {0,"He will be standing on the latest commit\nwe create."},{0,"It's your turn to write another piece of\ncode and commit your changes!"},
+    {0,"Try adding another variable in \"main.cpp\"\nedit window."},{2,"Commit your changes with the message\nthat describes it best!"},{1,"Notice that the Head moves onto your\nnew commit."},
+    {0,"Now it is time for you to try out for yourself,\n0good luck!"}},{"git commit","git commit"}},/*level_3*/{{{0,"Look at all the commits you have;\nyou must be proud of yourself!"},
+    {0,"Now as mentioned before our friend (the Head)\nis looking at the latest commit that we created."},{0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?"},
+    {0,"We need to move the Head to the\ncommit we want.Each commit has a specified number\nto show it, this number is called “commit hash”"},
+    {0,"We will use a new command which is\n“git checkout <commit hash>”. Now, we want to\ncheckout to our first commit."},
+    {0,"Write in the console: “git checkout” and the “hash” of that commit. (-c)"},{1,"As you can see in the edit menu,\nYour code has changed to what you first wrote\nin the previous level!"},
+    {0,"Now let's checkout again to our last commit.\nHere you have your latest code again!"},{0,"The “git checkout” command has a lot of benefits\nthat you will discover more into the next levels."}},{"git commit"}}};
 
 struct optionMenu{
     Font font;
@@ -202,8 +236,7 @@ int main()
     string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0;
     Clock cursor_clock;
-    string level_1_commands[5] = {"git init", "git commit", "git checkout", "git pull"};
-    int commands_entered_counter = 0;
+    
 
     // Edit Window
     RectangleShape edit_window_shape;
@@ -428,7 +461,7 @@ int main()
             }
             if (event.type == Event::TextEntered)
             {
-                if (edit_window_selected && current_screen == "intro level" && dialogue_text.new_script[dialogue_text.current_script_index].first == 2)
+                if (edit_window_selected && current_screen == "intro level" && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
                 {
                     if ( (edit_window_text.findCharacterPos(current_edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
@@ -481,10 +514,10 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
                     {
-                        if(dialogue_text.new_script[dialogue_text.current_script_index].first == 1)
+                        if(level[current_level_screen].new_script[dialogue_text.current_script_index].first == 1)
                         // Continuation flag is used for stopping input from user after the correct command
                         {
-                            if(user_cli_input == level_1_commands[commands_entered_counter] || (commit_command_entered))
+                            if(user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered))
                                 correct_command = 1;
                             else 
                                 correct_command = 0;
@@ -492,7 +525,7 @@ int main()
                             if(correct_command)
                             {
                                 // Commit message
-                                if(commit_command_entered && level_1_commands[commands_entered_counter] == "git commit")
+                                if(commit_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
                                 {
                                     final_cli_input = "commit successful \n"; 
                                     commit_message = user_cli_input;
@@ -504,7 +537,7 @@ int main()
                                 }
                                 // This condition needs a follow up, each command is special
                                 // So we use this if condition to adjust the uniqueness of each one
-                                else if(level_1_commands[commands_entered_counter] == "git commit")
+                                else if( level[current_level_screen].level_commands[commands_entered_counter]== "git commit")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_commit_msg_request+'\n');
@@ -530,14 +563,14 @@ int main()
                     }
                 }
                 //delete and enter for edit window
-                if(edit_window_selected && dialogue_text.new_script[dialogue_text.current_script_index].first==2)
+                if(edit_window_selected && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2)
                 {
-                    if (event.key.code == Keyboard::BackSpace && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
+                    if (event.key.code == Keyboard::BackSpace && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2) 
                     {
                         if (!current_edit_window_input.empty())
                             current_edit_window_input.pop_back();
                     }
-                    if (event.key.code == Keyboard::Return && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
+                    if (event.key.code == Keyboard::Return && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2) 
                     {
                         current_edit_window_input += ("\n");
                     }
@@ -667,38 +700,38 @@ int main()
            // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {        
-                if (!dialogue_text.script_ended && current_screen == "intro level" && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && dialogue_text.new_script[dialogue_text.current_script_index].first == 0)
+                if (!dialogue_text.script_ended && current_screen == "intro level" && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 0)
                 {
-                    if (dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    if (level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }    
                     // Clear the current text and reset the script content to the next string
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second;
+                    dialogue_text.script_content = level[current_level_screen].new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++; 
                 }   
-                else if (continuation_message.commands_flag == 1 && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
+                else if (continuation_message.commands_flag == 1 && level[current_level_screen].new_script[dialogue_text.current_script_index].first==1)
                 {
-                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    if(level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }
-                    dialogue_text.new_script[dialogue_text.current_script_index].first = 0;
+                    level[current_level_screen].new_script[dialogue_text.current_script_index].first = 0;
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
+                    dialogue_text.script_content = level[current_level_screen].new_script[dialogue_text.current_script_index].second; 
                     dialogue_text.current_script_index++;
                     continuation_message.commands_flag = 0;
                 }
-                else if(edit_window_changed==1 && dialogue_text.new_script[dialogue_text.current_script_index].first==2 )
+                else if(edit_window_changed==1 && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2 )
                 {
-                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    if(level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     } 
-                    dialogue_text.new_script[dialogue_text.current_script_index].first=0;
+                    level[current_level_screen].new_script[dialogue_text.current_script_index].first=0;
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
+                    dialogue_text.script_content = level[current_level_screen].new_script[dialogue_text.current_script_index].second; 
                     dialogue_text.current_script_index++;
                     edit_window_changed = 0;
                 }
@@ -871,7 +904,7 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
         continuation_message.continuation_fade_time = Time::Zero;
     }
 
-    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (dialogue_text.new_script[dialogue_text.current_script_index].first==0 || continuation_message.commands_flag ==1|| edit_window_changed==1))
+    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (level[current_level_screen].new_script[dialogue_text.current_script_index].first==0 || continuation_message.commands_flag ==1|| edit_window_changed==1))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
@@ -892,6 +925,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
     dialogue_text.script_text.setPosition(250, 780);
+    //dialogue_text.script_text.setStyle(Text::Bold);
     dialogue_text.time += dialogue_text.typewrite_clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
     {
