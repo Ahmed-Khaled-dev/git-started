@@ -88,8 +88,7 @@ struct dialogueText
 // done: 0,2,3
 // not done:1
 int current_level_screen = 0 , commands_entered_counter = 0;  
-levelStruct 
-level[4]= {/*level_0*/{{{0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
+levelStruct level[4]= {/*level_0*/{{{0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
     {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
     {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},{0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
     {0,"But fear not, I am here to introduce\nyou to a system that changed my life."}, 
@@ -409,6 +408,9 @@ int main()
                         current_screen_index ++;
                         current_screen = levels_screen[current_screen_index];
                         current_level_screen++;
+                        //reset the dialogues in the array of structs
+                        dialogue_text.current_script_index=0;
+                        dialogue_text.script_ended=0;
                     }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
