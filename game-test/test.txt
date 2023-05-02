@@ -1,0 +1,32 @@
+*Disclaimer: All buttons should change color and scale when you hover on them with the mouse*
+//In Main Menu Screen (close, options, start)//
+1- Close button: closes all program
+
+2- Options button: window should appear above screen
+2.1- Music slider: when you slide right volume increases, when you slide left volume decreases till it mutes. 
+# Bug: when I first start the game the sound is muted, as I start to move slider the sound appears but doesn't get muted again.
+2.2- SFX slider: when you slide right volume increases, when you slide left volume decreases till it mutes.
+# I'm not really sure whether I should hear the sound change in the SFX, but there isn't any sound effect.
+2.3- "X" button: closes options window but sound settings that you changed should be the same
+
+3- Start button: goes to Game Menu Screen
+
+
+//In Game Menu Screen (levels menu button #not added yet#, options button, back button, dialogue box, console, edit window, git graph)//
+1- Dialogue Box: "press down to continue" should be displayed, after pressing on the "down" arrow the text starts showing by parts and waits for "press down to continue" again to display the next part.
+
+2- Edit window: you should be able to write text in there and you press on the "save" button the text should be saved in the box.
+# Would be better if the "type here" text gets removed automatically once the user starts writing, but it's not a big deal.
+3- Console window: you should see the cursor and start writing commands there, after clicking enter that command must be shown on the screen of the console written in this way:"$ git <command>".
+
+4- Options Button: window should appear above screen
+4.1- Music Slider: when you slide right volume increases, when you slide left volume decreases till it mutes. 
+4.2- SFX Slider: when you slide right volume increases, when you slide left volume decreases till it mutes.
+4.3- "X" Button: closes options window but sound settings that you changed should be the same.
+
+5- Back Button: when pressed, sends you to the previous screen which is Main Menu Screen.
+
+6- Git Graph: when you press on the "up" arrow, a new commit should appear and the head would stand over it, when you press on another commit the head moves there.
+# Would recommend creating a limit to the commits since it overrides the edit window when they are a lot.
+# Would recommend replacing the arrows with something else, it seems like the head is moving back to the first commit not the most recent one.
+# Bug: when I click back and go to the main menu screen then press start, the head moves to the commit that has the same place as the start button, even though I didn't press on it.
