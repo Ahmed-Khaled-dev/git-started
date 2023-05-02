@@ -11,6 +11,7 @@ using namespace sf;
 int progress_cnt = 0;
 const int levels_num = 4;
 bool levels_status[levels_num] = { 0,0,0,0 };
+
 unsigned short int graph_smoke_animation_delay = 0, current_smoke_animation_frame = 0;
 short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
@@ -195,8 +196,6 @@ int main()
 {
 
     readProgressFile("progress.txt", levels_status, levels_num);
-
-
 
     // Dialogue box
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
@@ -459,6 +458,7 @@ int main()
 
             if (event.type == Event::Closed || current_screen == "close")
             {
+                updateProgressFile("progress.txt", levels_status, levels_num);
                 window.close();
             }
             // Mouse click CLI
@@ -822,11 +822,11 @@ int main()
 
                     if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(checkout_level_button, 0.9f, Color(255, 215, 0), Color(255, 140, 0));
+                        changeButtonScaleAndColor(checkout_level_button, 0.9f, Color(158, 158, 158), Color(255, 140, 0));
                     }
                     else
                     {
-                        changeButtonScaleAndColor(checkout_level_button, 1.0f, Color(255, 223, 0), Color::Black);
+                        changeButtonScaleAndColor(checkout_level_button, 1.0f, Color(169, 169, 169), Color::Black);
                     }
                     if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -857,11 +857,11 @@ int main()
 
                     if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(commit_level_button, 0.92f, Color(255, 215, 0), Color(255, 140, 0));
+                        changeButtonScaleAndColor(commit_level_button, 0.92f, Color(158, 158, 158), Color(255, 140, 0));
                     }
                     else
                     {
-                        changeButtonScaleAndColor(commit_level_button, 1.0f, Color(255, 223, 0), Color::Black);
+                        changeButtonScaleAndColor(commit_level_button, 1.0f, Color(169, 169, 169), Color::Black);
                     }
                     if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -884,11 +884,11 @@ int main()
 
                     if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(init_level_button, 0.9f, Color(255, 215, 0), Color(255, 140, 0));
+                        changeButtonScaleAndColor(init_level_button, 0.9f, Color(158, 158, 158), Color(255, 140, 0));
                     }
                     else
                     {
-                        changeButtonScaleAndColor(init_level_button, 1.0f, Color(255, 223, 0), Color::Black);
+                        changeButtonScaleAndColor(init_level_button, 1.0f, Color(169, 169, 169), Color::Black);
                     }
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -903,11 +903,11 @@ int main()
 
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(255, 215, 0), Color(255, 140, 0));
+                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(158, 158, 158), Color(255, 140, 0));
                     }
                     else
                     {
-                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(255, 223, 0), Color::Black);
+                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(169, 169, 169), Color::Black);
                     }
                 }
                 if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
@@ -1551,9 +1551,10 @@ bool checkInputEquality(string& input, string& correct_string, bool& edit_window
 }
 void readProgressFile(string file_name, bool levels_status[], int levels_num) {
     ifstream infile(file_name); //infile refers to an input file which is a file that is being read by a program.
-    string line; // string to accept the text input in each line in the text file each line represents the state of a level.
+    string line; // string to accept the text input, in each line in the text file each line represents the state of a level.
     int level = 0;
-    while (getline(infile, line) && level < levels_num) { //accepting lines from the text file equal to the number of levels to determine the levels status.
+     //accepting lines from the text file equal to the number of levels to determine the levels status.
+    while (getline(infile, line) && level < levels_num) {
         if (line == "completed") {
             levels_status[level] = 1;
         }
