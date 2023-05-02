@@ -12,6 +12,8 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
+string levels_screen[10]={"intro level","init level","commit level","checkout level"};
+int current_screen_index = 0;
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
@@ -76,7 +78,7 @@ struct dialogueText
     string font_type = "resources/fonts/BreeSerif-Regular.ttf";
     Color color = Color::Black;
     double size = 29;
-    double script_speed = 0.07f;
+    double script_speed = 0.01f;
     String script_content = " ";
     int current_script_index = 0;
     // The whole vector/dialogue/script
@@ -85,14 +87,14 @@ struct dialogueText
 }dialogue_text;
 // done: 0,2,3
 // not done:1
-int current_level_screen = 1,commands_entered_counter = 0;  
+int current_level_screen = 0 , commands_entered_counter = 0;  
 levelStruct 
 level[4]= {/*level_0*/{{{0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
     {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
     {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},{0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
     {0,"But fear not, I am here to introduce\nyou to a system that changed my life."}, 
-    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code. It is created for the\nsake of aiding us in writing our code."},
-    {0 ," It has useful commands that help us in\nworking with others quickly and efficiently."},{0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
+    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code."},
+    {0 ,"It is created for the sake of aiding us in\nwriting our code. It has useful commands that\nhelp us in working with others quickly\nand efficiently."},{0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
     {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
     /*level_1*/{{{0,"Let me show you around our time machine.\nThis blue box is our IDE, where you\nwill write the code you want."},{0,"This black box  is the command line window,\nwhere you will write the suitable \"GIT\" commands\nfor GIT to execute, also known as the \"Console\"."},
     {0,"Here is your git graph, it is a diagram\nthat shows how the commands are translated and\nmakes it easier to understand how they work."},{0,"After showing you around, let's start our\nadventure by telling you what the word \"command\"\nmeans in \"GIT\"."}
@@ -246,6 +248,11 @@ int main()
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
     bool edit_window_selected = 0, show_edit_window_cursor = 0, edit_window_changed = 0;
+    // Next button
+    RectangleShape game_window_next_button(Vector2f(140, 50));
+    Text game_window_next_text("Next", buttons_font, 35);
+    setButtonProperties(game_window_next_button, 0, 0, 255, 1600, 200);
+    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::White);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial, 35);
@@ -389,15 +396,25 @@ int main()
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
-                if (current_screen == "intro level") {
+                
+                if (current_screen == levels_screen[current_screen_index]) 
+                {
+                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels menu";
+                        current_screen_index = 0;
+                    }
+                    if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen_index ++;
+                        current_screen = levels_screen[current_screen_index];
+                        current_level_screen++;
+                    }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         edit_window_changed = checkInputEquality(current_edit_window_input, old_edit_window_input, edit_window_changed);
                     }
-                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "levels menu";
-                    }
+                
                     if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = "options_in_game";
@@ -441,27 +458,31 @@ int main()
                     {
                         current_screen = "main menu";
                     }
-                    else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
-                    {
-                        current_screen = "intro level";
-                    }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "intro level";
+                        current_screen = levels_screen[0];
+                        current_screen_index = 0;
+                    }
+                    else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = levels_screen[1];
+                        current_screen_index = 1;
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "intro level";
+                        current_screen = levels_screen[2];
+                        current_screen_index = 2;
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "intro level";
+                        current_screen = levels_screen[3];
+                        current_screen_index = 3;
                     }
                 }
             }
             if (event.type == Event::TextEntered)
             {
-                if (edit_window_selected && current_screen == "intro level" && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
+                if (edit_window_selected && current_screen == levels_screen[current_screen_index] && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
                 {
                     if ( (edit_window_text.findCharacterPos(current_edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
@@ -487,7 +508,7 @@ int main()
                         edit_window_selected = false;
                 }
                 // Filter out symbols (only characters in ascii code enters)
-                if (cli_selected && current_screen == "intro level")
+                if (cli_selected && current_screen == levels_screen[current_screen_index])
                     // User inputs in the cli
                     if (isprint(event.text.unicode))    
                     { 
@@ -696,11 +717,23 @@ int main()
                     checkout_level_button.setScale(1.0f, 1.0f);
 
                 }
+                if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    game_window_next_button.setFillColor(Color(26, 17, 16));
+                    game_window_next_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    game_window_next_button.setFillColor(Color::Black);
+                    game_window_next_button.setScale(1.0f, 1.0f);
+
+                }
             }
            // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {        
-                if (!dialogue_text.script_ended && current_screen == "intro level" && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 0)
+                if (!dialogue_text.script_ended && current_screen == levels_screen[current_screen_index] && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 0)
                 {
                     if (level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
                     {
@@ -750,7 +783,8 @@ int main()
             window.draw(main_menu_close_text);
             window.draw(game_title);
         }
-        else if (current_screen == "intro level")
+        // checking if its a level screen
+        else if (current_screen ==levels_screen[current_screen_index])
         {
             drawDialogue(window, dialogue_box);
             createCliInputShape(cli_input_shape);
@@ -785,6 +819,8 @@ int main()
             window.draw(game_window_back_text);
             window.draw(game_window_options_button);
             window.draw(game_window_options_text);
+            window.draw(game_window_next_button);
+            window.draw(game_window_next_text);
             window.draw(edit_window_title);
             window.draw(edit_window_title_text);
             for (unsigned short int i = 0; i < commits_count; i++)
@@ -1017,7 +1053,7 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
         {
             if (current_screen == "options_in_game")
             {
-                current_screen = "intro level";
+                current_screen = levels_screen[current_screen_index];
             }
             else if (current_screen == "options")
             {
@@ -1140,7 +1176,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
 
     if (commits_count == 0)
     {
-        // I cut from the texture a circle **without** an arrow
+        // I cut from the texture a circle *without* an arrow
         commit_sprite.setTextureRect(IntRect(287, 70, 156, 156));
         commit_sprite.setPosition(WINDOW_WIDTH / 2.0 + 800, WINDOW_HEIGHT / 3.0);
     }
@@ -1153,7 +1189,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
             commits[i].sprite.move(Vector2f(-(CIRCLE_LENGTH + ARROW_LENGTH), 0));
             index_of_the_last_commit = commits_count;
         }
-        // I cut from the texture a circle **with** an arrow
+        // I cut from the texture a circle *with* an arrow
         commit_sprite.setTextureRect(IntRect(37, 278, 406, 432));
         commit_sprite.setPosition(1920 / 2 - ARROW_LENGTH + 800, 1080 / 3);
     }
