@@ -173,10 +173,10 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_com
 void showContinuationMessage(dialogueText &dialogue_text);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, RectangleShape& show_msg, bool& should_show_msg);
-void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created);
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created, RectangleShape& graph);
 void headIdleAnimation(Sprite& head, bool& additional_commit_created);
 void calculateHeadDistance(Sprite& head, char& checked_out_commit, commit commit[]);
-void headAnimationAndMovement(Sprite& head);
+void headAnimationAndMovement(Sprite& head, bool& git_checkout);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 void inputChecker(string& user_input, bool& git_init, bool& git_add, bool& git_commit);
@@ -381,7 +381,11 @@ int main()
     // Option menu
 
     // Graph
-    RectangleShape show_msg;
+    RectangleShape show_msg, graph(Vector2f(1300, 576));
+    graph.setPosition(600, 81);
+    graph.setFillColor({223, 221, 221});
+    graph.setOutlineThickness(8);
+    graph.setOutlineColor(Color :: Black);
     Sprite head, smoke;
     Texture octacat, commit_textures, smoke_texture;
     octacat.loadFromFile("resources/sprites/octocat.png");
@@ -393,13 +397,14 @@ int main()
     smoke.setTexture(smoke_texture);
     head.setTexture(octacat);
     head.setTextureRect(IntRect(0, 0, 200.25, 301));
-    head.setScale(0.8, 0.8);
+    head.setScale(0.5, 0.5);
     head.setOrigin(100.125, 150.5);
-    head.setPosition(200, 200);
+    head.setPosition(graph.getGlobalBounds().left + 100, 200);
     bool additional_commit_created = 0;
     bool window_collision_mode = 1;
     bool should_create_smoke = 0;
     bool should_show_msg = 0;
+    bool git_init = 0, git_add = 0, git_commit = 0, git_checkout = 0;
     unsigned short int commits_count = 0;
     const unsigned short int MAX_COMMITS = 100;
     SoundBuffer pop_buff;
@@ -409,7 +414,6 @@ int main()
     pop_commit.setVolume(0);
     commit commits[MAX_COMMITS];
     window.setFramerateLimit(60);
-    bool git_init = 0, git_add = 0, git_commit = 0, git_checkout = 0;
     char checked_out_commit, commit_num = '1';
     Font msg_font_type;
     msg_font_type.loadFromFile("resources/fonts/minecraft_font.ttf");
@@ -867,11 +871,11 @@ int main()
             window.draw(edit_window_title_text);
             if (git_init){
                 headIdleAnimation(head, additional_commit_created);
-                headBorderDeflection(head, window_collision_mode, additional_commit_created);
+                headBorderDeflection(head, window_collision_mode, additional_commit_created, graph);
                 moveHeadToLatestCommit(head, additional_commit_created);
                 calculateHeadDistance(head, checked_out_commit, commits);
                 if (git_checkout)
-                    headAnimationAndMovement(head);
+                    headAnimationAndMovement(head, git_checkout);
                 window.draw(head);
                 for (unsigned short int i = 0; i < commits_count; i++)
                 window.draw(commits[i].sprite);
@@ -1258,13 +1262,12 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
             commits[i].sprite.move(Vector2f(-(CIRCLE_LENGTH + ARROW_LENGTH), 0));
             index_of_the_last_commit = commits_count;
         }
-        // I cut from the texture a circle *with* an arrow
-        commit_sprite.setTextureRect(IntRect(37, 278, 406, 432));
+        // I cut from the texture a circle **with** an arrow
+        commit_sprite.setTextureRect(IntRect(37, 278, 406, 156));
         commit_sprite.setPosition(1920 / 2 - ARROW_LENGTH + 800, 1080 / 3);
     }
 
     commit new_commit = { commit_message, commit_sprite, commit_num};
-    cout << commit_num << endl;
     commit_num++;
     commits[commits_count] = new_commit;
     commits_count++;
@@ -1313,15 +1316,15 @@ void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created) {
     }
 }
 
-void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created) {
-    if (!additional_commit_created)
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created){
+    if (!additional_commit_created) 
     {
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         if (window_collision_mode) {
             head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
-            if (head.getPosition().x < (0 + 50 * 0.8) || head.getPosition().x >(WINDOW_WIDTH - (50 * 0.8)))
+            if (head.getPosition().x < (graph.getGlobalBounds().left + (80 * 0.5)) || head.getPosition().x > (graph.getGlobalBounds().left + 1300 - (50 * 0.5)))
                 graph_head.x_border_deflection_velocity *= -1;
-            if (head.getPosition().y < (0 + 100 * 0.8) || head.getPosition().y >(WINDOW_HEIGHT - (100 * 0.8)))
+            if (head.getPosition().y < (graph.getGlobalBounds().top + (80 * 0.5)) || head.getPosition().y > (graph.getGlobalBounds().top + 576 - (80 * 0.5)))
                 graph_head.y_border_deflection_velocity *= -1;
         }
     }
@@ -1367,7 +1370,7 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
     }
 }
 
-void headAnimationAndMovement(Sprite& head) {
+void headAnimationAndMovement(Sprite& head){
     if (graph_head.distance_to_checkout_commit < 0)
     {
         head.move(5, 0);
@@ -1380,6 +1383,8 @@ void headAnimationAndMovement(Sprite& head) {
         head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
         graph_head.distance_to_checkout_commit -= 5;
     }
+    else
+        git_checkout = 0;
 }
 
 bool checkInputEquality(string& input, string& correct_string ,bool& edit_window_changed ){
