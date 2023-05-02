@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 using namespace sf;
@@ -42,28 +43,42 @@ struct dialogueBox
     RectangleShape title_shape;
 }dialogue_box;
 
+struct continuationMessage
+{
+    Time continuation_fade_time;
+    Clock continuation_fade_clock;
+    Font font;
+    Text continuation_text;
+    double continuation_delay = 0.8f;
+    string continuation_content = "Press down to continue...";
+    bool continuation_message_running = 0;
+    bool sub_script_ended = 0;   // For the sub-strings inside the whole script vector
+    string font_type = "resources/fonts/Roboto-Black.ttf";
+    bool commands_flag = 0;
+}continuation_message;
+
 struct dialogueText
 {
     Font font;
     Time time;
-    Time continuation_fade_time;
-    Clock clock;
-    Clock continuation_fade_clock;
+    Clock typewrite_clock; // For the typewriting effect
     Text script_text;
-    Text continuation_text;
     string font_type = "resources/fonts/Roboto-Black.ttf";
     Color color = Color::Black;
     double size = 32;
     double script_speed = 0.09f;
-    double continuation_delay = 0.8f;
     String script_content = " ";
-    string continuation_content = "Press down to continue...";
-    vector <String> new_script  = { "This is our game git-started\nwelcome",
-    "we will help you learn git\nand or github","in a fun easy way","so... lets git started!" };
+    // If bool = 1 
+    // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
+    // If bool = 2
+    // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
+    vector <pair<int,string>> new_script  =
+    {{0 ,"This is our game git-started\nwelcome"},{0,"try typing the command git init..."},{1 ,"try editing"},
+    {2 ,"try typing the command git commit,\nthen write commit name..."},{1 ,"try typing the command git checkout..."},
+    {1,"congrats that was correct!"}};
     int current_script_index = 0;
-    bool script_ended = 0;
-    bool continuation_message_running = 0;
-    bool script_part_ended = 0;
+    // The whole vector/dialogue/script
+    bool script_ended = 0;     
 }dialogue_text;
 
 struct optionMenu {
@@ -74,7 +89,7 @@ struct optionMenu {
 };
 
 // Functions declaration
-bool checkInputEquality(string& edit_window_input, string&);
+bool checkInputEquality(string& current_edit_window_input, string&correct_string, bool& edit_window_changed);
 void createCliInputShape(RectangleShape &form);
 void createCliOutputShape(RectangleShape &form);
 void createEditWindowShape(RectangleShape &form);
@@ -90,8 +105,8 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
 void setSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, Sprite& option_menu);
 void controlSfxAndMusicTexts(optionMenu& sfx_text, optionMenu& music_text, RectangleShape& mouse_cursor, Sound& pop);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor);
-void showContinuationMessage(dialogueText &dialogue_text);
+void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
 void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created);
 void headIdleAnimation(Sprite& head, bool& additional_commit_created);
@@ -99,13 +114,16 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
 void headAnimationAndMovement(Sprite& head);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
+void setTextOriginAndPosition(Text& text, float x_position, float y_position);
+void showContinuationMessage(continuationMessage& continuation_message,bool& edit_window_changed);
 
 int main()
 {
     // Dialogue box
-    dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
+    dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
+    continuation_message.font.loadFromFile(continuation_message.font_type);
 
     // Fonts
     Font buttons_font;
@@ -139,19 +157,23 @@ int main()
     music.setVolume(0);
 
     // Command line interface (CLI)
-    string user_cli_input, final_cli_input;
-    Text cli_text("", cli_font), cli_text_final("", cli_font);
-    bool show_cli_cursor = 0, cli_selected = 0;
-    Clock cursor_clock;
     RectangleShape cli_output_shape, cli_input_shape;
-    
+    string user_cli_input, final_cli_input, commit_message;
+    Text cli_text("", cli_font), cli_text_final("", cli_font);
+    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
+    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0;
+    Clock cursor_clock;
+    string level_1_commands[5] = {"git init", "git commit", "git checkout", "git pull"};
+    int commands_entered_counter = 0;
+
     // Edit Window
     RectangleShape edit_window_shape;
-    string edit_window_input = "type here", checker = "Hi, this is for check";
-    Text edit_window_text(edit_window_input ,cli_font);
+    string current_edit_window_input = "type here", old_edit_window_input = "type here";
+    const short int EDIT_WINDOW_MAX_CHARS = 600;
+    Text edit_window_text(current_edit_window_input ,cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
-    bool edit_window_selected = 0, show_edit_window_cursor = 0;
+    bool edit_window_selected = 0, show_edit_window_cursor = 0, edit_window_changed = 0;
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial , 35);
@@ -296,6 +318,18 @@ int main()
             {
                     if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && current_screen == "levels")
                     {
+                        edit_window_changed = checkInputEquality(current_edit_window_input, old_edit_window_input, edit_window_changed);
+                    }
+                    if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "levels menu";
+                    }
+                    if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "options_in_game";
+                    }
+                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
                         cli_selected = true;
                     }
                     else
@@ -337,73 +371,122 @@ int main()
                     {
                         current_screen = "close";
                     }
+                }
             }
-            if (event.type == Event::TextEntered) 
-            { 
-                if (edit_window_selected && current_screen == "levels")
+            if (event.type == Event::TextEntered)
+            {
+                if (edit_window_selected && current_screen == "intro level" && dialogue_text.new_script[dialogue_text.current_script_index].first == 2)
                 {
-                    const short int edit_window_max_chars = 600;
-                    if (edit_window_input.length() < edit_window_max_chars && (edit_window_text.findCharacterPos(edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
+                    if ( (edit_window_text.findCharacterPos(current_edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
-                        if (isprint(event.text.unicode))     
-                            edit_window_input += event.text.unicode;
+                        // Write in edit window
+                        if (isprint(event.text.unicode)){
+                            current_edit_window_input += event.text.unicode;
+                        }
+                        
                         // Bounds for text
-                        Vector2f pos = edit_window_text.findCharacterPos(edit_window_input.size());  
+                        Vector2f edit_window_char_pos = edit_window_text.findCharacterPos(current_edit_window_input.size());  
                         
-                        if(!((edit_window_shape.getGlobalBounds()).contains(pos))){
-                            char temp_last = edit_window_input[edit_window_input.size()-1];
-                            char temp_b_last = edit_window_input[edit_window_input.size()-2];
-                            edit_window_input.pop_back();
-                            edit_window_input.pop_back();
-                            edit_window_input += ("\n");
-                        
-                            edit_window_input += temp_b_last;
-                            edit_window_input += temp_last;
+                        if(!((edit_window_shape.getGlobalBounds()).contains(edit_window_char_pos))){
+                            char temp_last = current_edit_window_input[current_edit_window_input.size()-1];
+                            char temp_before_last = current_edit_window_input[current_edit_window_input.size()-2];
+                            current_edit_window_input.pop_back();
+                            current_edit_window_input.pop_back();
+                            current_edit_window_input += ("\n");
+                            current_edit_window_input += temp_before_last;
+                            current_edit_window_input += temp_last;
                         }
                     }
                     else
                         edit_window_selected = false;
                 }
                 // Filter out symbols (only characters in ascii code enters)
-                if (cli_selected && current_screen == "levels")
-                {
-                    if (isprint(event.text.unicode))     
+                if (cli_selected && current_screen == "intro level")
+                    // User inputs in the cli
+                    if (isprint(event.text.unicode))    
+                    { 
                         user_cli_input += event.text.unicode;
-                         
-                        Vector2f pst = cli_text.findCharacterPos(user_cli_input.size());  
+                        // Bounds for the cli text
+                        Vector2f cli_char_pos = cli_text.findCharacterPos(user_cli_input.size());  
                         
-                        if (!(cli_output_shape.getGlobalBounds().contains(pst)))
+                        if (!(cli_output_shape.getGlobalBounds().contains(cli_char_pos)))
                         {
                             user_cli_input.pop_back();
                         }
                 }
             }
-            // If user wants to erase what he wrote
             if (event.type == Event::KeyPressed) 
             {    
-                if(cli_selected){
-                     if (event.key.code == Keyboard::BackSpace) 
-                     {
-                        if (!user_cli_input.empty())
-                            user_cli_input.pop_back();
-                     }
-                    // User clicks enter and the text will be transfered at the top of the screen
-                    if (event.key.code == Keyboard::Return) 
-                    {
-                        final_cli_input += ("$ "+ user_cli_input + "\n");
-                        user_cli_input.clear();
-                    }
-                }
-                if(edit_window_selected)
+                if(cli_selected)
                 {
+                    // Delete option
                     if (event.key.code == Keyboard::BackSpace) 
                     {
-                        if (!edit_window_input.empty())
-                            edit_window_input.pop_back();
+                    if (!user_cli_input.empty())
+                        user_cli_input.pop_back();
                     }
-                    if (event.key.code == Keyboard::Return) 
+                    // User clicks enter and the text will be transfered at the top of the screen
+                    if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
                     {
-                        edit_window_input += ( "\n");  
+                        if(dialogue_text.new_script[dialogue_text.current_script_index].first == 1)
+                        // Continuation flag is used for stopping input from user after the correct command
+                        {
+                            if(user_cli_input == level_1_commands[commands_entered_counter] || (commit_command_entered))
+                                correct_command = 1;
+                            else 
+                                correct_command = 0;
+
+                            if(correct_command)
+                            {
+                                // Commit message
+                                if(commit_command_entered && level_1_commands[commands_entered_counter] == "git commit")
+                                {
+                                    final_cli_input = "commit successful \n"; 
+                                    commit_message = user_cli_input;
+                                    user_cli_input.clear();
+                                    commands_entered_counter++;
+                                    correct_command = 0;
+                                    commit_command_entered = 0;
+                                    continuation_message.commands_flag = 1;
+                                }
+                                // This condition needs a follow up, each command is special
+                                // So we use this if condition to adjust the uniqueness of each one
+                                else if(level_1_commands[commands_entered_counter] == "git commit")
+                                {
+                                    final_cli_input.clear();
+                                    final_cli_input = (cli_commit_msg_request+'\n');
+                                    commit_command_entered = 1;
+                                    continuation_message.commands_flag = 0;
+                                }
+                                else 
+                                {
+                                    final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
+                                    continuation_message.commands_flag = 1;
+                                    commands_entered_counter++;   
+                                }
+                            }
+                            else
+                            {
+
+                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                                
+                            }
+
+                            user_cli_input.clear();
+                        }
+                    }
+                }
+                //delete and enter for edit window
+                if(edit_window_selected && dialogue_text.new_script[dialogue_text.current_script_index].first==2)
+                {
+                    if (event.key.code == Keyboard::BackSpace && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
+                    {
+                        if (!current_edit_window_input.empty())
+                            current_edit_window_input.pop_back();
+                    }
+                    if (event.key.code == Keyboard::Return && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
+                    {
+                        current_edit_window_input += ("\n");
                     }
                 }
             }
@@ -468,20 +551,102 @@ int main()
                     game_window_back_button.setFillColor(Color::Yellow);
                     game_window_back_button.setScale(1.0f, 1.0f);
                 }
+                if (levels_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    levels_back_button.setFillColor(Color(140, 140, 140));
+                    levels_back_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    levels_back_button.setFillColor(Color(46, 139, 87));
+                    levels_back_button.setScale(1.0f, 1.0f);
+                }
+                if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    init_level_button.setFillColor(Color(140, 140, 140));
+                    init_level_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    init_level_button.setFillColor(Color(112, 128, 144));
+                    init_level_button.setScale(1.0f, 1.0f);
+
+                }
+                if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    intro_level_button.setFillColor(Color(140, 140, 140));
+                    intro_level_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    intro_level_button.setFillColor(Color(112, 128, 144));
+                    intro_level_button.setScale(1.0f, 1.0f);
+
+                }
+                if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    commit_level_button.setFillColor(Color(140, 140, 140));
+                    commit_level_button.setScale(0.92f, 0.92f);
+                }
+                else
+                {
+                    commit_level_button.setFillColor(Color(112, 128, 144));
+                    commit_level_button.setScale(1.0f, 1.0f);
+
+                }
+                if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+
+                    checkout_level_button.setFillColor(Color(140, 140, 140));
+                    checkout_level_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    checkout_level_button.setFillColor(Color(112, 128, 144));
+                    checkout_level_button.setScale(1.0f, 1.0f);
+
+                }
             }
-            // Check if down arrow (later space) key has been pressed
+           // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
-            { 
-                if (!dialogue_text.script_ended && current_screen == "levels" && dialogue_text.script_part_ended)
+            {        
+                if (!dialogue_text.script_ended && current_screen == "intro level" && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && dialogue_text.new_script[dialogue_text.current_script_index].first == 0)
                 {
                     if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }    
-                    // Clear the current text and reset the script_content to the next string
+                    // Clear the current text and reset the script content to the next string
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index];
+                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second;
+                    dialogue_text.current_script_index++; 
+                }   
+                else if (continuation_message.commands_flag == 1 && dialogue_text.new_script[dialogue_text.current_script_index].first==1)
+                {
+                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    {
+                        dialogue_text.script_ended = 1;
+                    }
+                    dialogue_text.new_script[dialogue_text.current_script_index].first = 0;
+                    dialogue_text.script_text.setString("");
+                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
                     dialogue_text.current_script_index++;
+                    continuation_message.commands_flag = 0;
+                }
+                else if(edit_window_changed==1 && dialogue_text.new_script[dialogue_text.current_script_index].first==2 )
+                {
+                    if(dialogue_text.new_script[dialogue_text.current_script_index] == dialogue_text.new_script.back())
+                    {
+                        dialogue_text.script_ended = 1;
+                    } 
+                    dialogue_text.new_script[dialogue_text.current_script_index].first=0;
+                    dialogue_text.script_text.setString("");
+                    dialogue_text.script_content = dialogue_text.new_script[dialogue_text.current_script_index].second; 
+                    dialogue_text.current_script_index++;
+                    edit_window_changed = 0;
                 }
             }
         }
@@ -506,11 +671,11 @@ int main()
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
             printDialogueText(dialogue_text);
-            showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
-            showCursor(cursor_clock, show_edit_window_cursor,edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
-            showContinuationMessage(dialogue_text);
-            setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
+            showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
+            showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_output_shape, cli_input_shape);
+            showContinuationMessage(continuation_message, edit_window_changed);
+            setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             headIdleAnimation(head, additional_commit_created);
             headBorderDeflection(head, window_collision_mode, additional_commit_created);
             moveHeadToLatestCommit(head, additional_commit_created);
@@ -524,7 +689,7 @@ int main()
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
-            window.draw(dialogue_text.continuation_text);
+            window.draw(continuation_message.continuation_text);
             window.draw(edit_window_text);
             window.draw(cli_text);
             window.draw(edit_window_save_button);
@@ -575,7 +740,7 @@ int main()
             window.draw(dialogue_box.title);   
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
-            window.draw(dialogue_text.continuation_text);
+            window.draw(continuation_message.continuation_text);
             window.draw(edit_window_text);
             window.draw(cli_text);
             window.draw(cli_text_final); 
@@ -626,27 +791,27 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setPosition(220, 720);
 }
 
-void showContinuationMessage(dialogueText &dialogue_text)
+void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed) 
 {
-    dialogue_text.continuation_fade_time += dialogue_text.continuation_fade_clock.restart();
-    if(dialogue_text.continuation_fade_time >= seconds(dialogue_text.continuation_delay))
+    continuation_message.continuation_fade_time += continuation_message.continuation_fade_clock.restart();
+    if(continuation_message.continuation_fade_time >= seconds(continuation_message.continuation_delay))
     {
-        dialogue_text.continuation_message_running =! dialogue_text.continuation_message_running;
-        dialogue_text.continuation_fade_time = Time::Zero;
+        continuation_message.continuation_message_running =! continuation_message.continuation_message_running;
+        continuation_message.continuation_fade_time = Time::Zero;
     }
 
-    if(!dialogue_text.script_ended && dialogue_text.script_part_ended)
+    if(!dialogue_text.script_ended && continuation_message.sub_script_ended && (dialogue_text.new_script[dialogue_text.current_script_index].first==0 || continuation_message.commands_flag ==1|| edit_window_changed==1))
     {
-        dialogue_text.continuation_text.setString((dialogue_text.continuation_message_running ? dialogue_text.continuation_content : ""));
-        dialogue_text.continuation_text.setFont(dialogue_text.font);
-        dialogue_text.continuation_text.setFillColor(Color(57,60,58));
-        dialogue_text.continuation_text.setCharacterSize(24);
-        dialogue_text.continuation_text.setStyle(Text::Italic);
-        dialogue_text.continuation_text.setPosition(670, 925);
+        continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
+        continuation_message.continuation_text.setFont(continuation_message.font);
+        continuation_message.continuation_text.setFillColor(Color(57,60,58));
+        continuation_message.continuation_text.setCharacterSize(24);
+        continuation_message.continuation_text.setStyle(Text::Italic);
+        continuation_message.continuation_text.setPosition(670, 925);
     }
-    else if (!dialogue_text.script_part_ended)
+    else if (!continuation_message.sub_script_ended)
     {
-        dialogue_text.continuation_text.setFillColor(Color::Transparent);
+        continuation_message.continuation_text.setFillColor(Color::Transparent);
     }
 }
 
@@ -656,7 +821,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
     dialogue_text.script_text.setPosition(250, 780);
-    dialogue_text.time += dialogue_text.clock.restart();
+    dialogue_text.time += dialogue_text.typewrite_clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
     {
         dialogue_text.time -= seconds(dialogue_text.script_speed);
@@ -668,11 +833,11 @@ void printDialogueText(dialogueText& dialogue_text)
             dialogue_text.script_content = dialogue_text.script_content.toAnsiString().substr(1);
             if (dialogue_text.script_content.isEmpty())
             {
-                dialogue_text.script_part_ended = 1;
+                continuation_message.sub_script_ended = 1;
             }
             else
             {
-                dialogue_text.script_part_ended = 0;
+                continuation_message.sub_script_ended = 0;
             }
         } 
     }  
@@ -786,10 +951,11 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_com
 void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
     // Shape of cursor
     cli_text.setString(user_cli_input + (show_cursor ? '|' : ' ')); 
-    cli_text.setPosition(rectangle.getPosition());
+    cli_text.setPosition(rectangle.getPosition().x+7, rectangle.getPosition().y+7);
     cli_text_final.setFillColor(Color::White);
     cli_text_final.setString(final_cli_input);
     cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+7);
+   // cout<<user_cli_input<<'\n'<<final_cli_input;
 }
 
 void setEditWindowText(Text & edit_text,string& edit_input,bool& show_cursor, RectangleShape& rectangle){
@@ -952,8 +1118,8 @@ void headAnimationAndMovement(Sprite& head){
     }
 }
 
-bool checkInputEquality(string& edit_window_input, string& checker){
-    if(edit_window_input == checker)
+bool checkInputEquality(string& input, string& correct_string ,bool& edit_window_changed ){
+    if(input != correct_string || (edit_window_changed==1 && (input == correct_string)))
     {
         // cout<<"ye";
         return 1; 
