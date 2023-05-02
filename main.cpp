@@ -26,7 +26,7 @@ struct graphHead{
     short int x_border_deflection_velocity = 3, y_border_deflection_velocity = 3;
 }graph_head;
 
-struct commit{
+struct commit {
     string message;
     Sprite sprite;
     char commit_num;
@@ -169,9 +169,9 @@ void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color)
 void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu);
 void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& Event);
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
-void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor);
-void showContinuationMessage(dialogueText &dialogue_text);
-void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message);
+void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
+void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
+void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message, char& commit_num);
 void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, RectangleShape& show_msg, bool& should_show_msg);
 void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created, RectangleShape& graph);
 void headIdleAnimation(Sprite& head, bool& additional_commit_created);
@@ -179,7 +179,9 @@ void calculateHeadDistance(Sprite& head, char& checked_out_commit, commit commit
 void headAnimationAndMovement(Sprite& head, bool& git_checkout);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
-void inputChecker(string& user_input, bool& git_init, bool& git_add, bool& git_commit);
+void inputChecker(string& user_input, bool& git_init, bool& git_add, bool& git_commit, bool& git_checkout, char& checked_out_commit);
+void setTextOriginAndPosition(Text& text, float x_position, float y_position);
+void showContinuationMessage(continuationMessage& continuation_message,bool& edit_window_changed);
 
 int main()
 {
@@ -380,7 +382,7 @@ int main()
     setSfxTexts(sfx_text, option_menu);
     // Option menu
 
-    // Graph
+       // Graph
     RectangleShape show_msg, graph(Vector2f(1300, 576));
     graph.setPosition(600, 81);
     graph.setFillColor({223, 221, 221});
@@ -431,27 +433,8 @@ int main()
 
         while (window.pollEvent(event))
         {
-            if (git_add && current_screen == "levels"){
-                if (git_commit){
-                    addCommit(commits_count, commits, commit_textures, "inidasdag jlajdb lsjd ld ;ksa");
-                    pop_commit.play();
-                    window_collision_mode = 0;
-                    should_create_smoke = 1;
-                    if (index_of_the_last_commit == 0)
-                        head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
-                    else if (index_of_the_last_commit == 1) {
-                        head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
-                        additional_commit_created = 1;
-                    }
-                    else {
-                        head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
-                        additional_commit_created = 1;
-                    }
-                    git_add = 0;
-                    git_commit = 0;
-                }
-            }
-            if (event.type == Event::Closed || current_screen == "close") 
+           
+            if (event.type == Event::Closed || current_screen == "close")
             {
                 window.close();
             }
@@ -616,21 +599,82 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
                     {
-                        inputChecker(user_cli_input, git_init, git_add, git_commit);
-                        final_cli_input += ("$ "+ user_cli_input + "\n");
-                        user_cli_input.clear();
+                        inputChecker(user_cli_input, git_init, git_add, git_commit, git_checkout, checked_out_commit);
+                        if(dialogue_text.new_script[dialogue_text.current_script_index].first == 1)
+                        // Continuation flag is used for stopping input from user after the correct command
+                        {
+                            if(user_cli_input == level_1_commands[commands_entered_counter] || (commit_command_entered))
+                                correct_command = 1;
+                            else 
+                                correct_command = 0;
+
+                            if(correct_command)
+                            {
+                                // Commit message
+                                if(commit_command_entered && level_1_commands[commands_entered_counter] == "git commit")
+                                {
+                                    final_cli_input = "commit successful \n"; 
+                                    commit_message = user_cli_input;
+                                    if (current_screen == "intro level"){
+                                        if (git_commit){
+                                            addCommit(commits_count, commits, commit_textures, commit_message, commit_num);
+                                            pop_commit.play();
+                                            window_collision_mode = 0;
+                                            should_create_smoke = 1;
+                                            if (index_of_the_last_commit == 0)
+                                                head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
+                                            else if (index_of_the_last_commit == 1) {
+                                                head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
+                                                additional_commit_created = 1;
+                                            }
+                                            else {
+                                                head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
+                                                additional_commit_created = 1;
+                                            }
+                                                git_add = 0;
+                                                git_commit = 0;
+                                        }
+                                    }
+                                    user_cli_input.clear();
+                                    commands_entered_counter++;
+                                    correct_command = 0;
+                                    commit_command_entered = 0;
+                                    continuation_message.commands_flag = 1;
+                                }
+                                // This condition needs a follow up, each command is special
+                                // So we use this if condition to adjust the uniqueness of each one
+                                else if(level_1_commands[commands_entered_counter] == "git commit")
+                                {
+                                    final_cli_input.clear();
+                                    final_cli_input = (cli_commit_msg_request+'\n');
+                                    commit_command_entered = 1;
+                                    continuation_message.commands_flag = 0;
+                                }
+                                else 
+                                {
+                                    final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
+                                    continuation_message.commands_flag = 1;
+                                    commands_entered_counter++;   
+                                }
+                            }
+                            else
+                            {
+
+                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                                
+                            }
+
+                            user_cli_input.clear();
+                        }
                     }
                 }
-                if(edit_window_selected)
+                //delete and enter for edit window
+                if(edit_window_selected && dialogue_text.new_script[dialogue_text.current_script_index].first==2)
                 {
-                    if (event.key.code == Keyboard::BackSpace) 
+                    if (event.key.code == Keyboard::BackSpace && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
                     {
-                        if (!edit_window_input.empty())
-                            edit_window_input.pop_back();
-                    }
-                    if (event.key.code == Keyboard::Return) 
-                    {
-                        edit_window_input += ( "\n");  
+                        if (!current_edit_window_input.empty())
+                            current_edit_window_input.pop_back();
                     }
                     if (event.key.code == Keyboard::Return && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2) 
                     {
@@ -834,16 +878,12 @@ int main()
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
             printDialogueText(dialogue_text);
-            showCursor(cursor_clock, show_cli_cursor,cli_selected, cursor_time);
-            showCursor(cursor_clock, show_edit_window_cursor,edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor,cli_output_shape,cli_input_shape);
-            showContinuationMessage(dialogue_text);
-            setEditWindowText(edit_window_text,edit_window_input,show_edit_window_cursor,edit_window_shape);
-            headIdleAnimation(head, additional_commit_created);
-            headBorderDeflection(head, window_collision_mode, additional_commit_created);
-            moveHeadToLatestCommit(head, additional_commit_created);
-            calculateHeadDistance(head, position, commits);
-            headAnimationAndMovement(head);
+            showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
+            showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_output_shape, cli_input_shape);
+            showContinuationMessage(continuation_message, edit_window_changed);
+            setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
+            showMessage(commits, mouse_cursor, msg, show_msg, should_show_msg);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
@@ -869,7 +909,7 @@ int main()
             }
             window.draw(edit_window_title);
             window.draw(edit_window_title_text);
-            if (git_init){
+             if (git_init){
                 headIdleAnimation(head, additional_commit_created);
                 headBorderDeflection(head, window_collision_mode, additional_commit_created, graph);
                 moveHeadToLatestCommit(head, additional_commit_created);
@@ -879,13 +919,17 @@ int main()
                 window.draw(head);
                 for (unsigned short int i = 0; i < commits_count; i++)
                 window.draw(commits[i].sprite);
-            window.draw(head);
-            if (should_create_smoke){
-                makeSmoke(smoke, should_create_smoke);
-                window.draw(smoke);
+                if (should_create_smoke){
+                    makeSmoke(smoke, should_create_smoke);
+                    window.draw(smoke);
+                }
+            }
+            if (should_show_msg){
+                window.draw(show_msg);
+                window.draw(msg);
             }
         }
-        else if(current_screen == "options")
+        else if (current_screen == "options")
         {
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
             controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
@@ -908,7 +952,6 @@ int main()
             createCliInputShape(cli_input_shape);
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
-            headIdleAnimation(head, additional_commit_created);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
@@ -1220,20 +1263,20 @@ void inputChecker(string& user_cli_input, bool& git_init, bool& git_add, bool& g
                 break;
             }
         }
-    if (!git_add)
-        git_commit = 0;
+    /*if (!git_add)
+        git_commit = 0;*/
 }
 
-void makeSmoke(Sprite& smoke, bool& should_create_smoke) {
+void makeSmoke(Sprite& smoke, bool& should_create_smoke){
     smoke.setScale(0.2, 0.2);
     smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
     smoke.setPosition(WINDOW_WIDTH / 2.0 - 90 + 800, WINDOW_HEIGHT / 3.0 - 170);
     graph_smoke_animation_delay++;
-    if (graph_smoke_animation_delay >= 3) {
+    if (graph_smoke_animation_delay >= 3){
         current_smoke_animation_frame++;
         graph_smoke_animation_delay = 0;
     }
-    if (current_smoke_animation_frame > 6) {
+    if (current_smoke_animation_frame > 6){
         current_smoke_animation_frame = 0;
         should_create_smoke = 0;
     }
@@ -1285,7 +1328,10 @@ void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, Rect
         if (commits[index].sprite.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
             msg.setString(commits[index].message);
             msg.setFillColor(Color :: White);
-            show_msg.setSize(Vector2f(commits[index].message.size() * 9, 40));
+            if (commits[index].message.size() <= 10)
+                show_msg.setSize(Vector2f(commits[index].message.size() * 14, 40));
+            else
+                show_msg.setSize(Vector2f(commits[index].message.size() * 10, 40));
             show_msg.setOrigin(show_msg.getLocalBounds().width / 2, show_msg.getLocalBounds().height / 2);
             msg.setPosition(show_msg.getGlobalBounds().left + 10, show_msg.getGlobalBounds().top + 15);
             show_msg.setPosition(mouse_cursor.getPosition().x, mouse_cursor.getPosition().y);
@@ -1316,7 +1362,7 @@ void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created) {
     }
 }
 
-void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created){
+void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created, RectangleShape& graph){
     if (!additional_commit_created) 
     {
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
@@ -1329,11 +1375,11 @@ void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& addit
         }
     }
 }
-void headIdleAnimation(Sprite& head, bool& additional_commit_created) {
-    if (!additional_commit_created) {
+void headIdleAnimation(Sprite& head, bool& additional_commit_created){
+    if (!additional_commit_created){
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         graph_head.idle_animation_delay++;
-        if (graph_head.idle_animation_delay >= 20) {
+        if (graph_head.idle_animation_delay >= 20){
             graph_head.current_animation_frame++;
             graph_head.idle_animation_delay = 0;
         }
@@ -1342,9 +1388,9 @@ void headIdleAnimation(Sprite& head, bool& additional_commit_created) {
     }
 }
 
-void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit commit[])
+void calculateHeadDistance(Sprite& head, char& checked_out_commit, commit commit[])
 { 
-    for (short int i = 0; i < 100; i++)
+    for (short int i = 0; i <= index_of_the_last_commit; i++)
     {
         if (commit[i].commit_num == checked_out_commit) {
             if (i == 0 && head.getPosition().x - commit[i].sprite.getPosition().x < 0) {
@@ -1370,7 +1416,7 @@ void calculateHeadDistance(Sprite& head, Vector2i& position_of_mouse, commit com
     }
 }
 
-void headAnimationAndMovement(Sprite& head){
+void headAnimationAndMovement(Sprite& head, bool& git_checkout){
     if (graph_head.distance_to_checkout_commit < 0)
     {
         head.move(5, 0);
