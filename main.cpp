@@ -274,11 +274,11 @@ int main()
 
     // Command line interface (CLI)
     RectangleShape cli_output_shape, cli_input_shape;
-    string user_cli_input, final_cli_input, commit_message;
     int commands_entered_counter = 0;
+    string user_cli_input, final_cli_input, commit_message, checkout_id;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
-    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
-    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0;
+    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.",cli_checkout_message_rqst="Please enter the ID of the commit";
+    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0,checkout_command_entered=0;
     Clock cursor_clock;
     
 
@@ -610,7 +610,7 @@ int main()
                         if(level[current_level_screen].new_script[dialogue_text.current_script_index].first == 1)
                         // Continuation flag is used for stopping input from user after the correct command
                         {
-                            if(user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered))
+                            if(user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
                                 correct_command = 1;
                             else 
                                 correct_command = 0;
@@ -628,6 +628,16 @@ int main()
                                     commit_command_entered = 0;
                                     continuation_message.commands_flag = 1;
                                 }
+                                else if(checkout_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
+                                {
+                                    final_cli_input = "checkout successful \n"; 
+                                    checkout_id = user_cli_input;
+                                    user_cli_input.clear();
+                                    commands_entered_counter++;
+                                    correct_command = 0;
+                                    checkout_command_entered = 0;
+                                    continuation_message.commands_flag = 1;
+                                }
                                 // This condition needs a follow up, each command is special
                                 // So we use this if condition to adjust the uniqueness of each one
                                 else if(level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
@@ -637,7 +647,14 @@ int main()
                                     commit_command_entered = 1;
                                     continuation_message.commands_flag = 0;
                                 }
-                                else
+                                else if(level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
+                                {
+                                    final_cli_input.clear();
+                                    final_cli_input = (cli_checkout_message_rqst+'\n');
+                                    checkout_command_entered = 1;
+                                    continuation_message.commands_flag = 0;
+                                }
+                                else 
                                 {
                                     final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
                                     continuation_message.commands_flag = 1;
