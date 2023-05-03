@@ -277,7 +277,8 @@ int main()
     int commands_entered_counter = 0;
     string user_cli_input, final_cli_input, commit_message, checkout_id;
     Text cli_text("", cli_font), cli_text_final("", cli_font);
-    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.",cli_checkout_message_rqst="Please enter the ID of the commit";
+    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
+    string cli_checkout_message_rqst = "Please enter the ID of the commit\nyou want to checkout to";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0,checkout_command_entered=0;
     Clock cursor_clock;
     
