@@ -189,6 +189,22 @@ int main()
     playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
 
+
+    // Transition slide
+    Texture transition_slide;
+    transition_slide.loadFromFile("resources/sprites/transition.jpeg");
+    Sprite transition_slide_bg;
+    transition_slide_bg.setTexture(transition_slide);
+    transition_slide_bg.setScale(1.195f, 1.1f);
+    int transition_level_texts_index=0;
+    //transition array of strings (could be put in the levels struct)
+    string transition_level_texts[10]={"Please enter your name:","The Git Beginning!\n(git init) \n\n\npress space to continue ","Committing to Success:\nCrafting Meaningful\nCommits \n(git commit) \n\npress space to continue","TimeWarper:\nNavigating the Timeline\n(git checkout)  \npress space to continue","thank you"};
+    Text transition_text(transition_level_texts[transition_level_texts_index], game_title_font, 29);
+    transition_text.setPosition(1310,650);
+    transition_text.setFillColor(Color::Black);
+
+
+    
     // Levels menu
     RectangleShape levels_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
     RectangleShape init_level_button(Vector2f(1000, 150)), commit_level_button(Vector2f(1000, 150)), checkout_level_button(Vector2f(1000, 150));
@@ -370,8 +386,16 @@ int main()
         Vector2i position = mouse.getPosition(window);
         Vector2f world_pos = window.mapPixelToCoords(position);
         mouse_cursor.setPosition(world_pos.x, world_pos.y);
+
+
         while (window.pollEvent(event))
         {
+            if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide")
+            {
+                current_screen = levels_screen[current_screen_index];
+                transition_level_texts_index++;
+                transition_text.setString(transition_level_texts[transition_level_texts_index]);
+            }
             if ((Keyboard::isKeyPressed(Keyboard::Up)) && current_screen == "intro level") {
                 addCommit(commits_count, commits, commit_textures, "initial commit");
                 pop_commit.play();
@@ -409,6 +433,7 @@ int main()
                         current_screen = levels_screen[current_screen_index];
                         current_level_screen++;
                         //reset the dialogues in the array of structs
+                        current_screen = "transition slide";
                         dialogue_text.current_script_index=0;
                         dialogue_text.script_ended=0;
                     }
@@ -444,7 +469,7 @@ int main()
                 else if (current_screen == "main menu") {
                     if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "levels menu";
+                        current_screen = "transition slide";
                     }
                     if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -784,6 +809,10 @@ int main()
             window.draw(main_menu_options_text);
             window.draw(main_menu_close_text);
             window.draw(game_title);
+        }
+        else if(current_screen == "transition slide"){
+            window.draw(transition_slide_bg);
+            window.draw(transition_text);
         }
         // checking if its a level screen
         else if (current_screen ==levels_screen[current_screen_index])
