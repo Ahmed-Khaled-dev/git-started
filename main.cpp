@@ -201,7 +201,7 @@ int main()
     string transition_level_texts[10]={"Please enter your name:","The Git Beginning!\n(git init) \n\n\npress space to continue ","Committing to Success:\nCrafting Meaningful\nCommits \n(git commit) \n\npress space to continue","TimeWarper:\nNavigating the Timeline\n(git checkout)  \npress space to continue","thank you"};
     Text transition_text(transition_level_texts[transition_level_texts_index], game_title_font, 29);
     transition_text.setPosition(1310,650);
-    transition_text.setFillColor(Color::Black);
+    transition_text.setFillColor(Color::White);
 
 
     
@@ -469,7 +469,7 @@ int main()
                 else if (current_screen == "main menu") {
                     if (main_menu_start_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = "transition slide";
+                        current_screen = "levels menu";
                     }
                     if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -492,8 +492,9 @@ int main()
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = levels_screen[1];
+                        //current_screen = levels_screen[1];
                         current_screen_index = 1;
+                        current_screen = "transition slide";
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
