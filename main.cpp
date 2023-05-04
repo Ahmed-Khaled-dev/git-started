@@ -232,15 +232,15 @@ int main()
 
     // Transition slide
     Texture transition_slide;
-    transition_slide.loadFromFile("resources/sprites/transition.jpeg");
+    transition_slide.loadFromFile("resources/sprites/Transition background v1.0.png");
     Sprite transition_slide_bg;
     transition_slide_bg.setTexture(transition_slide);
-    transition_slide_bg.setScale(1.195f, 1.1f);
+    transition_slide_bg.setScale(0.999f, 0.9999f);
     int transition_level_texts_index = 0;
     // Transition array of strings (could be put in the levels struct)
     string transition_level_texts[10] = { "Please enter your name:","The Git Beginning!\n(git init) \n\n\npress space to continue ","Committing to Success:\nCrafting Meaningful\nCommits \n(git commit) \n\npress space to continue","TimeWarper:\nNavigating the Timeline\n(git checkout)  \npress space to continue","thank you" };
     Text transition_text(transition_level_texts[transition_level_texts_index], game_title_font, 29);
-    transition_text.setPosition(1310, 650);
+    transition_text.setPosition(1310, 700);
     transition_text.setFillColor(Color::White);
 
     // Levels menu
