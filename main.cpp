@@ -382,7 +382,7 @@ int main()
     setSfxTexts(sfx_text, option_menu);
     // Option menu
 
-       // Graph
+    // Graph
     RectangleShape show_msg, graph(Vector2f(1300, 576));
     graph.setPosition(600, 81);
     graph.setFillColor({223, 221, 221});
@@ -433,6 +433,16 @@ int main()
 
         while (window.pollEvent(event))
         {
+            if((Keyboard::isKeyPressed(Keyboard:: Insert)) && current_screen == levels_screens[current_level_screen_index])
+            {
+                dialogue_text.current_script_index = level[current_level_screen].new_script.size() - 1;
+            }
+            if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide")
+            {
+                current_screen = levels_screens[current_level_screen_index];
+                transition_level_texts_index++;
+                transition_text.setString(transition_level_texts[transition_level_texts_index]);
+            }
            
             if (event.type == Event::Closed || current_screen == "close")
             {
@@ -599,11 +609,11 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty())) 
                     {
-                        inputChecker(user_cli_input, git_init, git_add, git_commit, git_checkout, checked_out_commit);
-                        if(dialogue_text.new_script[dialogue_text.current_script_index].first == 1)
+                        if(level[current_level_screen].new_script[dialogue_text.current_script_index].first == 1)
                         // Continuation flag is used for stopping input from user after the correct command
                         {
-                            if(user_cli_input == level_1_commands[commands_entered_counter] || (commit_command_entered))
+                            inputChecker(user_cli_input, git_init, git_add, git_commit, git_checkout, checked_out_commit);
+                            if(user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
                                 correct_command = 1;
                             else 
                                 correct_command = 0;
@@ -611,43 +621,58 @@ int main()
                             if(correct_command)
                             {
                                 // Commit message
-                                if(commit_command_entered && level_1_commands[commands_entered_counter] == "git commit")
+                                if(commit_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
                                 {
-                                    final_cli_input = "commit successful \n"; 
+                                    final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
-                                    if (current_screen == "intro level"){
-                                        if (git_commit){
-                                            addCommit(commits_count, commits, commit_textures, commit_message, commit_num);
-                                            pop_commit.play();
-                                            window_collision_mode = 0;
-                                            should_create_smoke = 1;
-                                            if (index_of_the_last_commit == 0)
-                                                head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
-                                            else if (index_of_the_last_commit == 1) {
-                                                head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
-                                                additional_commit_created = 1;
-                                            }
-                                            else {
-                                                head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
-                                                additional_commit_created = 1;
-                                            }
-                                                git_add = 0;
-                                                git_commit = 0;
+                                    if (git_commit){
+                                        addCommit(commits_count, commits, commit_textures, commit_message, commit_num);
+                                        pop_commit.play();
+                                        window_collision_mode = 0;
+                                        should_create_smoke = 1;
+                                        if (index_of_the_last_commit == 0)
+                                            head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
+                                        else if (index_of_the_last_commit == 1) {
+                                            head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
+                                            additional_commit_created = 1;
                                         }
-                                    }
+                                        else {
+                                            head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
+                                            additional_commit_created = 1;
+                                        }
+                                    git_add = 0;
+                                    git_commit = 0;
+                            }
                                     user_cli_input.clear();
                                     commands_entered_counter++;
                                     correct_command = 0;
                                     commit_command_entered = 0;
                                     continuation_message.commands_flag = 1;
                                 }
+                                else if(checkout_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
+                                {
+                                    final_cli_input = "checkout successful \n"; 
+                                    checkout_id = user_cli_input;
+                                    user_cli_input.clear();
+                                    commands_entered_counter++;
+                                    correct_command = 0;
+                                    checkout_command_entered = 0;
+                                    continuation_message.commands_flag = 1;
+                                }
                                 // This condition needs a follow up, each command is special
                                 // So we use this if condition to adjust the uniqueness of each one
-                                else if(level_1_commands[commands_entered_counter] == "git commit")
+                                else if(level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_commit_msg_request+'\n');
                                     commit_command_entered = 1;
+                                    continuation_message.commands_flag = 0;
+                                }
+                                else if(level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
+                                {
+                                    final_cli_input.clear();
+                                    final_cli_input = (cli_checkout_message_rqst+'\n');
+                                    checkout_command_entered = 1;
                                     continuation_message.commands_flag = 0;
                                 }
                                 else 
@@ -655,23 +680,21 @@ int main()
                                     final_cli_input += ("$ "+ user_cli_input + "\t\t\t\t\t\t correct!!!"+"\n");
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;   
+                                    //correct_command = 0;
                                 }
                             }
                             else
                             {
-
-                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
-                                
+                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";   
                             }
-
                             user_cli_input.clear();
                         }
                     }
                 }
-                //delete and enter for edit window
-                if(edit_window_selected && dialogue_text.new_script[dialogue_text.current_script_index].first==2)
+                // Delete and enter for edit window
+                if(edit_window_selected && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2)
                 {
-                    if (event.key.code == Keyboard::BackSpace && dialogue_text.new_script[dialogue_text.current_script_index].first==2) 
+                    if (event.key.code == Keyboard::BackSpace && level[current_level_screen].new_script[dialogue_text.current_script_index].first==2) 
                     {
                         if (!current_edit_window_input.empty())
                             current_edit_window_input.pop_back();
@@ -1292,7 +1315,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
 
     if (commits_count == 0)
     {
-        // I cut from the texture a circle *without* an arrow
+        // I cut from the texture a circle **without** an arrow
         commit_sprite.setTextureRect(IntRect(287, 70, 156, 156));
         commit_sprite.setPosition(WINDOW_WIDTH / 2.0 + 800, WINDOW_HEIGHT / 3.0);
     }
