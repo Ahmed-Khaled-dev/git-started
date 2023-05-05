@@ -454,8 +454,7 @@ int main()
             if ((Keyboard::isKeyPressed(Keyboard::Space)) && current_screen == "transition slide")
             {
                 current_screen = levels_screens[current_level_screen_index];
-                transition_level_texts_index++;
-                transition_text.setString(transition_level_texts[transition_level_texts_index]);
+                transition_text.setString(transition_level_texts[current_level_screen_index+1]);
             }
             if (event.type == Event::Closed || current_screen == "close")
             {
@@ -481,9 +480,10 @@ int main()
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
+                        current_level_screen++;
                         current_level_screen_index++;
                         current_screen = levels_screens[current_level_screen_index];
-                        current_level_screen++;
+                        
                         //reset the dialogues in the array of structs
                         current_screen = "transition slide";
                         dialogue_text.script_text.setString("");
@@ -546,6 +546,7 @@ int main()
                         current_level_screen = 0;
                         current_screen = levels_screens[0];
                         current_level_screen_index = 0;
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
@@ -553,18 +554,24 @@ int main()
                         current_screen = levels_screens[1];
                         current_level_screen_index = 1;
                         current_level_screen = 1;
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        current_screen = "transition slide";
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[1])
                     {
                         current_screen = levels_screens[2];
                         current_level_screen_index = 2;
                         current_level_screen = 2;
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        current_screen = "transition slide";
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[2])
                     {
                         current_screen = levels_screens[3];
                         current_level_screen_index = 3;
                         current_level_screen = 3;
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        current_screen = "transition slide";
                     }
                 }
             }
