@@ -1353,13 +1353,11 @@ void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, Rect
         if (commits[index].sprite.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())){
             msg.setString(commits[index].message);
             msg.setFillColor(Color :: White);
-            if (commits[index].message.size() <= 10)
-                show_msg.setSize(Vector2f(commits[index].message.size() * 14, 40));
-            else
-                show_msg.setSize(Vector2f(commits[index].message.size() * 10, 40));
+            msg.setOrigin(msg.getLocalBounds().width / 2, msg.getLocalBounds().height / 2);
+            show_msg.setSize(Vector2f(commits[index].message.size() * 15, 40));
             show_msg.setOrigin(show_msg.getLocalBounds().width / 2, show_msg.getLocalBounds().height / 2);
-            msg.setPosition(show_msg.getGlobalBounds().left + 10, show_msg.getGlobalBounds().top + 15);
             show_msg.setPosition(mouse_cursor.getPosition().x, mouse_cursor.getPosition().y);
+            msg.setPosition(show_msg.getGlobalBounds().left + (show_msg.getLocalBounds().width / 2), show_msg.getGlobalBounds().top + 20);
             show_msg.setFillColor(Color :: Black);
         }
         else
