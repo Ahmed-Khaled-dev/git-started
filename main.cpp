@@ -29,7 +29,7 @@ struct graphHead{
 struct commit {
     string message;
     Sprite sprite;
-    char commit_num;
+    string commit_num;
 };
 
 struct gameLevel
@@ -171,15 +171,15 @@ void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& 
 void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
-void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message, char& commit_num);
+void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message, string& commit_num);
 void showMessage(commit commits[], RectangleShape& mouse_cursor, Text& msg, RectangleShape& show_msg, bool& should_show_msg);
 void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& additional_commit_created, RectangleShape& graph);
 void headIdleAnimation(Sprite& head, bool& additional_commit_created);
-void calculateHeadDistance(Sprite& head, char& checked_out_commit, commit commit[]);
+void calculateHeadDistance(Sprite& head, string& checked_out_commit, commit commit[]);
 void headAnimationAndMovement(Sprite& head, bool& git_checkout);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
-void inputChecker(string& user_input, bool& git_init, bool& git_add, bool& git_commit, bool& git_checkout, char& checked_out_commit);
+void inputChecker(string& user_input, bool& git_init, bool& git_add, bool& git_commit, bool& git_checkout, string& checked_out_commit);
 void setTextOriginAndPosition(Text& text, float x_position, float y_position);
 void showContinuationMessage(continuationMessage& continuation_message,bool& edit_window_changed);
 
@@ -416,7 +416,7 @@ int main()
     pop_commit.setVolume(0);
     commit commits[MAX_COMMITS];
     window.setFramerateLimit(60);
-    char checked_out_commit, commit_num = '1';
+    string checked_out_commit, commit_num = "1";
     Font msg_font_type;
     msg_font_type.loadFromFile("resources/fonts/minecraft_font.ttf");
     Text msg;
@@ -653,6 +653,8 @@ int main()
                                 {
                                     final_cli_input = "checkout successful \n"; 
                                     checkout_id = user_cli_input;
+                                    checked_out_commit = checkout_id;
+                                    git_checkout = 1;
                                     user_cli_input.clear();
                                     commands_entered_counter++;
                                     correct_command = 0;
@@ -1268,7 +1270,7 @@ void createCliInputShape(RectangleShape& form) {
     form.setPosition(1200, 700);
 }
 
-void inputChecker(string& user_cli_input, bool& git_init, bool& git_add, bool& git_commit, bool& git_checkout, char& checked_out_commit){
+void inputChecker(string& user_cli_input, bool& git_init, bool& git_add, bool& git_commit, bool& git_checkout, string& checked_out_commit){
     string git_chekcout_sen = "";
     if (user_cli_input == "git init")
         git_init = 1;
@@ -1276,7 +1278,7 @@ void inputChecker(string& user_cli_input, bool& git_init, bool& git_add, bool& g
         git_add = 1;
     else if (user_cli_input == "git commit")
         git_commit = 1;
-    else if (user_cli_input.size() == 14)
+    /*else if (user_cli_input.size() == 14)
         for (int i = 0; i < user_cli_input.size(); i++){
             git_chekcout_sen += user_cli_input[i];
             if (git_chekcout_sen == "git checkout" && git_init){
@@ -1285,7 +1287,7 @@ void inputChecker(string& user_cli_input, bool& git_init, bool& git_add, bool& g
                 git_chekcout_sen = "";
                 break;
             }
-        }
+        }*/
     /*if (!git_add)
         git_commit = 0;*/
 }
@@ -1305,7 +1307,7 @@ void makeSmoke(Sprite& smoke, bool& should_create_smoke){
     }
 }
 
-void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message, char& commit_num) {
+void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message, string& commit_num) {
     // All the following are the same for both conditions
     Sprite commit_sprite;
     commit_sprite.setColor({ 43, 45, 47 });
@@ -1334,7 +1336,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     }
 
     commit new_commit = { commit_message, commit_sprite, commit_num};
-    commit_num++;
+    commit_num[0]++;
     commits[commits_count] = new_commit;
     commits_count++;
 }
@@ -1411,7 +1413,7 @@ void headIdleAnimation(Sprite& head, bool& additional_commit_created){
     }
 }
 
-void calculateHeadDistance(Sprite& head, char& checked_out_commit, commit commit[])
+void calculateHeadDistance(Sprite& head, string& checked_out_commit, commit commit[])
 { 
     for (short int i = 0; i <= index_of_the_last_commit; i++)
     {
