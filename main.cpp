@@ -86,7 +86,6 @@ struct dialogueText
 
 }dialogue_text;
 
-int current_level_screen = 0;
 // For the vectors of pairs
 // If bool = 1 
 // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
@@ -236,10 +235,9 @@ int main()
     Sprite transition_slide_bg;
     transition_slide_bg.setTexture(transition_slide);
     transition_slide_bg.setScale(0.999f, 0.9999f);
-    int transition_level_texts_index = 0;
     // Transition array of strings (could be put in the levels struct)
     string transition_level_texts[10] = { "Please enter your name:","The Git Beginning!\n(git init) \n\n\npress space to continue ","Committing to Success:\nCrafting Meaningful\nCommits \n(git commit) \n\npress space to continue","TimeWarper:\nNavigating the Timeline\n(git checkout)  \npress space to continue","thank you" };
-    Text transition_text(transition_level_texts[transition_level_texts_index], game_title_font, 29);
+    Text transition_text(transition_level_texts[current_level_screen_index], game_title_font, 29);
     transition_text.setPosition(1310, 700);
     transition_text.setFillColor(Color::White);
 
@@ -449,7 +447,7 @@ int main()
         {
             if ((Keyboard::isKeyPressed(Keyboard::Insert)) && current_screen == levels_screens[current_level_screen_index])
             {
-                dialogue_text.current_script_index = level[current_level_screen].new_script.size() - 1;
+                dialogue_text.current_script_index = level[current_level_screen_index].new_script.size() - 1;
             }
             if ((Keyboard::isKeyPressed(Keyboard::Space)) && current_screen == "transition slide")
             {
@@ -480,7 +478,6 @@ int main()
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
-                        current_level_screen++;
                         current_level_screen_index++;
                         current_screen = levels_screens[current_level_screen_index];
                         
@@ -543,7 +540,6 @@ int main()
                     }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_level_screen = 0;
                         current_screen = levels_screens[0];
                         current_level_screen_index = 0;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
@@ -553,7 +549,6 @@ int main()
                     {
                         current_screen = levels_screens[1];
                         current_level_screen_index = 1;
-                        current_level_screen = 1;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -561,7 +556,6 @@ int main()
                     {
                         current_screen = levels_screens[2];
                         current_level_screen_index = 2;
-                        current_level_screen = 2;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -569,7 +563,6 @@ int main()
                     {
                         current_screen = levels_screens[3];
                         current_level_screen_index = 3;
-                        current_level_screen = 3;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -577,7 +570,7 @@ int main()
             }
             if (event.type == Event::TextEntered)
             {
-                if (edit_window_selected && current_screen == levels_screens[current_level_screen_index] && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
+                if (edit_window_selected && current_screen == levels_screens[current_level_screen_index] && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                 {
                     if ((edit_window_text.findCharacterPos(current_edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
                     {
@@ -630,11 +623,11 @@ int main()
                     // User clicks enter and the text will be transfered at the top of the screen
                     if (event.key.code == Keyboard::Return && (!dialogue_text.script_ended) && !continuation_message.commands_flag && (!user_cli_input.empty()))
                     {
-                        if (level[current_level_screen].new_script[dialogue_text.current_script_index].first == 1)
+                        if (level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 1)
                             // Continuation flag is used for stopping input from user after the correct command
                         {
                             commandsInputChecker(user_cli_input, git_init_entered, git_add_entered, git_commit_entered, git_checkout_entered, checked_out_commit);
-                            if (user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
+                            if (user_cli_input == level[current_level_screen_index].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
                                 correct_command = 1;
                             else
                                 correct_command = 0;
@@ -642,7 +635,7 @@ int main()
                             if (correct_command)
                             {
                                 // Commit message
-                                if (commit_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
+                                if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
@@ -670,7 +663,7 @@ int main()
                                     commit_command_entered = 0;
                                     continuation_message.commands_flag = 1;
                                 }
-                                else if (checkout_command_entered && level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
+                                else if (checkout_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
                                     final_cli_input = "checkout successful \n";
                                     checkout_id = user_cli_input;
@@ -684,14 +677,14 @@ int main()
                                 }
                                 // This condition needs a follow up, each command is special
                                 // So we use this if condition to adjust the uniqueness of each one
-                                else if (level[current_level_screen].level_commands[commands_entered_counter] == "git commit")
+                                else if (level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_commit_msg_request + '\n');
                                     commit_command_entered = 1;
                                     continuation_message.commands_flag = 0;
                                 }
-                                else if (level[current_level_screen].level_commands[commands_entered_counter] == "git checkout")
+                                else if (level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
                                     final_cli_input.clear();
                                     final_cli_input = (cli_checkout_message_rqst + '\n');
@@ -715,14 +708,14 @@ int main()
                     }
                 }
                 // Delete and enter for edit window
-                if (edit_window_selected && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
+                if (edit_window_selected && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                 {
-                    if (event.key.code == Keyboard::BackSpace && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
+                    if (event.key.code == Keyboard::BackSpace && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                     {
                         if (!current_edit_window_input.empty())
                             current_edit_window_input.pop_back();
                     }
-                    if (event.key.code == Keyboard::Return && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
+                    if (event.key.code == Keyboard::Return && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                     {
                         current_edit_window_input += ("\n");
                     }
@@ -950,38 +943,38 @@ int main()
             // Check if down arrow (later space) key has been pressed
             if (Keyboard::isKeyPressed(Keyboard::Down))
             {
-                if (!dialogue_text.script_ended && current_screen == levels_screens[current_level_screen_index] && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 0)
+                if (!dialogue_text.script_ended && current_screen == levels_screens[current_level_screen_index] && continuation_message.sub_script_ended && continuation_message.commands_flag == 0 && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 0)
                 {
-                    if (level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
+                    if (level[current_level_screen_index].new_script[dialogue_text.current_script_index] == level[current_level_screen_index].new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }
                     // Clear the current text and reset the script content to the next string
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = level[current_level_screen].new_script[dialogue_text.current_script_index].second;
+                    dialogue_text.script_content = level[current_level_screen_index].new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++;
                 }
-                else if (continuation_message.commands_flag == 1 && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 1)
+                else if (continuation_message.commands_flag == 1 && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 1)
                 {
-                    if (level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
+                    if (level[current_level_screen_index].new_script[dialogue_text.current_script_index] == level[current_level_screen_index].new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }
                     //level[current_level_screen].new_script[dialogue_text.current_script_index].first = 0;
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = level[current_level_screen].new_script[dialogue_text.current_script_index].second;
+                    dialogue_text.script_content = level[current_level_screen_index].new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++;
                     continuation_message.commands_flag = 0;
                 }
-                else if (edit_window_changed == 1 && level[current_level_screen].new_script[dialogue_text.current_script_index].first == 2)
+                else if (edit_window_changed == 1 && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                 {
-                    if (level[current_level_screen].new_script[dialogue_text.current_script_index] == level[current_level_screen].new_script.back())
+                    if (level[current_level_screen_index].new_script[dialogue_text.current_script_index] == level[current_level_screen_index].new_script.back())
                     {
                         dialogue_text.script_ended = 1;
                     }
                     //level[current_level_screen].new_script[dialogue_text.current_script_index].first=0;
                     dialogue_text.script_text.setString("");
-                    dialogue_text.script_content = level[current_level_screen].new_script[dialogue_text.current_script_index].second;
+                    dialogue_text.script_content = level[current_level_screen_index].new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++;
                     edit_window_changed = 0;
                 }
@@ -1171,7 +1164,7 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
         continuation_message.continuation_message_running = !continuation_message.continuation_message_running;
         continuation_message.continuation_fade_time = Time::Zero;
     }
-    if (!dialogue_text.script_ended && continuation_message.sub_script_ended && (level[current_level_screen].new_script[dialogue_text.current_script_index].first == 0 || continuation_message.commands_flag == 1 || edit_window_changed == 1))
+    if (!dialogue_text.script_ended && continuation_message.sub_script_ended && (level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 0 || continuation_message.commands_flag == 1 || edit_window_changed == 1))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
