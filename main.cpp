@@ -322,16 +322,21 @@ int main()
     Text edit_window_save_text("Save", arial, 35);
     setButtonProperties(edit_window_save_button, 2, 118, 36, 522, 621);
     setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::White);
+
     // Game window is the window containing the dialogue box, edit window, cli etc.
+    Texture game_window_bg;
+    game_window_bg.loadFromFile("resources/sprites/Game menu design.png");
+    Sprite game_window(game_window_bg);
+    game_window.setScale(0.616f,0.59f);
     // Back button
-    RectangleShape game_window_back_button(Vector2f(140, 50));
+    RectangleShape game_window_back_button(Vector2f(333, 82));
     Text game_window_back_text("Back", buttons_font, 35);
-    setButtonProperties(game_window_back_button, 0, 0, 255, 1600, 40);
+    setButtonProperties(game_window_back_button, 121, 101, 190, 210, 58);
     setButtonTextProperties(game_window_back_button, game_window_back_text, Color::Black);
     // Options button
-    RectangleShape game_window_options_button(Vector2f(200, 50));
+    RectangleShape game_window_options_button(Vector2f(333, 82));
     Text game_window_options_text("Options", buttons_font, 35);
-    setButtonProperties(game_window_options_button, 255, 255, 0, 1800, 40);
+    setButtonProperties(game_window_options_button, 60, 154, 145, 1700, 58);
     setButtonTextProperties(game_window_options_button, game_window_options_text, Color::Black);
     // Main.cpp Rectangle 
     RectangleShape edit_window_title(Vector2f(500, 80));
@@ -802,19 +807,23 @@ int main()
                 }
                 if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(game_window_options_button, 0.9f, Color(153, 153, 0), Color::Black);
+                    game_window_options_button.setFillColor(Color(40, 134, 125));
+                    game_window_options_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(game_window_options_button, 1.0f, Color::Yellow, Color::Black);
+                    game_window_options_button.setFillColor(Color::Yellow);
+                    game_window_options_button.setScale(1.0f, 1.0f);
                 }
                 if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(game_window_back_button, 0.9f, Color(153, 153, 0), Color::Black);
+                    game_window_back_button.setFillColor(Color(153, 153, 0));
+                    game_window_back_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(game_window_back_button, 1.0f, Color::Yellow, Color::Black);
+                    game_window_back_button.setFillColor(Color(121,101,190));
+                    game_window_back_button.setScale(1.0f, 1.0f);
                 }
                 if (levels_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -1063,6 +1072,7 @@ int main()
             showContinuationMessage(continuation_message, edit_window_changed);
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
+            window.draw(game_window);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
             window.draw(cli_input_shape);
