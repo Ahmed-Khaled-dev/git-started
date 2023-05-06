@@ -247,10 +247,10 @@ int main()
     transition_text.setFillColor(Color::White);
 
     // Levels menu
-    RectangleShape levels_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
+    RectangleShape levels_menu_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
     RectangleShape init_level_button(Vector2f(1000, 150)), commit_level_button(Vector2f(1000, 150)), checkout_level_button(Vector2f(1000, 150));
 
-    setButtonProperties(levels_back_button, 46, 139, 87, 77, 45);
+    setButtonProperties(levels_menu_back_button, 46, 139, 87, 77, 45);
     setButtonProperties(level_buttons_bg, 200, 200, 200, 960, 510);
     setButtonProperties(intro_level_button, 112, 128, 144, 960, 245);
     setButtonProperties(init_level_button, 112, 128, 144, 960, 430);
@@ -268,7 +268,7 @@ int main()
     levels_menu_bg.setScale(1.52f, 1.52f);
 
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
-    Text levels_back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
+    Text levels_menu_back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
     Text commits_levels_category("Commits", buttons_font, 32);
     Text intro_level_text("Tragic Failure: The Cost of Poor Organization (intro)", buttons_font, 29);
     Text init_level_text("The Git Beginning! (git init)", buttons_font, 29);
@@ -278,7 +278,7 @@ int main()
     commits_levels_category.setFillColor(Color::Black);
     intro_levels_category.setFillColor(Color::Black);
 
-    setButtonTextProperties(levels_back_button, levels_back_button_text, Color::Black);
+    setButtonTextProperties(levels_menu_back_button, levels_menu_back_button_text, Color::Black);
     setButtonTextProperties(intro_level_button, intro_level_text, Color::White);
     setButtonTextProperties(init_level_button, init_level_text, Color::White);
     setButtonTextProperties(commit_level_button, commit_level_text, Color::White);
@@ -455,7 +455,6 @@ int main()
                 transition_level_texts_index++;
                 transition_text.setString(transition_level_texts[transition_level_texts_index]);
             }
-
             if (event.type == Event::Closed || current_screen == "close")
             {
                 updateProgressFile("progress.txt", levels_status, levels_num);
@@ -492,6 +491,8 @@ int main()
                         user_cli_input.clear();
                         final_cli_input.clear();
                         commands_entered_counter = 0;
+                        levels_status[progress_cnt] = 1;
+                        progress_cnt++;
                     }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -536,7 +537,7 @@ int main()
                     }
                 }
                 else if (current_screen == "levels menu") {
-                    if (levels_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (levels_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_screen = "main menu";
                     }
@@ -771,13 +772,13 @@ int main()
                 {
                     changeButtonScaleAndColor(game_window_back_button, 1.0f, Color::Yellow, Color::Black);
                 }
-                if (levels_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                if (levels_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(levels_back_button, 0.9f, Color(140, 140, 140), Color::Black);
+                    changeButtonScaleAndColor(levels_menu_back_button, 0.9f, Color(140, 140, 140), Color::Black);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(levels_back_button, 1.0f, Color(46, 139, 87), Color::Black);
+                    changeButtonScaleAndColor(levels_menu_back_button, 1.0f, Color(46, 139, 87), Color::Black);
                 }
                 /* if you write the if conditions related to the colors and hover on effect that are determined by the state of the level (passed or not) as only ifs
                 the code always execute the first if that is written and satisfied only and discards the others even if the argument is satisfied
@@ -1085,13 +1086,13 @@ int main()
         }
         else if (current_screen == "levels menu") {
             window.draw(levels_menu_bg);
-            window.draw(levels_back_button);
+            window.draw(levels_menu_back_button);
             window.draw(level_buttons_bg);
             window.draw(intro_level_button);
             window.draw(init_level_button);
             window.draw(commit_level_button);
             window.draw(checkout_level_button);
-            window.draw(levels_back_button_text);
+            window.draw(levels_menu_back_button_text);
             window.draw(intro_levels_category);
             window.draw(commits_levels_category);
             window.draw(intro_level_text);
