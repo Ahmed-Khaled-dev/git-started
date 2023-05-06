@@ -8,7 +8,6 @@
 using namespace std;
 using namespace sf;
 
-int progress_cnt = 0;
 const int levels_count = 4;
 bool levels_status[levels_count] = {0, 0, 0, 0};
 
@@ -494,8 +493,6 @@ int main()
                         user_cli_input.clear();
                         final_cli_input.clear();
                         commands_entered_counter = 0;
-                        levels_status[progress_cnt] = 1;
-                        progress_cnt++;
                     }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
@@ -1033,6 +1030,7 @@ int main()
             window.draw(game_window_options_text);
             if (dialogue_text.script_ended)
             {
+                levels_status[current_level_screen_index] =1;
                 window.draw(game_window_next_button);
                 window.draw(game_window_next_text);
             }
