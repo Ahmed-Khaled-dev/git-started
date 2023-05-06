@@ -9,8 +9,8 @@ using namespace std;
 using namespace sf;
 
 int progress_cnt = 0;
-const int levels_num = 4;
-bool levels_status[levels_num] = { 0,0,0,0 };
+const int levels_count = 4;
+bool levels_status[levels_count] = {0, 0, 0, 0};
 
 unsigned short int graph_smoke_animation_delay = 0, current_smoke_animation_frame = 0;
 short int index_of_the_last_commit = 0;
@@ -169,7 +169,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
 void playMusicFromFile(string file_path, Music& music);
 void updateButtonText(RectangleShape& rectangle, Text& text, string new_text);
-void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position);
+void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position, int transparency = 255);
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
 void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu);
 void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor, Sound& pop, Event& Event);
@@ -186,16 +186,14 @@ void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 void commandsInputChecker(string& user_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit);
 void setTextOriginAndPosition(Text& text, float x_position, float y_position);
-
 void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed);
-void readProgressFile(string file_name, bool levels_status[], int levels_num);
-void updateProgressFile(string file_name, bool levels_status[], int levels_num);
+void readProgressFile(string file_name, bool levels_status[], int levels_count);
+void updateProgressFile(string file_name, bool levels_status[], int levels_count);
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color);
 
 int main()
 {
-
-    readProgressFile("progress.txt", levels_status, levels_num);
+    readProgressFile("progress.txt", levels_status, levels_count);
 
     // Dialogue box
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
@@ -250,12 +248,17 @@ int main()
     RectangleShape levels_menu_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
     RectangleShape init_level_button(Vector2f(1000, 150)), commit_level_button(Vector2f(1000, 150)), checkout_level_button(Vector2f(1000, 150));
 
+    Color const AVAILABLE_LEVELS_BUTTONS_COLOR = Color(48, 74, 91);
+    Color const UNAVAILABLE_LEVELS_TEXT_COLOR = Color(255, 255, 255, 150);
+    Color const AVAILABLE_LEVELS_TEXT_COLOR = Color::White;
+    Color const COMPLETED_LEVELS_TEXT_COLOR = Color(0, 255, 0);
+    Color const LEVELS_BUTTONS_BORDER_COLOR = Color::Black;
     setButtonProperties(levels_menu_back_button, 46, 139, 87, 77, 45);
     setButtonProperties(level_buttons_bg, 200, 200, 200, 960, 510);
-    setButtonProperties(intro_level_button, 112, 128, 144, 960, 245);
-    setButtonProperties(init_level_button, 112, 128, 144, 960, 430);
-    setButtonProperties(commit_level_button, 112, 128, 144, 960, 650);
-    setButtonProperties(checkout_level_button, 112, 128, 144, 960, 825);
+    setButtonProperties(intro_level_button, 48, 74, 91, 960, 245, 200);
+    setButtonProperties(init_level_button, 48, 74, 91, 960, 430, 200);
+    setButtonProperties(commit_level_button, 48, 74, 91, 960, 650, 200);
+    setButtonProperties(checkout_level_button, 48, 74, 91, 960, 825, 200);
 
     Texture levels_menu;
     if (!levels_menu.loadFromFile("resources/sprites/levels-menu.jpg")) {
@@ -280,9 +283,9 @@ int main()
 
     setButtonTextProperties(levels_menu_back_button, levels_menu_back_button_text, Color::Black);
     setButtonTextProperties(intro_level_button, intro_level_text, Color::White);
-    setButtonTextProperties(init_level_button, init_level_text, Color::White);
-    setButtonTextProperties(commit_level_button, commit_level_text, Color::White);
-    setButtonTextProperties(checkout_level_button, checkout_level_text, Color::White);
+    setButtonTextProperties(init_level_button, init_level_text, UNAVAILABLE_LEVELS_TEXT_COLOR);
+    setButtonTextProperties(commit_level_button, commit_level_text, UNAVAILABLE_LEVELS_TEXT_COLOR);
+    setButtonTextProperties(checkout_level_button, checkout_level_text, UNAVAILABLE_LEVELS_TEXT_COLOR);
 
     setTextOriginAndPosition(intro_levels_category, 960, 140);
     setTextOriginAndPosition(commits_levels_category, 960, 545);
@@ -457,7 +460,7 @@ int main()
             }
             if (event.type == Event::Closed || current_screen == "close")
             {
-                updateProgressFile("progress.txt", levels_status, levels_num);
+                updateProgressFile("progress.txt", levels_status, levels_count);
                 window.close();
             }
             // Mouse click CLI
@@ -548,13 +551,12 @@ int main()
                         current_level_screen_index = 0;
                         current_screen = "transition slide";
                     }
-                    else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
                     {
                         current_screen = levels_screens[1];
                         current_level_screen_index = 1;
                         current_level_screen = 1;
                     }
-
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[1])
                     {
                         current_screen = levels_screens[2];
@@ -783,132 +785,153 @@ int main()
                 /* if you write the if conditions related to the colors and hover on effect that are determined by the state of the level (passed or not) as only ifs
                 the code always execute the first if that is written and satisfied only and discards the others even if the argument is satisfied
                 (so basically i had to make the conditions in decending order and related in entangled if - if else relationship)*/
-
                 if (levels_status[3]) {
-
                     if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(checkout_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(checkout_level_button, checkout_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(checkout_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(checkout_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(checkout_level_button, checkout_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(checkout_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(commit_level_button, 0.92f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(commit_level_button, commit_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(commit_level_button, 0.92f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(commit_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(commit_level_button, commit_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(commit_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(init_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(init_level_button, init_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(init_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(init_level_button, init_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                 }
                 else if (levels_status[2]) {
-
                     if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(checkout_level_button, 0.9f, Color(158, 158, 158), Color(255, 140, 0));
+                        setButtonTextProperties(checkout_level_button, checkout_level_text, AVAILABLE_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(checkout_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(checkout_level_button, 1.0f, Color(169, 169, 169), Color::Black);
+                        setButtonTextProperties(checkout_level_button, checkout_level_text, AVAILABLE_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(checkout_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(commit_level_button, 0.92f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(commit_level_button, commit_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(commit_level_button, 0.92f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(commit_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(commit_level_button, commit_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(commit_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(init_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(init_level_button, init_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(init_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(init_level_button, init_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                 }
                 else if (levels_status[1]) {
-
                     if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(commit_level_button, 0.92f, Color(158, 158, 158), Color(255, 140, 0));
+                        setButtonTextProperties(commit_level_button, commit_level_text, AVAILABLE_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(commit_level_button, 0.92f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(commit_level_button, 1.0f, Color(169, 169, 169), Color::Black);
+                        setButtonTextProperties(commit_level_button, commit_level_text, AVAILABLE_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(commit_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(init_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(init_level_button, init_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(init_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(init_level_button, init_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                 }
                 else if (levels_status[0]) {
-
                     if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(init_level_button, 0.9f, Color(158, 158, 158), Color(255, 140, 0));
+                        setButtonTextProperties(init_level_button, init_level_text, AVAILABLE_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(init_level_button, 1.0f, Color(169, 169, 169), Color::Black);
+                        setButtonTextProperties(init_level_button, init_level_text, AVAILABLE_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(init_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(152, 255, 152), Color::Black);
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(57, 255, 20), Color(128, 128, 128));
+                        setButtonTextProperties(intro_level_button, intro_level_text, COMPLETED_LEVELS_TEXT_COLOR);
+                        changeButtonScaleAndColor(intro_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                 }
-                else if (levels_status[0] == 0) {
-
+                else if (levels_status[0] == 0) 
+                {
                     if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        changeButtonScaleAndColor(intro_level_button, 0.9f, Color(158, 158, 158), Color(255, 140, 0));
+                        changeButtonScaleAndColor(intro_level_button, 0.9f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                     else
                     {
-                        changeButtonScaleAndColor(intro_level_button, 1.0f, Color(169, 169, 169), Color::Black);
+                        changeButtonScaleAndColor(intro_level_button, 1.0f, AVAILABLE_LEVELS_BUTTONS_COLOR, LEVELS_BUTTONS_BORDER_COLOR);
                     }
                 }
                 if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
@@ -1228,9 +1251,9 @@ void setTextOriginAndPosition(Text& text, float x_position, float y_position) {
     text.setPosition(x_position, y_position);
 }
 
-void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position)
+void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green_intensity, int blue_intensity, float x_position, float y_position, int transparency)
 {
-    rectangle.setFillColor(Color(red_intensity, green_intensity, blue_intensity));
+    rectangle.setFillColor(Color(red_intensity, green_intensity, blue_intensity, transparency));
     rectangle.setOutlineThickness(5);
     rectangle.setOutlineColor(Color::Black);
     rectangle.setOrigin(rectangle.getSize() / 2.f);
@@ -1550,34 +1573,46 @@ bool checkInputEquality(string& input, string& correct_string, bool& edit_window
         return 0;
     }
 }
-void readProgressFile(string file_name, bool levels_status[], int levels_num) {
-    ifstream infile(file_name); //infile refers to an input file which is a file that is being read by a program.
-    string line; // string to accept the text input, in each line in the text file each line represents the state of a level.
+
+void readProgressFile(string file_name, bool levels_status[], int levels_count) {
+    // Infile refers to an input file which is a file that is being read by a program.
+    ifstream infile(file_name); 
+    // String to accept the text input, in each line in the text file each line represents the state of a level.
+    string line; 
     int level = 0;
-     //accepting lines from the text file equal to the number of levels to determine the levels status.
-    while (getline(infile, line) && level < levels_num) {
-        if (line == "completed") {
+    // Accepting lines from the text file equal to the number of levels to determine the levels status.
+    while (getline(infile, line) && level < levels_count) {
+        if (line == "completed") 
+        {
             levels_status[level] = 1;
         }
-        else {
+        else 
+        {
             levels_status[level] = 0;
         }
         level++;
     }
-    infile.close();// close the text file after the process.
+    // Close the text file after the process.
+    infile.close();
 }
-void updateProgressFile(string file_name, bool levels_status[], int levels_num) {
-    ofstream outfile(file_name); //outfile refers to an output file which is a file that is being written to by a program.
-    for (int i = 0; i < levels_num; i++) {
-        if (levels_status[i]) {
-            outfile << "completed" << endl; //edits the file according to the state of each level.
+
+void updateProgressFile(string file_name, bool levels_status[], int levels_count) {
+    // Outfile refers to an output file which is a file that is being written to by a program.
+    ofstream outfile(file_name);
+    for (int i = 0; i < levels_count; i++) {
+        if (levels_status[i])
+        {
+            // Edits the file according to the state of each level.
+            outfile << "completed" << endl; 
         }
-        else {
+        else 
+        {
             outfile << "incomplete" << endl;
         }
     }
     outfile.close();
 }
+
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color)
 {
     rectangle.setFillColor(color);
