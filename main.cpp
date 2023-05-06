@@ -298,9 +298,9 @@ int main()
     RectangleShape cli_output_shape, cli_input_shape;
     int commands_entered_counter = 0;
     string user_cli_input, final_cli_input, commit_message, checkout_id;
-    Text cli_text("", cli_font), cli_text_final("", cli_font);
-    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
-    string cli_checkout_message_rqst = "Please enter the ID of the commit\nyou want to checkout to";
+    Text cli_text("", cli_font,35), cli_text_final("", cli_font);
+    string cli_commit_msg_request = " # Please enter the \ncommit message for\nyour changes in the\ncommand line.";
+    string cli_checkout_message_rqst = "Please enter the ID of\nthe commit you want \nto checkout to";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0;
     Clock cursor_clock;
 
@@ -320,14 +320,14 @@ int main()
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
     Text edit_window_save_text("Save", arial, 35);
-    setButtonProperties(edit_window_save_button, 2, 118, 36, 522, 621);
+    setButtonProperties(edit_window_save_button, 2, 118, 36, 1800, 945);
     setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::White);
 
     // Game window is the window containing the dialogue box, edit window, cli etc.
     Texture game_window_bg;
     game_window_bg.loadFromFile("resources/sprites/Game menu design.png");
     Sprite game_window(game_window_bg);
-    game_window.setScale(0.616f,0.59f);
+    game_window.setScale(0.618f,0.638f);
     // Back button
     RectangleShape game_window_back_button(Vector2f(333, 82));
     Text game_window_back_text("Back", buttons_font, 35);
@@ -339,10 +339,11 @@ int main()
     setButtonProperties(game_window_options_button, 60, 154, 145, 1700, 58);
     setButtonTextProperties(game_window_options_button, game_window_options_text, Color::Black);
     // Main.cpp Rectangle 
-    RectangleShape edit_window_title(Vector2f(500, 80));
+    RectangleShape edit_window_title(Vector2f(340, 45));
     Text edit_window_title_text("Main.cpp", cli_font, 35);
-    setButtonProperties(edit_window_title, 110, 164, 198, 330, 85);
+    setButtonProperties(edit_window_title, 110, 164, 198, 1705, 173);
     setButtonTextProperties(edit_window_title, edit_window_title_text, Color::Black);
+    edit_window_title.setOutlineColor(Color ::White);
 
     // Main Menu
     Text game_title;
@@ -522,7 +523,7 @@ int main()
                     {
                         current_screen = "options_in_game";
                     }
-                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (cli_input_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         cli_selected = true;
                     }
@@ -1142,31 +1143,13 @@ int main()
             createCliInputShape(cli_input_shape);
             createEditWindowShape(edit_window_shape);
             createCliOutputShape(cli_output_shape);
-            window.draw(dialogue_box.body_shape);
-            window.draw(edit_window_shape);
-            window.draw(cli_input_shape);
-            window.draw(cli_output_shape);
-            window.draw(dialogue_box.title_shape);
-            window.draw(dialogue_box.title);
-            window.draw(dialogue_box.sprite);
-            window.draw(dialogue_text.script_text);
-            window.draw(continuation_message.continuation_text);
-            window.draw(edit_window_text);
-            window.draw(cli_text);
-            window.draw(cli_text_final);
-            window.draw(edit_window_title);
-            window.draw(edit_window_title_text);
-            if (git_init_entered)
-            {
-                for (unsigned short int i = 0; i < commits_count; i++)
-                    window.draw(commits[i].sprite);
-                window.draw(head);
-            }
+            headIdleAnimation(head, additional_commit_created);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)
                 window.draw(slider[i]);
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
+
         }
         else if (current_screen == "levels menu") {
             window.draw(levels_menu_bg);
@@ -1400,22 +1383,22 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     cli_text.setPosition(rectangle.getPosition().x + 7, rectangle.getPosition().y + 7);
     cli_text_final.setFillColor(Color::White);
     cli_text_final.setString(final_cli_input);
-    cli_text_final.setPosition(rectangle_upper.getPosition().x + 7, rectangle_upper.getPosition().y + 7);
+    cli_text_final.setPosition(rectangle_upper.getPosition().x + 7, rectangle_upper.getPosition().y + 10);
     // cout<<user_cli_input<<'\n'<<final_cli_input;
 }
 
 void setEditWindowText(Text& edit_text, string& edit_input, bool& show_cursor, RectangleShape& rectangle) {
     edit_text.setString(edit_input + (show_cursor ? '|' : ' '));
-    edit_text.setPosition(rectangle.getPosition().x + 7, rectangle.getPosition().y + 90);
+    edit_text.setPosition(rectangle.getPosition().x +5 , rectangle.getPosition().y +3 );
     edit_text.setFillColor(Color::White);
 }
 
 void createEditWindowShape(RectangleShape& form) {
-    form.setSize(Vector2f(500, 600));
+    form.setSize(Vector2f(340, 870));
     form.setFillColor(Color(0, 116, 185));
-    form.setOutlineThickness(8);
-    form.setOutlineColor(Color::Black);
-    form.setPosition(80, 45);
+    form.setOutlineThickness(5);
+    form.setOutlineColor(Color::White);
+    form.setPosition(1535, 202);
 }
 
 void createCliOutputShape(RectangleShape& form) {
@@ -1427,7 +1410,29 @@ void createCliOutputShape(RectangleShape& form) {
 void createCliInputShape(RectangleShape& form) {
     form.setSize(Vector2f(340, 72));
     form.setFillColor(Color::Transparent);
-    form.setPosition(40, 509);
+    form.setPosition(40, 550);
+}
+
+void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
+    //string git_chekcout_sen = "";
+    if (user_cli_input == "git init")
+        git_init_entered = 1;
+    else if ((user_cli_input == "git add ." || user_cli_input == "git add Main.cpp") && git_init_entered)
+        git_add_entered = 1;
+    else if (user_cli_input == "git commit")
+        git_commit_entered = 1;
+    /*else if (user_cli_input.size() == 14)
+        for (int i = 0; i < user_cli_input.size(); i++){
+            git_chekcout_sen += user_cli_input[i];
+            if (git_chekcout_sen == "git checkout" && git_init_entered){
+                checked_out_commit = user_cli_input[13];
+                git_checkout_entered = 1;
+                git_chekcout_sen = "";
+                break;
+            }
+        }*/
+        /*if (!git_add_entered)
+            git_commit_entered = 0;*/
 }
 
 void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
