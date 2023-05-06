@@ -49,7 +49,7 @@ struct dialogueBox {
     Text title;
     string title_content = "Mentor";
     double title_size = 32;
-    string image_path = "resources/sprites/man.png";
+    string image_path = "resources/sprites/new-mentor.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
 }dialogue_box;
 
@@ -224,7 +224,7 @@ int main()
 
     // Music
     Music music;
-    playMusicFromFile("resources/audio/lepo.wav", music);
+    playMusicFromFile("resources/audio/background audio.wav", music);
     music.setVolume(0);
 
     // Transition slide
@@ -686,6 +686,12 @@ int main()
                                 // Commit message
                                 if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
+                                    SoundBuffer correct_command_sound;
+                                    correct_command_sound.loadFromFile("resources/audio/correct command.wav");
+                                    Sound correct_command_audio;
+                                    correct_command_audio.setBuffer(correct_command_sound);
+                                    correct_command_audio.setVolume(100);
+                                    correct_command_audio.play();
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
                                     if (git_commit_entered) {
@@ -1171,8 +1177,8 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
-    dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(50, 680);
+    dialogue_box.sprite.setScale(0.7, 0.7);
+    dialogue_box.sprite.setPosition(63, 660);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
