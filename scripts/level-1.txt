@@ -1,13 +1,18 @@
 Let me show you around our time machine. 
-This blue box is our IDE (like visual studio), where you will write the code you want.
-The black box you see on your screen (the console) is your tool to tell Git what to do. but be aware ! GIT will not obey your orders unless you communicate to it in a special language (like programming languages).
-After showing you around, let’s start our adventure by telling you what the word order or “command” means to “GIT”. 
-“Commands” are a set of instructions , each one of them is a trigger that makes GIT do a certain job. 
-We will start with our first command “Git init”. 
+This blue box (main.cpp) is our IDE (like visual studio), where you will be able to write code.
+The black box you see on your screen (the console) is your tool to tell Git what to do. but be aware!
+(if we finish the design we can say "this black box above me: (since the sprite will be below the console))
+GIT will not obey your orders unless you communicate to it in a special syntax (like programming languages).
+After showing you around, let’s start our adventure by telling you how to order GIT to do something.
+We use GIT commands!
+"Commands" are a set of instructions, each one of them is used to order GIT to do a certain job. 
+We will start with our first command "git init". 
 
-Git init enforms GIT to start watching your current folder which we call a git repository. All of our git commands won’t work unless we initialize a repository.since GIT won't know where should it carry on your orders That’s why “Git init” has to be the first command to be executed. 
-Let’s try executing it together. Please type “git init” in the command line (the black box) -c
+Git init orders GIT to start watching your current folder
+After git starts watching your folder, your folder is now called a git repository (repo for short). 
+You wont be able to order git to do anything unless you initialize a repository
+That’s why "git init" has to be the first command to be executed. 
+Let’s try executing it together, Please type "git init" in the command line (the black box) -c
 (head appears)
-Would you look at that!! That’s our head. Does it remind you of something?
-This Octocat symbolizes the head in git. It is inspired from the github logo and it will accompany you throughout the game.  You will get to know more about the “head” in the upcoming levels
-
+Would you look at that!! That’s GIT's head (Now git has it's eyes on you) (we can add fun creepy music in here).
+It will accompany you throughout the game. You will get to know more about the "GIT head" in the upcoming levels
