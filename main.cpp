@@ -465,7 +465,7 @@ int main()
                         commands_entered_counter = 0;
                         dialogue_text.script_ended = 0;
                     }
-                    if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
                         current_level_screen_index++;
                         current_screen = levels_screens[current_level_screen_index];
