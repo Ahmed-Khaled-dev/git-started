@@ -48,7 +48,7 @@ struct dialogueBox {
     Sprite sprite;
     Text title;
     string title_content = "Mentor";
-    double title_size = 27;
+    double title_size = 32;
     string image_path = "resources/sprites/man.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
 }dialogue_box;
@@ -313,8 +313,8 @@ int main()
     // Next button
     RectangleShape game_window_next_button(Vector2f(140, 50));
     Text game_window_next_text("Next", buttons_font, 35);
-    setButtonProperties(game_window_next_button, 75, 181, 67, 1415, 930);
-    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::White);
+    setButtonProperties(game_window_next_button, 60, 154, 145, 1415, 945);
+    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(333, 50));
     Text edit_window_save_text("Save", arial, 35);
@@ -988,11 +988,14 @@ int main()
                 }
                 if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(game_window_next_button, 0.9f, Color(75, 181, 67), Color::Black);
+
+                    game_window_next_button.setFillColor(Color(75, 181, 160));
+                    game_window_next_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(game_window_next_button, 1.0f, Color(Color(25, 135, 84)), Color::Black);
+                    game_window_next_button.setFillColor(Color(25, 135, 84));
+                    game_window_next_button.setScale(1.0f, 1.0f);
                 }
             }
             // Check if down arrow (later space) key has been pressed
@@ -1165,20 +1168,11 @@ int main()
 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 {
-    //Dialogue box (big)
-    //dialogue_box.body_shape.setSize(Vector2f(1075, 287));
-    //dialogue_box.body_shape.setFillColor(Color::Transparent);
-    //dialogue_box.body_shape.setPosition(417, 710);
-
-    /*Dialogue box (small)
-    dialogue_box.title_shape.setSize(Vector2f(1000, 75));
-    dialogue_box.title_shape.setFillColor(Color(0, 56, 101));
-    dialogue_box.title_shape.setPosition(460, 600);*/
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
     dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(15, 630);
+    dialogue_box.sprite.setPosition(50, 680);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
@@ -1186,7 +1180,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setFillColor(Color::White);
     dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
-    dialogue_box.title.setPosition(460, 660);
+    dialogue_box.title.setPosition(460, 710);
 }
 
 void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed)
@@ -1217,7 +1211,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFont(dialogue_text.font);
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
-    dialogue_text.script_text.setPosition(450, 760);
+    dialogue_text.script_text.setPosition(450, 780);
     //dialogue_text.script_text.setStyle(Text::Bold);
     dialogue_text.time += dialogue_text.typewrite_clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
@@ -1402,28 +1396,6 @@ void createCliInputShape(RectangleShape& form) {
     form.setSize(Vector2f(340, 72));
     form.setFillColor(Color::Transparent);
     form.setPosition(40, 550);
-}
-
-void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
-    //string git_chekcout_sen = "";
-    if (user_cli_input == "git init")
-        git_init_entered = 1;
-    else if ((user_cli_input == "git add ." || user_cli_input == "git add Main.cpp") && git_init_entered)
-        git_add_entered = 1;
-    else if (user_cli_input == "git commit")
-        git_commit_entered = 1;
-    /*else if (user_cli_input.size() == 14)
-        for (int i = 0; i < user_cli_input.size(); i++){
-            git_chekcout_sen += user_cli_input[i];
-            if (git_chekcout_sen == "git checkout" && git_init_entered){
-                checked_out_commit = user_cli_input[13];
-                git_checkout_entered = 1;
-                git_chekcout_sen = "";
-                break;
-            }
-        }*/
-        /*if (!git_add_entered)
-            git_commit_entered = 0;*/
 }
 
 void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
