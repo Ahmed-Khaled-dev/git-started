@@ -48,7 +48,7 @@ struct dialogueBox {
     Sprite sprite;
     Text title;
     string title_content = "Mentor";
-    double title_size = 25;
+    double title_size = 27;
     string image_path = "resources/sprites/man.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
     RectangleShape body_shape;
@@ -1075,8 +1075,8 @@ int main()
             window.draw(game_window);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
-            window.draw(cli_input_shape);
-            window.draw(cli_output_shape);
+            //window.draw(cli_input_shape);
+            //window.draw(cli_output_shape);
             window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
@@ -1192,18 +1192,14 @@ int main()
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 {
     //Dialogue box (big)
-    dialogue_box.body_shape.setSize(Vector2f(900, 260));
-    dialogue_box.body_shape.setFillColor(Color(44, 240, 83));
-    dialogue_box.body_shape.setOutlineThickness(5);
-    dialogue_box.body_shape.setOutlineColor(Color::Black);
-    dialogue_box.body_shape.setPosition(80, 700);
+    dialogue_box.body_shape.setSize(Vector2f(1075, 287));
+    dialogue_box.body_shape.setFillColor(Color::Transparent);
+    dialogue_box.body_shape.setPosition(417, 710);
 
-    //Dialogue box (small)
-    dialogue_box.title_shape.setSize(Vector2f(900, 65));
-    dialogue_box.title_shape.setFillColor(Color(95, 219, 120));
-    dialogue_box.title_shape.setOutlineThickness(0.8f);
-    dialogue_box.title_shape.setOutlineColor(Color(72, 84, 74));
-    dialogue_box.title_shape.setPosition(80, 700);
+    /*Dialogue box (small)
+    dialogue_box.title_shape.setSize(Vector2f(1000, 75));
+    dialogue_box.title_shape.setFillColor(Color(0, 56, 101));
+    dialogue_box.title_shape.setPosition(460, 600);*/
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
@@ -1213,10 +1209,10 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
     dialogue_box.title.setFont(dialogue_box.font);
-    dialogue_box.title.setFillColor(Color(57, 60, 58));
+    dialogue_box.title.setFillColor(Color::White);
     dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
-    dialogue_box.title.setPosition(220, 720);
+    dialogue_box.title.setPosition(460, 660);
 }
 
 void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed)
@@ -1231,10 +1227,10 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
-        continuation_message.continuation_text.setFillColor(Color(57, 60, 58));
+        continuation_message.continuation_text.setFillColor(Color::Black);
         continuation_message.continuation_text.setCharacterSize(24);
         continuation_message.continuation_text.setStyle(Text::Italic);
-        continuation_message.continuation_text.setPosition(670, 925);
+        continuation_message.continuation_text.setPosition(1200, 925);
     }
     else if (!continuation_message.sub_script_ended)
     {
@@ -1247,7 +1243,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFont(dialogue_text.font);
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
-    dialogue_text.script_text.setPosition(250, 780);
+    dialogue_text.script_text.setPosition(450, 760);
     //dialogue_text.script_text.setStyle(Text::Bold);
     dialogue_text.time += dialogue_text.typewrite_clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
