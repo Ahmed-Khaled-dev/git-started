@@ -559,6 +559,7 @@ int main()
                     {
                         current_screen = levels_screens[0];
                         current_level_screen_index = 0;
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -567,6 +568,7 @@ int main()
                         current_screen = levels_screens[1];
                         current_level_screen_index = 1;
                         player_name_entry = 0;
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -575,6 +577,7 @@ int main()
                         current_screen = levels_screens[2];
                         current_level_screen_index = 2;
                         player_name_entry = 0;
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
