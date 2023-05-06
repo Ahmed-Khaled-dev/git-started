@@ -51,8 +51,6 @@ struct dialogueBox {
     double title_size = 27;
     string image_path = "resources/sprites/man.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
-    RectangleShape body_shape;
-    RectangleShape title_shape;
 }dialogue_box;
 
 struct continuationMessage
@@ -318,10 +316,10 @@ int main()
     setButtonProperties(game_window_next_button, 75, 181, 67, 1415, 930);
     setButtonTextProperties(game_window_next_button, game_window_next_text, Color::White);
     // Save button
-    RectangleShape edit_window_save_button(Vector2f(120, 50));
+    RectangleShape edit_window_save_button(Vector2f(333, 50));
     Text edit_window_save_text("Save", arial, 35);
-    setButtonProperties(edit_window_save_button, 2, 118, 36, 1800, 945);
-    setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::White);
+    setButtonProperties(edit_window_save_button, 110, 164, 198, 1700, 945);
+    setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::Black);
 
     // Game window is the window containing the dialogue box, edit window, cli etc.
     Texture game_window_bg;
@@ -800,11 +798,13 @@ int main()
                 }
                 if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(edit_window_save_button, 0.9f, Color(34, 139, 34), Color::Black);
+                    edit_window_save_button.setFillColor(Color(130, 185, 205));
+                    edit_window_save_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(edit_window_save_button, 1.0f, Color(2, 118, 36), Color::Black);
+                    edit_window_save_button.setFillColor(Color(110, 164, 198));
+                    edit_window_save_button.setScale(1.0f, 1.0f);
                 }
                 if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -1074,11 +1074,6 @@ int main()
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
             window.draw(game_window);
-            window.draw(dialogue_box.body_shape);
-            window.draw(edit_window_shape);
-            window.draw(cli_input_shape);
-            window.draw(cli_output_shape);
-            window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
@@ -1098,7 +1093,6 @@ int main()
                 window.draw(game_window_next_button);
                 window.draw(game_window_next_text);
             }
-            window.draw(edit_window_title);
             window.draw(edit_window_title_text);
             if (git_init_entered) {
                 headIdleAnimation(head, additional_commit_created);
@@ -1140,9 +1134,6 @@ int main()
             controlSfxAndMusicVolume(sfx_text, music, pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
             setSliderMoveLimits(slider_bar, slider);
             drawDialogue(window, dialogue_box);
-            createCliInputShape(cli_input_shape);
-            createEditWindowShape(edit_window_shape);
-            createCliOutputShape(cli_output_shape);
             headIdleAnimation(head, additional_commit_created);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)
@@ -1175,9 +1166,9 @@ int main()
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 {
     //Dialogue box (big)
-    dialogue_box.body_shape.setSize(Vector2f(1075, 287));
-    dialogue_box.body_shape.setFillColor(Color::Transparent);
-    dialogue_box.body_shape.setPosition(417, 710);
+    //dialogue_box.body_shape.setSize(Vector2f(1075, 287));
+    //dialogue_box.body_shape.setFillColor(Color::Transparent);
+    //dialogue_box.body_shape.setPosition(417, 710);
 
     /*Dialogue box (small)
     dialogue_box.title_shape.setSize(Vector2f(1000, 75));
