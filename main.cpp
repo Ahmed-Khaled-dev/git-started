@@ -296,7 +296,13 @@ int main()
     string cli_checkout_message_rqst = "Please enter the ID of the commit\nyou want to checkout to";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0;
     Clock cursor_clock;
-
+    // player input
+    string player_name;
+    Text player_name_text("player_name", game_title_font , 32);
+    player_name_text.setPosition(1310, 750);
+    player_name_text.setFillColor(Color:: White);
+    const short int PLAYER_NAME_MAX_CHARS = 17;
+    bool show_player_name_cursor = 0, player_name_entry = 0;
 
     // Edit Window
     RectangleShape edit_window_shape;
@@ -445,11 +451,19 @@ int main()
 
         while (window.pollEvent(event))
         {
+            //player entry screen
+            if(transition_level_texts[current_level_screen_index]=="Please enter your name:"){
+                player_name_entry = 1;
+            }
+            else 
+            {
+                player_name_entry = 0;
+            }
             if ((Keyboard::isKeyPressed(Keyboard::Insert)) && current_screen == levels_screens[current_level_screen_index])
             {
                 dialogue_text.current_script_index = level[current_level_screen_index].new_script.size() - 1;
             }
-            if ((Keyboard::isKeyPressed(Keyboard::Space)) && current_screen == "transition slide")
+            if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide" && player_name_entry !=1)
             {
                 current_screen = levels_screens[current_level_screen_index];
                 transition_text.setString(transition_level_texts[current_level_screen_index+1]);
@@ -475,6 +489,7 @@ int main()
                         final_cli_input.clear();
                         commands_entered_counter = 0;
                         dialogue_text.script_ended = 0;
+                        player_name_entry = 0;
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
@@ -486,11 +501,13 @@ int main()
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
                         dialogue_text.current_script_index = 0;
-                        dialogue_text.script_ended = 0;
                         user_cli_input.clear();
                         final_cli_input.clear();
                         commands_entered_counter = 0;
+                        dialogue_text.script_ended = 0;
+                        player_name_entry = 0;
                     }
+                    
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         edit_window_changed = checkInputEquality(current_edit_window_input, old_edit_window_input, edit_window_changed);
@@ -549,6 +566,7 @@ int main()
                     {
                         current_screen = levels_screens[1];
                         current_level_screen_index = 1;
+                        player_name_entry = 0;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -556,6 +574,7 @@ int main()
                     {
                         current_screen = levels_screens[2];
                         current_level_screen_index = 2;
+                        player_name_entry = 0;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -563,6 +582,7 @@ int main()
                     {
                         current_screen = levels_screens[3];
                         current_level_screen_index = 3;
+                        player_name_entry = 0;
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                     }
@@ -570,6 +590,13 @@ int main()
             }
             if (event.type == Event::TextEntered)
             {
+                if(player_name_entry == 1 && player_name.size()<=PLAYER_NAME_MAX_CHARS){
+                    if (event.type == Event::TextEntered ) {
+                        if (isprint(event.text.unicode))
+                            player_name += event.text.unicode;
+                    }
+                   
+                }
                 if (edit_window_selected && current_screen == levels_screens[current_level_screen_index] && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                 {
                     if ((edit_window_text.findCharacterPos(current_edit_window_input.size()).y < edit_window_shape.getGlobalBounds().height))
@@ -610,9 +637,24 @@ int main()
                         }
                     }
             }
-            if (event.type == Event::KeyPressed)
-            {
-                if (cli_selected)
+            if(event.type == Event::KeyPressed) 
+            {   
+                if(player_name_entry == 1){
+                        if (event.key.code == Keyboard::BackSpace) 
+                        {
+                            if(!player_name.empty())
+                                player_name.pop_back();
+                        }
+                        if (event.key.code == Keyboard::Return) 
+                        {
+                            current_level_screen_index = 0;
+                            current_screen = levels_screens[current_level_screen_index];
+                            player_name_entry = 0;
+                            transition_text.setString(transition_level_texts[current_level_screen_index+1]);
+                            player_name_text.setString("");
+                        }
+                }
+                if(cli_selected)
                 {
                     // Delete option
                     if (event.key.code == Keyboard::BackSpace)
@@ -980,6 +1022,12 @@ int main()
                 }
             }
         }
+
+        if(player_name_entry == 1)
+        {
+            showCursor(cursor_clock, show_player_name_cursor, player_name_entry, cursor_time);
+            player_name_text.setString(player_name + (show_player_name_cursor ? '_' : ' '));
+        }
         window.clear(Color(223, 221, 221));
         if (current_screen == "main menu")
         {
@@ -992,9 +1040,12 @@ int main()
             window.draw(main_menu_close_text);
             window.draw(game_title);
         }
-        else if (current_screen == "transition slide") {
+        else if (current_screen == "transition slide")
+         {
             window.draw(transition_slide_bg);
             window.draw(transition_text);
+            if(player_name_entry == 1) 
+                window.draw(player_name_text);
         }
         // Checking if it's a level screen
         else if (current_screen == levels_screens[current_level_screen_index])
