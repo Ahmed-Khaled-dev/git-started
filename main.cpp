@@ -315,7 +315,7 @@ int main()
     // Next button
     RectangleShape game_window_next_button(Vector2f(140, 50));
     Text game_window_next_text("Next", buttons_font, 35);
-    setButtonProperties(game_window_next_button, 75, 181, 67, 1420, 40);
+    setButtonProperties(game_window_next_button, 75, 181, 67, 1415, 930);
     setButtonTextProperties(game_window_next_button, game_window_next_text, Color::White);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(120, 50));
@@ -743,7 +743,7 @@ int main()
                                 }
                                 else
                                 {
-                                    final_cli_input += ("$ " + user_cli_input + "\t\t\t\t\t\t correct!!!" + "\n");
+                                    final_cli_input += ("$ " + user_cli_input + "\n\t\t\t\t\tcorrect!!!" + "\n");
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;
                                     //correct_command = 0;
@@ -751,7 +751,7 @@ int main()
                             }
                             else
                             {
-                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                                final_cli_input = user_cli_input + "\n\t\tincorrect command\n";
                             }
                             user_cli_input.clear();
                         }
@@ -1068,15 +1068,15 @@ int main()
             printDialogueText(dialogue_text);
             showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_output_shape, cli_input_shape);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape);
             showContinuationMessage(continuation_message, edit_window_changed);
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
             window.draw(game_window);
             window.draw(dialogue_box.body_shape);
             window.draw(edit_window_shape);
-            //window.draw(cli_input_shape);
-            //window.draw(cli_output_shape);
+            window.draw(cli_input_shape);
+            window.draw(cli_output_shape);
             window.draw(dialogue_box.title_shape);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
@@ -1419,19 +1419,15 @@ void createEditWindowShape(RectangleShape& form) {
 }
 
 void createCliOutputShape(RectangleShape& form) {
-    form.setSize(Vector2f(650, 60));
-    form.setFillColor(Color::Black);
-    form.setOutlineThickness(5);
-    form.setOutlineColor(Color(241, 196, 15));
-    form.setPosition(1200, 900);
+    form.setSize(Vector2f(340, 445));
+    form.setFillColor(Color::Transparent);
+    form.setPosition(40, 139);
 }
 
 void createCliInputShape(RectangleShape& form) {
-    form.setSize(Vector2f(650, 200));
-    form.setFillColor(Color::Black);
-    form.setOutlineThickness(5);
-    form.setOutlineColor(Color(241, 196, 15));
-    form.setPosition(1200, 700);
+    form.setSize(Vector2f(340, 72));
+    form.setFillColor(Color::Transparent);
+    form.setPosition(40, 509);
 }
 
 void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
