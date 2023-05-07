@@ -7,7 +7,6 @@
 
 using namespace std;
 using namespace sf;
-
 const int levels_count = 4;
 bool levels_status[levels_count] = {0, 0, 0, 0};
 
@@ -48,11 +47,9 @@ struct dialogueBox {
     Sprite sprite;
     Text title;
     string title_content = "Mentor";
-    double title_size = 25;
-    string image_path = "resources/sprites/man.png";
+    double title_size = 32;
+    string image_path = "resources/sprites/new-mentor-edited.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
-    RectangleShape body_shape;
-    RectangleShape title_shape;
 }dialogue_box;
 
 struct continuationMessage
@@ -77,7 +74,7 @@ struct dialogueText
     Text script_text;
     string font_type = "resources/fonts/BreeSerif-Regular.ttf";
     Color color = Color::Black;
-    double size = 29;
+    double size = 30;
     double script_speed = 0.01f;
     String script_content = " ";
     int current_script_index = 0;
@@ -93,60 +90,42 @@ struct dialogueText
 // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
 gameLevel level[4] = {
     /*level_0 (intro)*/{{
-    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
-    {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
-    {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},
-    {0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
-    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."},
-    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code."},
-    {0 ,"It is created for the sake of aiding us in\nwriting our code. It has useful commands that\nhelp us in working with others quickly\nand efficiently."},
-    {0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
-    {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
+    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming* because your\nteam's code was full of errors and was disorganized"},
+    {0 ,"* Suddenly...*\n*someone appears in front of you, they look similar to you but older *"},
+    {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
+    {0 ,"I am you but from the future. I remember this day clearly. I was\nfilled with disappointment because of my failure, but fear not,\nI am here to introduce you to a system that changed my life."}, 
+    {0 ,"I am talking about \"GIT\" it is a free version control system that tracks\nall versions of your code.\nIt is created for the sake of aiding us in writing our code."},
+    {0, "It has useful commands that help us in working with others\nquickly and efficiently."},
+    {0 ,"I will take you back with my time machine to the start\nof the contest and walk you through all the GIT commands."},
+    {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest Are you ready to Git started?"}}},
     /*level_1 (git init)*/{{
-    {0,"Let me show you around our time machine.\nThis blue box is our IDE, where you\nwill write the code you want."},
-    {0,"This black box  is the command line window,\nwhere you will write the suitable \"GIT\" commands\nfor GIT to execute, also known as the \"Console\"."},
-    {0,"Here is your git graph, it is a diagram\nthat shows how the commands are translated and\nmakes it easier to understand how they work."},
-    {0,"After showing you around, let's start our\nadventure by telling you what the word \"command\"\nmeans in \"GIT\"."},
-    {0,"\"Commands\" are a set of instructions, each one\nof them is responsible for making a certain job."},
-    {0,"We will start with our first command \"Git init\".\nIt's responsible for watching your current\nfolder called a git repository."},
-    {0,"All of our git commands won't work unless we\ninitialize a repository. That's why\n\"Git init\" has to be the first command to be executed."},
-    {0,"Let's try executing it together. Please type\n\"git init\" in the command line (the black box)"},
-    {1,"Would you look at that!! That's our head.\nDoes it remind you of something?"},
-    {0,"This Octocat symbolizes the head in git.\nIt is inspired from the github logo and it will\naccompany you throughout the game."},
-    {0,"You will get to know more about the\n\"head\" in the upcoming levels..."}}
+    {0,"Let me show you around our time machine. This blue box is\nour IDE (like visual studio),where you will be able to write\ncode.The black box you see on your screen (the console) is your tool\nto tell Git what to do. but be aware!"},
+    {0,"GIT will not understand what you wish to do unless you communicate\nwith it in a special syntax (like programming languages)."},
+    {0,"After showing you around, let's start our adventure by telling\nyou what the word \"command\" means in \"GIT\". \"Commands\"\nare a set of instructions, each one of them is responsible for\nmaking a certain job. We will start with our first command \"Git init\"."},
+    {0,"Git init tells GIT to start watching your current folder which we call\na git repository (repo for short). You won't be able to\ntell git anything unless you initialize a repository. That's why \"Git init\"\nhas to be the first command to be executed."},
+    {0,"Let's try executing it together. Please type:\n\"git init\" in the command line (the black box)"},
+    {1,"Would you look at that!! That's Git's head (Now git has\nits eyes on you), It will accompany you throughout the game. You\nwill get to know more about the \"GIT head\" in the upcoming levels"}}
     ,{"git init"}},
     /*level_2 (git commit)*/{{
-    {0,"Now that you've created your first repository\n(which we will call \"repo\" from now),\nyou'll start by writing your code."},
-    {0,"Throughout each big step,\nyou will need to keep track of your history."},
-    {0,"Imagine this; you are working on\na huge project with your team,"},
-    {0,"One of your team mates messed up a part of\ntheir code, they can't remember what part\ngot messed up,"},
-    {0,"Neither can they go back to the code that\nworked fine, Scary to imagine right?"},
-    {0,"That's where \"commits\" come in hand.\n\"commits\" are like checkpoints in games\nbut for your code."},
-    {0,"We will use the \"git commit <commit_message>\"\ncommand."},
-    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need\nto write code using C++"},
+    {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code. Throughout each big step, you\nwill need to keep track of your history."},
+    {0,"Imagine this; you are working on a huge project with your\nteam, One of your team mates messed up a part of their code,\nthey can't remember what part got messed up, Neither can they go back\nto the code that worked fine, Scary to imagine right?"},
+    {0,"That's where \"commits\" come in hand. \"commits\" are like\ncheckpoints in games but for your code. We will use the\n\"git commit <commit_message>\" command."},
+    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need to write code using C++"},
     {0,"For example, try writing: \"int i = 5;\""},
-    {2,"Now you need to commit your changes\nto mark this checkpoint!"},
-    {0,"In the command line write:\ngit commit, name it any thing you want\nfor example \"First Variable!\""},
-    {1,"Congratulations! you have just written your\nfirst commit.\nThe circle that just appeared represents our commit."},
-    {0,"As you can see, our Head (Octocat) has appeared\nabove our commit."},
-    {0,"He will be standing on the latest commit\nwe create."},
-    {0,"It's your turn to write another piece of\ncode and commit your changes!"},
-    {0,"Try adding another variable in \"main.cpp\"\nedit window."},
+    {2,"Now you need to commit your changes to mark this\ncheckpoint! In the command line write: \"git commit\""},
+    {1,"Congratulations! you have just written your first commit.\nThis is your git graph, it is a diagram that shows how the commands\nare translated and makes it easier to understand how they work.The\ncircle that just appeared represents our commit.As you can see, our Head\n(Octocat) has appeared above our commit."},
+    {0,"He will be standing on the latest commit we create.\nSince he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
+    {0,"It's your turn to write another piece of code and commit\nyour changes! Try adding another variable in \"main.cpp\"\nedit window."},
     {2,"Commit your changes with the message\nthat describes it best!"},
-    {1,"Notice that the Head moves onto your\nnew commit."},
-    {0,"Now it is time for you to try out for yourself,\ngood luck!"}},
+    {1,"Notice that the Head moves onto your new commit."}},
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
-    {0,"Look at all the commits you have;\nyou must be proud of yourself!"},
-    {0,"Now as mentioned before our friend (the Head)\nis looking at the latest commit that we created."},
-    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?"},
-    {0,"We need to move the Head to the\ncommit we want.Each commit has a specified number\nto show it, this number is called \"commit hash\""},
-    {0,"We will use a new command which is\n\"git checkout <commit hash>\". Now, we want to\ncheckout to our first commit."},
-    {0,"Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
-    {1,"As you can see in the edit menu,\nYour code has changed to what you first wrote\nin the previous level!"},
-    {0,"Now let's checkout again to our last commit.\nHere you have your latest code again!"},
+    {0,"Look at all the commits you have; you must be proud of yourself!\nNow as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
+    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?\nWe need to move the Head to the commit we want.Each commit\nhas a specified number to show it, this number is called \"commit hash\""},
+    {0,"We will use a new command which is \"git checkout <commit hash>\".\nNow, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
+    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit. Here you have your latest code again!"},
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
-    {"git checkout"}} };
+    {"git checkout"}}};
 
 struct optionMenu {
     Font font;
@@ -161,7 +140,7 @@ void createCliInputShape(RectangleShape& form);
 void createCliOutputShape(RectangleShape& form);
 void createEditWindowShape(RectangleShape& form);
 void setEditWindowText(Text& edit_text, string& edit_input, bool&, RectangleShape& rectangle);
-void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape&);
+void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape&, bool& correct_command);
 void showCursor(Clock& cursor_clock, bool& show_cursor, bool&, Time& cursor_time);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
@@ -195,6 +174,7 @@ int main()
 
     // Dialogue box
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
+    dialogue_box.texture.setSmooth(true);
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
     continuation_message.font.loadFromFile(continuation_message.font_type);
@@ -226,8 +206,23 @@ int main()
 
     // Music
     Music music;
-    playMusicFromFile("resources/audio/lepo.wav", music);
+    playMusicFromFile("resources/audio/background audio.wav", music);
     music.setVolume(0);
+    SoundBuffer soundbuffer_1;
+    soundbuffer_1.loadFromFile("resources/audio/correct command.wav");
+    Sound correct_command_sound;
+    correct_command_sound.setBuffer(soundbuffer_1);
+    correct_command_sound.setVolume(300.0f);
+    SoundBuffer soundbuffer_2;
+    soundbuffer_2.loadFromFile("resources/audio/wrong command.wav");
+    Sound incorrect_command_sound;
+    incorrect_command_sound.setBuffer(soundbuffer_2);
+    incorrect_command_sound.setVolume(30.0f);
+    SoundBuffer soundbuffer_3;
+    soundbuffer_3.loadFromFile("resources/audio/level up.wav");
+    Sound level_up_sound;
+    level_up_sound.setBuffer(soundbuffer_3);
+    level_up_sound.setVolume(300.0f);
 
     // Transition slide
     Texture transition_slide;
@@ -277,9 +272,9 @@ int main()
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
     Text levels_menu_back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
     Text commits_levels_category("Commits", buttons_font, 32);
-    Text intro_level_text("Tragic Failure: The Cost of Poor Organization (intro)", buttons_font, 29);
+    Text intro_level_text("Tragic Failure: Introducing Git (intro)", buttons_font, 29);
     Text init_level_text("The Git Beginning! (git init)", buttons_font, 29);
-    Text commit_level_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 29);
+    Text commit_level_text("Committing to Success (git commit)", buttons_font, 29);
     Text checkout_level_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 29);
 
     commits_levels_category.setFillColor(Color::Black);
@@ -298,16 +293,16 @@ int main()
     RectangleShape cli_output_shape, cli_input_shape;
     int commands_entered_counter = 0;
     string user_cli_input, final_cli_input, commit_message, checkout_id;
-    Text cli_text("", cli_font), cli_text_final("", cli_font);
-    string cli_commit_msg_request = " # Please enter the commit message \nfor your changes in  the command line.";
-    string cli_checkout_message_rqst = "Please enter the ID of the commit\nyou want to checkout to";
-    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0;
+    Text cli_text("", cli_font,35), cli_text_final("", cli_font);
+    string cli_commit_msg_request = " # Please enter the \ncommit message for\nyour changes in the\ncommand line.";
+    string cli_checkout_message_rqst = "Please enter the ID of\nthe commit you want \nto checkout to";
+    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0,green_command;
     Clock cursor_clock;
 
     // Edit Window
     RectangleShape edit_window_shape;
     string current_edit_window_input = "type here", old_edit_window_input = "type here";
-    const short int EDIT_WINDOW_MAX_CHARS = 600;
+    const short int EDIT_WINDOW_MAX_CHARS = 500;
     Text edit_window_text(current_edit_window_input, cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
@@ -315,29 +310,40 @@ int main()
     // Next button
     RectangleShape game_window_next_button(Vector2f(140, 50));
     Text game_window_next_text("Next", buttons_font, 35);
-    setButtonProperties(game_window_next_button, 75, 181, 67, 1420, 40);
-    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::White);
+    setButtonProperties(game_window_next_button, 60, 154, 145, 1415, 950);
+    setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
     // Save button
-    RectangleShape edit_window_save_button(Vector2f(120, 50));
-    Text edit_window_save_text("Save", arial, 35);
-    setButtonProperties(edit_window_save_button, 2, 118, 36, 522, 621);
-    setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::White);
+    RectangleShape edit_window_save_button(Vector2f(333, 50));
+    Text edit_window_save_text("Save", buttons_font, 35);
+    setButtonProperties(edit_window_save_button, 110, 164, 198, 1706, 950);
+    setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::Black);
+
     // Game window is the window containing the dialogue box, edit window, cli etc.
+    Texture game_window_bg;
+    game_window_bg.loadFromFile("resources/sprites/Game menu design.png");
+    Sprite game_window(game_window_bg);
+    game_window.setScale(0.618f,0.638f);
+    string level_title [10] = {"Introducing Git","The Git Beginning!","Committing to Success","TimeWarper: the Timeline"};
+    Text levels_title(level_title[current_level_screen_index], game_title_font, 45);
+    levels_title.setPosition(725,30);
+    levels_title.setFillColor(Color::White);
+    
     // Back button
-    RectangleShape game_window_back_button(Vector2f(140, 50));
+    RectangleShape game_window_back_button(Vector2f(333, 82));
     Text game_window_back_text("Back", buttons_font, 35);
-    setButtonProperties(game_window_back_button, 0, 0, 255, 1600, 40);
+    setButtonProperties(game_window_back_button, 121, 101, 190, 210, 58);
     setButtonTextProperties(game_window_back_button, game_window_back_text, Color::Black);
     // Options button
-    RectangleShape game_window_options_button(Vector2f(200, 50));
+    RectangleShape game_window_options_button(Vector2f(333, 82));
     Text game_window_options_text("Options", buttons_font, 35);
-    setButtonProperties(game_window_options_button, 255, 255, 0, 1800, 40);
+    setButtonProperties(game_window_options_button, 60, 154, 145, 1700, 58);
     setButtonTextProperties(game_window_options_button, game_window_options_text, Color::Black);
     // Main.cpp Rectangle 
-    RectangleShape edit_window_title(Vector2f(500, 80));
+    RectangleShape edit_window_title(Vector2f(340, 45));
     Text edit_window_title_text("Main.cpp", cli_font, 35);
-    setButtonProperties(edit_window_title, 110, 164, 198, 330, 85);
+    setButtonProperties(edit_window_title, 110, 164, 198, 1705, 173);
     setButtonTextProperties(edit_window_title, edit_window_title_text, Color::Black);
+    edit_window_title.setOutlineColor(Color ::White);
 
     // Main Menu
     Text game_title;
@@ -468,6 +474,7 @@ int main()
             if ((Keyboard::isKeyPressed(Keyboard::Insert)) && current_screen == levels_screens[current_level_screen_index])
             {
                 dialogue_text.current_script_index = level[current_level_screen_index].new_script.size() - 1;
+                continuation_message.sub_script_ended = 1;
             }
             if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide" && player_name_entry != 1)
             {
@@ -494,19 +501,32 @@ int main()
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
+                        //level_up_sound.play();
                         current_level_screen_index++;
+                        dialogue_text.script_ended = 0;
                         current_screen = levels_screens[current_level_screen_index];
-                        
                         //reset the dialogues in the array of structs
                         current_screen = "transition slide";
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
+                        player_name_entry = 0;
                         dialogue_text.current_script_index = 0;
                         user_cli_input.clear();
                         final_cli_input.clear();
                         commands_entered_counter = 0;
-                        dialogue_text.script_ended = 0;
-                        player_name_entry = 0;
+                        levels_title.setString(level_title[current_level_screen_index]);
+                        if (current_level_screen_index == 1)
+                        {
+                            levels_title.setPosition(690, 30);
+                        }
+                        else if (current_level_screen_index == 2)
+                        {
+                            levels_title.setPosition(640, 30);
+                        }
+                        else if (current_level_screen_index == 3)
+                        {
+                            levels_title.setPosition(610, 30);
+                        }
                     }
                     
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
@@ -517,7 +537,7 @@ int main()
                     {
                         current_screen = "options_in_game";
                     }
-                    if (cli_output_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    if (cli_input_shape.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         cli_selected = true;
                     }
@@ -558,37 +578,45 @@ int main()
                     }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_screen = levels_screens[0];
                         current_level_screen_index = 0;
+                        current_screen = levels_screens[0];
+                        current_screen = "transition slide";
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
-                        current_screen = "transition slide";
+                        levels_title.setString("Introducing Git");
+                        levels_title.setPosition(725, 30);
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
                     {
-                        current_screen = levels_screens[1];
                         current_level_screen_index = 1;
-                        player_name_entry = 0;
+                        current_screen = levels_screens[1];
+                        current_screen = "transition slide";
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
-                        current_screen = "transition slide";
+                        levels_title.setString("The Git Beginning!");
+                        levels_title.setPosition(690, 30);
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[1])
                     {
-                        current_screen = levels_screens[2];
                         current_level_screen_index = 2;
+                        current_screen = levels_screens[2];
+                        current_screen = "transition slide";
                         player_name_entry = 0;
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
-                        current_screen = "transition slide";
+                        levels_title.setString("Committing to Success");
+                        levels_title.setPosition(640, 30);
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[2])
                     {
-                        current_screen = levels_screens[3];
                         current_level_screen_index = 3;
                         player_name_entry = 0;
-                        transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        current_screen = levels_screens[3];
                         current_screen = "transition slide";
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        levels_title.setString("TimeWarper: the Timeline");
+                        levels_title.setPosition(610, 30);
                     }
                 }
             }
@@ -648,7 +676,7 @@ int main()
                         if(!player_name.empty())
                             player_name.pop_back();
                     }
-                    if (event.key.code == Keyboard::Return) 
+                    if (event.key.code == Keyboard::Return && !player_name.empty()) 
                     {
                         current_level_screen_index = 0;
                         current_screen = levels_screens[current_level_screen_index];
@@ -682,6 +710,8 @@ int main()
                                 // Commit message
                                 if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
+                                    correct_command_sound.play();
+                                    green_command = 1;
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
                                     if (git_commit_entered) {
@@ -710,6 +740,8 @@ int main()
                                 }
                                 else if (checkout_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
+                                    correct_command_sound.play();
+                                    green_command = 1;
                                     final_cli_input = "checkout successful \n";
                                     checkout_id = user_cli_input;
                                     checked_out_commit = checkout_id;
@@ -724,6 +756,7 @@ int main()
                                 // So we use this if condition to adjust the uniqueness of each one
                                 else if (level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
+                                    green_command = 1;
                                     final_cli_input.clear();
                                     final_cli_input = (cli_commit_msg_request + '\n');
                                     commit_command_entered = 1;
@@ -731,6 +764,7 @@ int main()
                                 }
                                 else if (level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
+                                    green_command = 1;
                                     final_cli_input.clear();
                                     final_cli_input = (cli_checkout_message_rqst + '\n');
                                     checkout_command_entered = 1;
@@ -738,7 +772,9 @@ int main()
                                 }
                                 else
                                 {
-                                    final_cli_input += ("$ " + user_cli_input + "\t\t\t\t\t\t correct!!!" + "\n");
+                                    correct_command_sound.play();
+                                    green_command = 1;
+                                    final_cli_input = ("$ " + user_cli_input + "\ncorrect!" + "\n");
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;
                                     //correct_command = 0;
@@ -746,7 +782,9 @@ int main()
                             }
                             else
                             {
-                                final_cli_input = user_cli_input + "\t\t\t\t\t\tincorrect command\n";
+                                incorrect_command_sound.play();
+                                green_command = 0;
+                                final_cli_input = "$ " + user_cli_input + "\nincorrect command!\n";
                             }
                             user_cli_input.clear();
                         }
@@ -794,27 +832,33 @@ int main()
                 }
                 if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(edit_window_save_button, 0.9f, Color(34, 139, 34), Color::Black);
+                    edit_window_save_button.setFillColor(Color(130, 185, 205));
+                    edit_window_save_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(edit_window_save_button, 1.0f, Color(2, 118, 36), Color::Black);
+                    edit_window_save_button.setFillColor(Color(110, 164, 198));
+                    edit_window_save_button.setScale(1.0f, 1.0f);
                 }
                 if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(game_window_options_button, 0.9f, Color(153, 153, 0), Color::Black);
+                    game_window_options_button.setFillColor(Color(40, 134, 125));
+                    game_window_options_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(game_window_options_button, 1.0f, Color::Yellow, Color::Black);
+                    game_window_options_button.setFillColor(Color(60, 154, 145));
+                    game_window_options_button.setScale(1.0f, 1.0f);
                 }
                 if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(game_window_back_button, 0.9f, Color(153, 153, 0), Color::Black);
+                    game_window_back_button.setFillColor(Color(101, 81, 170));
+                    game_window_back_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(game_window_back_button, 1.0f, Color::Yellow, Color::Black);
+                    game_window_back_button.setFillColor(Color(121,101,190));
+                    game_window_back_button.setScale(1.0f, 1.0f);
                 }
                 if (levels_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -978,11 +1022,14 @@ int main()
                 }
                 if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    changeButtonScaleAndColor(game_window_next_button, 0.9f, Color(75, 181, 67), Color::Black);
+
+                    game_window_next_button.setFillColor(Color(55, 161, 140));
+                    game_window_next_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    changeButtonScaleAndColor(game_window_next_button, 1.0f, Color(Color(25, 135, 84)), Color::Black);
+                    game_window_next_button.setFillColor(Color(75, 181, 160));
+                    game_window_next_button.setScale(1.0f, 1.0f);
                 }
             }
             // Check if down arrow (later space) key has been pressed
@@ -1059,15 +1106,12 @@ int main()
             printDialogueText(dialogue_text);
             showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_output_shape, cli_input_shape);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
             showContinuationMessage(continuation_message, edit_window_changed);
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
-            window.draw(dialogue_box.body_shape);
-            window.draw(edit_window_shape);
-            window.draw(cli_input_shape);
-            window.draw(cli_output_shape);
-            window.draw(dialogue_box.title_shape);
+            window.draw(game_window);
+            window.draw(levels_title);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
@@ -1087,7 +1131,6 @@ int main()
                 window.draw(game_window_next_button);
                 window.draw(game_window_next_text);
             }
-            window.draw(edit_window_title);
             window.draw(edit_window_title_text);
             if (git_init_entered) {
                 headIdleAnimation(head, additional_commit_created);
@@ -1124,39 +1167,35 @@ int main()
         }
         else if (current_screen == "options_in_game")
         {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
-            controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
-            controlSfxAndMusicVolume(sfx_text, music, pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
-            setSliderMoveLimits(slider_bar, slider);
-            drawDialogue(window, dialogue_box);
-            createCliInputShape(cli_input_shape);
-            createEditWindowShape(edit_window_shape);
-            createCliOutputShape(cli_output_shape);
-            window.draw(dialogue_box.body_shape);
-            window.draw(edit_window_shape);
-            window.draw(cli_input_shape);
-            window.draw(cli_output_shape);
-            window.draw(dialogue_box.title_shape);
+            window.draw(game_window);
+            
+            window.draw(levels_title);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
             window.draw(continuation_message.continuation_text);
             window.draw(edit_window_text);
-            window.draw(cli_text);
-            window.draw(cli_text_final);
-            window.draw(edit_window_title);
             window.draw(edit_window_title_text);
-            if (git_init_entered)
-            {
-                for (unsigned short int i = 0; i < commits_count; i++)
-                    window.draw(commits[i].sprite);
-                window.draw(head);
-            }
+            window.draw(cli_text);
+            window.draw(edit_window_save_button);
+            window.draw(edit_window_save_text);
+            window.draw(cli_text_final);
+            window.draw(game_window_back_button);
+            window.draw(game_window_back_text);
+            window.draw(game_window_options_button);
+            window.draw(game_window_options_text);
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
+            controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
+            controlSfxAndMusicVolume(sfx_text, music, pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
+            setSliderMoveLimits(slider_bar, slider);
+            drawDialogue(window, dialogue_box);
+            headIdleAnimation(head, additional_commit_created);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)
                 window.draw(slider[i]);
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
+
         }
         else if (current_screen == "levels menu") {
             window.draw(levels_menu_bg);
@@ -1181,32 +1220,19 @@ int main()
 
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 {
-    //Dialogue box (big)
-    dialogue_box.body_shape.setSize(Vector2f(900, 260));
-    dialogue_box.body_shape.setFillColor(Color(44, 240, 83));
-    dialogue_box.body_shape.setOutlineThickness(5);
-    dialogue_box.body_shape.setOutlineColor(Color::Black);
-    dialogue_box.body_shape.setPosition(80, 700);
-
-    //Dialogue box (small)
-    dialogue_box.title_shape.setSize(Vector2f(900, 65));
-    dialogue_box.title_shape.setFillColor(Color(95, 219, 120));
-    dialogue_box.title_shape.setOutlineThickness(0.8f);
-    dialogue_box.title_shape.setOutlineColor(Color(72, 84, 74));
-    dialogue_box.title_shape.setPosition(80, 700);
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
-    dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(15, 630);
+    dialogue_box.sprite.setScale(0.7, 0.7);
+    dialogue_box.sprite.setPosition(30, 650);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
     dialogue_box.title.setFont(dialogue_box.font);
-    dialogue_box.title.setFillColor(Color(57, 60, 58));
+    dialogue_box.title.setFillColor(Color::White);
     dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
-    dialogue_box.title.setPosition(220, 720);
+    dialogue_box.title.setPosition(460, 710);
 }
 
 void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed)
@@ -1221,10 +1247,10 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
-        continuation_message.continuation_text.setFillColor(Color(57, 60, 58));
+        continuation_message.continuation_text.setFillColor(Color::White);
         continuation_message.continuation_text.setCharacterSize(24);
         continuation_message.continuation_text.setStyle(Text::Italic);
-        continuation_message.continuation_text.setPosition(670, 925);
+        continuation_message.continuation_text.setPosition(1200, 945);
     }
     else if (!continuation_message.sub_script_ended)
     {
@@ -1237,7 +1263,7 @@ void printDialogueText(dialogueText& dialogue_text)
     dialogue_text.script_text.setFont(dialogue_text.font);
     dialogue_text.script_text.setFillColor(dialogue_text.color);
     dialogue_text.script_text.setCharacterSize(dialogue_text.size);
-    dialogue_text.script_text.setPosition(250, 780);
+    dialogue_text.script_text.setPosition(450, 780);
     //dialogue_text.script_text.setStyle(Text::Bold);
     dialogue_text.time += dialogue_text.typewrite_clock.restart();
     while (dialogue_text.time >= seconds(dialogue_text.script_speed))
@@ -1388,44 +1414,43 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_com
 }
 
 
-void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
+void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper, bool& correct_command) {
     // Shape of cursor
     cli_text.setString(user_cli_input + (show_cursor ? '|' : ' '));
     cli_text.setPosition(rectangle.getPosition().x + 7, rectangle.getPosition().y + 7);
-    cli_text_final.setFillColor(Color::White);
+    if(correct_command)
+    cli_text_final.setFillColor(Color::Green);
+    else
+    cli_text_final.setFillColor(Color::Red);
     cli_text_final.setString(final_cli_input);
-    cli_text_final.setPosition(rectangle_upper.getPosition().x + 7, rectangle_upper.getPosition().y + 7);
-    // cout<<user_cli_input<<'\n'<<final_cli_input;
+    cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+10);
+   // cout<<user_cli_input<<'\n'<<final_cli_input;
 }
 
 void setEditWindowText(Text& edit_text, string& edit_input, bool& show_cursor, RectangleShape& rectangle) {
     edit_text.setString(edit_input + (show_cursor ? '|' : ' '));
-    edit_text.setPosition(rectangle.getPosition().x + 7, rectangle.getPosition().y + 90);
+    edit_text.setPosition(rectangle.getPosition().x +5 , rectangle.getPosition().y +3 );
     edit_text.setFillColor(Color::White);
 }
 
 void createEditWindowShape(RectangleShape& form) {
-    form.setSize(Vector2f(500, 600));
+    form.setSize(Vector2f(340, 670));
     form.setFillColor(Color(0, 116, 185));
-    form.setOutlineThickness(8);
-    form.setOutlineColor(Color::Black);
-    form.setPosition(80, 45);
+    form.setOutlineThickness(5);
+    form.setOutlineColor(Color::White);
+    form.setPosition(1535, 202);
 }
 
 void createCliOutputShape(RectangleShape& form) {
-    form.setSize(Vector2f(650, 60));
-    form.setFillColor(Color::Black);
-    form.setOutlineThickness(5);
-    form.setOutlineColor(Color(241, 196, 15));
-    form.setPosition(1200, 900);
+    form.setSize(Vector2f(340, 445));
+    form.setFillColor(Color::Transparent);
+    form.setPosition(40, 139);
 }
 
 void createCliInputShape(RectangleShape& form) {
-    form.setSize(Vector2f(650, 200));
-    form.setFillColor(Color::Black);
-    form.setOutlineThickness(5);
-    form.setOutlineColor(Color(241, 196, 15));
-    form.setPosition(1200, 700);
+    form.setSize(Vector2f(340, 72));
+    form.setFillColor(Color::Transparent);
+    form.setPosition(40, 550);
 }
 
 void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
@@ -1670,4 +1695,4 @@ void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color col
     rectangle.setScale(scale, scale);
     rectangle.setOutlineThickness(5);
     rectangle.setOutlineColor(outline_color);
-}
+}   
