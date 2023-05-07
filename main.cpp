@@ -83,7 +83,6 @@ struct dialogueText
 
 }dialogue_text;
 
-int current_level_screen = 0;
 // For the vectors of pairs
 // If bool = 1 
 // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
@@ -95,7 +94,8 @@ gameLevel level[4] = {
     {0 ,"* Suddenly...*\n*someone appears in front of you, they look similar to you but older *"},
     {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
     {0 ,"I am you but from the future. I remember this day clearly. I was\nfilled with disappointment because of my failure, but fear not,\nI am here to introduce you to a system that changed my life."}, 
-    {0 ,"I am talking about \"GIT\" it is a free version control system that tracks\nall versions of your code. It is created for the sake of aiding us in writing our code.\nIt has useful commands that help us in working with others\nquickly and efficiently."},
+    {0 ,"I am talking about \"GIT\" it is a free version control system that tracks\nall versions of your code.\nIt is created for the sake of aiding us in writing our code."},
+    {0, "It has useful commands that help us in working with others\nquickly and efficiently."},
     {0 ,"I will take you back with my time machine to the start\nof the contest and walk you through all the GIT commands."},
     {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest Are you ready to Git started?"}}},
     /*level_1 (git init)*/{{
@@ -214,10 +214,10 @@ int main()
     correct_command_sound.setBuffer(soundbuffer_1);
     correct_command_sound.setVolume(300.0f);
     SoundBuffer soundbuffer_2;
-    soundbuffer_2.loadFromFile("resources/audio/incorrect command.wav");
+    soundbuffer_2.loadFromFile("resources/audio/wrong command.wav");
     Sound incorrect_command_sound;
     incorrect_command_sound.setBuffer(soundbuffer_2);
-    incorrect_command_sound.setVolume(300.0f);
+    incorrect_command_sound.setVolume(30.0f);
     SoundBuffer soundbuffer_3;
     soundbuffer_3.loadFromFile("resources/audio/level up.wav");
     Sound level_up_sound;
@@ -272,9 +272,9 @@ int main()
     // A way to 1 - text.setFont(); 2 - text.setString(); 3 - text.setCharacterSize(); in one line  
     Text levels_menu_back_button_text("Back", buttons_font, 32), intro_levels_category("Intro", buttons_font, 32);
     Text commits_levels_category("Commits", buttons_font, 32);
-    Text intro_level_text("Tragic Failure: The Cost of Poor Organization (intro)", buttons_font, 29);
+    Text intro_level_text("Tragic Failure: Introducing Git (intro)", buttons_font, 29);
     Text init_level_text("The Git Beginning! (git init)", buttons_font, 29);
-    Text commit_level_text("Committing to Success: Crafting Meaningful Commits (git commit)", buttons_font, 29);
+    Text commit_level_text("Committing to Success (git commit)", buttons_font, 29);
     Text checkout_level_text("TimeWarper: Navigating the Timeline (git checkout)", buttons_font, 29);
 
     commits_levels_category.setFillColor(Color::Black);
@@ -501,16 +501,16 @@ int main()
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
-                        level_up_sound.play();
+                        //level_up_sound.play();
                         current_level_screen_index++;
+                        dialogue_text.script_ended = 0;
                         current_screen = levels_screens[current_level_screen_index];
-                        current_level_screen++;
                         //reset the dialogues in the array of structs
                         current_screen = "transition slide";
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
+                        player_name_entry = 0;
                         dialogue_text.current_script_index = 0;
-                        dialogue_text.script_ended = 0;
                         user_cli_input.clear();
                         final_cli_input.clear();
                         commands_entered_counter = 0;
@@ -578,34 +578,43 @@ int main()
                     }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
-                        current_level_screen = 0;
-                        current_screen = levels_screens[0];
                         current_level_screen_index = 0;
+                        current_screen = levels_screens[0];
                         current_screen = "transition slide";
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("Introducing Git");
                         levels_title.setPosition(725, 30);
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
                     {
-                       current_screen = levels_screens[1];
                         current_level_screen_index = 1;
-                        current_level_screen = 1;
+                        current_screen = levels_screens[1];
+                        current_screen = "transition slide";
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("The Git Beginning!");
                         levels_title.setPosition(690, 30);
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[1])
                     {
-                        current_screen = levels_screens[2];
                         current_level_screen_index = 2;
-                        current_level_screen = 2;
+                        current_screen = levels_screens[2];
+                        current_screen = "transition slide";
+                        player_name_entry = 0;
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("Committing to Success");
                         levels_title.setPosition(640, 30);
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[2])
                     {
-                        current_screen = levels_screens[3];
                         current_level_screen_index = 3;
-                        current_level_screen = 3;
+                        player_name_entry = 0;
+                        current_screen = levels_screens[3];
+                        current_screen = "transition slide";
+                        current_edit_window_input = "type here", old_edit_window_input = "type here";
+                        transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("TimeWarper: the Timeline");
                         levels_title.setPosition(610, 30);
                     }
