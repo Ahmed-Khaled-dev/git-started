@@ -48,7 +48,7 @@ struct dialogueBox {
     Text title;
     string title_content = "Mentor";
     double title_size = 32;
-    string image_path = "resources/sprites/man.png";
+    string image_path = "resources/sprites/new-mentor-edited.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
 }dialogue_box;
 
@@ -74,7 +74,7 @@ struct dialogueText
     Text script_text;
     string font_type = "resources/fonts/BreeSerif-Regular.ttf";
     Color color = Color::Black;
-    double size = 29;
+    double size = 30;
     double script_speed = 0.01f;
     String script_content = " ";
     int current_script_index = 0;
@@ -175,6 +175,7 @@ int main()
 
     // Dialogue box
     dialogue_box.texture.loadFromFile(dialogue_box.image_path);
+    dialogue_box.texture.setSmooth(true);
     dialogue_box.font.loadFromFile(dialogue_box.font_type);
     dialogue_text.font.loadFromFile(dialogue_text.font_type);
     continuation_message.font.loadFromFile(continuation_message.font_type);
@@ -206,7 +207,7 @@ int main()
 
     // Music
     Music music;
-    playMusicFromFile("resources/audio/lepo.wav", music);
+    playMusicFromFile("resources/audio/background audio.wav", music);
     music.setVolume(0);
 
     // Transition slide
@@ -295,12 +296,12 @@ int main()
     // Next button
     RectangleShape game_window_next_button(Vector2f(140, 50));
     Text game_window_next_text("Next", buttons_font, 35);
-    setButtonProperties(game_window_next_button, 60, 154, 145, 1415, 945);
+    setButtonProperties(game_window_next_button, 60, 154, 145, 1415, 965);
     setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(333, 50));
     Text edit_window_save_text("Save", buttons_font, 35);
-    setButtonProperties(edit_window_save_button, 110, 164, 198, 1706, 840);
+    setButtonProperties(edit_window_save_button, 110, 164, 198, 1706, 950);
     setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::Black);
 
     // Game window is the window containing the dialogue box, edit window, cli etc.
@@ -459,6 +460,7 @@ int main()
             if ((Keyboard::isKeyPressed(Keyboard::Insert)) && current_screen == levels_screens[current_level_screen_index])
             {
                 dialogue_text.current_script_index = level[current_level_screen_index].new_script.size() - 1;
+                continuation_message.sub_script_ended = 1;
             }
             if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide" && player_name_entry != 1)
             {
@@ -641,7 +643,7 @@ int main()
                         if(!player_name.empty())
                             player_name.pop_back();
                     }
-                    if (event.key.code == Keyboard::Return) 
+                    if (event.key.code == Keyboard::Return && !player_name.empty()) 
                     {
                         current_level_screen_index = 0;
                         current_screen = levels_screens[current_level_screen_index];
@@ -736,7 +738,7 @@ int main()
                                 else
                                 {
                                     green_command = 1;
-                                    final_cli_input = ("$ " + user_cli_input + "\n\t\t\t\t\tcorrect!!!" + "\n");
+                                    final_cli_input = ("$ " + user_cli_input + "\ncorrect!" + "\n");
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;
                                     //correct_command = 0;
@@ -745,7 +747,7 @@ int main()
                             else
                             {
                                 green_command = 0;
-                                final_cli_input = user_cli_input + "\n\t\tincorrect command\n";
+                                final_cli_input = "$ " + user_cli_input + "\nincorrect command!\n";
                             }
                             user_cli_input.clear();
                         }
@@ -808,12 +810,12 @@ int main()
                 }
                 else
                 {
-                    game_window_options_button.setFillColor(Color::Yellow);
+                    game_window_options_button.setFillColor(Color(60, 154, 145));
                     game_window_options_button.setScale(1.0f, 1.0f);
                 }
                 if (game_window_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
-                    game_window_back_button.setFillColor(Color(153, 153, 0));
+                    game_window_back_button.setFillColor(Color(101, 81, 170));
                     game_window_back_button.setScale(0.9f, 0.9f);
                 }
                 else
@@ -984,12 +986,12 @@ int main()
                 if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
 
-                    game_window_next_button.setFillColor(Color(75, 181, 160));
+                    game_window_next_button.setFillColor(Color(55, 161, 140));
                     game_window_next_button.setScale(0.9f, 0.9f);
                 }
                 else
                 {
-                    game_window_next_button.setFillColor(Color(25, 135, 84));
+                    game_window_next_button.setFillColor(Color(75, 181, 160));
                     game_window_next_button.setScale(1.0f, 1.0f);
                 }
             }
@@ -1129,12 +1131,14 @@ int main()
         else if (current_screen == "options_in_game")
         {
             window.draw(game_window);
+            
             window.draw(levels_title);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
             window.draw(continuation_message.continuation_text);
             window.draw(edit_window_text);
+            window.draw(edit_window_title_text);
             window.draw(cli_text);
             window.draw(edit_window_save_button);
             window.draw(edit_window_save_text);
@@ -1182,8 +1186,8 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
-    dialogue_box.sprite.setScale(0.8, 0.8);
-    dialogue_box.sprite.setPosition(50, 680);
+    dialogue_box.sprite.setScale(0.7, 0.7);
+    dialogue_box.sprite.setPosition(30, 650);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
