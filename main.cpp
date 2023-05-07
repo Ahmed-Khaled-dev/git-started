@@ -104,6 +104,15 @@ gameLevel level[4] = {
     {0, "It has useful commands that help us in working with others\nquickly and efficiently."},
     {0 ,"I will take you back with my time machine to the start\nof the contest and walk you through all the GIT commands."},
     {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest Are you ready to Git started?"}}},
+    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
+    {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
+    {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},
+    {0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
+    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."},
+    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code."},
+    {0 ,"It is created for the sake of aiding us in\nwriting our code. It has useful commands that\nhelp us in working with others quickly\nand efficiently."},
+    {0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
+    {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
     /*level_1 (git init)*/{{
     {0,"Let me show you around our time machine. This blue box is\nour IDE (like visual studio),where you will be able to write\ncode.The black box you see on your screen (the console) is your tool\nto tell Git what to do. but be aware!"},
     {0,"GIT will not understand what you wish to do unless you communicate\nwith it in a special syntax (like programming languages)."},
@@ -122,6 +131,17 @@ gameLevel level[4] = {
     {1,"Womething?"},
     {0,"This ame."},
     {0,"Youvels..."}}
+    {0,"Let me show you around our time machine.\nThis blue box is our IDE, where you\nwill write the code you want."},
+    {0,"This black box  is the command line window,\nwhere you will write the suitable \"GIT\" commands\nfor GIT to execute, also known as the \"Console\"."},
+    {0,"Here is your git graph, it is a diagram\nthat shows how the commands are translated and\nmakes it easier to understand how they work."},
+    {0,"After showing you around, let's start our\nadventure by telling you what the word \"command\"\nmeans in \"GIT\"."},
+    {0,"\"Commands\" are a set of instructions, each one\nof them is responsible for making a certain job."},
+    {0,"We will start with our first command \"Git init\".\nIt's responsible for watching your current\nfolder called a git repository."},
+    {0,"All of our git commands won't work unless we\ninitialize a repository. That's why\n\"Git init\" has to be the first command to be executed."},
+    {0,"Let's try executing it together. Please type\n\"git init\" in the command line (the black box)"},
+    {1,"Would you look at that!! That's our head.\nDoes it remind you of something?"},
+    {0,"This Octocat symbolizes the head in git.\nIt is inspired from the github logo and it will\naccompany you throughout the game."},
+    {0,"You will get to know more about the\n\"head\" in the upcoming levels..."}}
     ,{"git init"}},
     /*level_2 (git commit)*/{{
     {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code. Throughout each big step, you\nwill need to keep track of your history."},
@@ -139,21 +159,25 @@ gameLevel level[4] = {
     {0,"Ttory."},
     {0,"Imaam,"},
     {0,"One messed up,"},
+    {0,"Now that you've created your first repository\n(which we will call \"repo\" from now),\nyou'll start by writing your code."},
+    {0,"Throughout each big step,\nyou will need to keep track of your history."},
+    {0,"Imagine this; you are working on\na huge project with your team,"},
+    {0,"One of your team mates messed up a part of\ntheir code, they can't remember what part\ngot messed up,"},
     {0,"Neither can they go back to the code that\nworked fine, Scary to imagine right?"},
-    {0,"That's where n games\nbut for your code."},
-    {0,"Wege>\"\ncommand."},
-    {0,"But fcode using C++"},
-    {0,"For ex i = 5;\""},
-    {2,"Now oint!"},
-    {0,"In theoble!\""},
-    {1,"Congrr commit."},
-    {0,"Asit."},
-    {0,"He reate."},
-    {0,"It's ges!"},
-    {0,"Try aow."},
-    {2,"Cobest!"},
-    {1,"Not."},
-    {0,"Now uck!"}},
+    {0,"That's where \"commits\" come in hand.\n\"commits\" are like checkpoints in games\nbut for your code."},
+    {0,"We will use the \"git commit <commit_message>\"\ncommand."},
+    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need\nto write code using C++"},
+    {0,"For example, try writing: \"int i = 5;\""},
+    {2,"Now you need to commit your changes\nto mark this checkpoint!"},
+    {0,"In the command line write:\ngit commit, name it any thing you want\nfor example \"First Variable!\""},
+    {1,"Congratulations! you have just written your\nfirst commit.\nThe circle that just appeared represents our commit."},
+    {0,"As you can see, our Head (Octocat) has appeared\nabove our commit."},
+    {0,"He will be standing on the latest commit\nwe create."},
+    {0,"It's your turn to write another piece of\ncode and commit your changes!"},
+    {0,"Try adding another variable in \"main.cpp\"\nedit window."},
+    {2,"Commit your changes with the message\nthat describes it best!"},
+    {1,"Notice that the Head moves onto your\nnew commit."},
+    {0,"Now it is time for you to try out for yourself,\ngood luck!"}},
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
     {0,"Look at all the commits you have; you must be proud of yourself!\nNow as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
@@ -171,6 +195,16 @@ gameLevel level[4] = {
     {0,"Now let'again!"},
     {0,"The / into the next levels."}},
     {"git checkout"}}};
+    {0,"Look at all the commits you have;\nyou must be proud of yourself!"},
+    {0,"Now as mentioned before our friend (the Head)\nis looking at the latest commit that we created."},
+    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?"},
+    {0,"We need to move the Head to the\ncommit we want.Each commit has a specified number\nto show it, this number is called \"commit hash\""},
+    {0,"We will use a new command which is\n\"git checkout <commit hash>\". Now, we want to\ncheckout to our first commit."},
+    {0,"Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
+    {1,"As you can see in the edit menu,\nYour code has changed to what you first wrote\nin the previous level!"},
+    {0,"Now let's checkout again to our last commit.\nHere you have your latest code again!"},
+    {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
+    {"git checkout"}} };
 
 struct optionMenu {
     Font font;
@@ -505,6 +539,8 @@ int main()
     Text graph_commit_msg;
     graph_commit_msg.setCharacterSize(15);
     graph_commit_msg.setFont(graph_commit_msg_font);
+    string code_1 = "int i = 5;\ncout << i++ << endl;", code_2 = "int i = 5;\ncout << i++ << endl;\nint res = calc(i)";
+
 
     Event event;
     while (window.isOpen())
@@ -559,9 +595,6 @@ int main()
                         player_name_entry = 0;
                         for (int i = 0; i < commits_count; i++)
                         {
-                            commits[i].commit_code = "";
-                            commits[i].commit_num = "";
-                            commits[i].message = "";
                             commits[i].sprite = empty_entity;
                         }
                         commit_num = "1";
@@ -696,6 +729,27 @@ int main()
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("TimeWarper: the Timeline");
                         levels_title.setPosition(610, 30);
+                    }
+                        current_level_screen = 3;
+                        commits_count = 0;
+                        git_checkout_entered = 0;
+                        checked_out_commit = "2";
+                        additional_commit_created = 0;
+                        commit_num = "1";
+                        addCommit(commits_count, commits, commit_textures, "First Variable", commit_num, code_1);
+                        commits_count = 1;
+                        addCommit(commits_count, commits, commit_textures, "Second Variable", commit_num, code_2);
+                        index_of_the_last_commit = commits_count;
+                        if (index_of_the_last_commit == 0)
+                            head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
+                        else if (index_of_the_last_commit == 1) {
+                                head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
+                                additional_commit_created = 1;
+                        }
+                        else {
+                            head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
+                            additional_commit_created = 1;
+                        }
                     }
                 }
             }
@@ -836,7 +890,7 @@ int main()
                                     final_cli_input = "checkout successful \n";
                                     checkout_id = user_cli_input;
                                     checked_out_commit = checkout_id;
-                                    if (checked_out_commit[0] != '1')
+                                    if (checked_out_commit[0] - 48 > index_of_the_last_commit)
                                         git_checkout_entered = 0;
                                     else
                                         git_checkout_entered = 1;
@@ -1251,9 +1305,11 @@ int main()
             }
             if (show_graph_commit_msg) {
             if (current_level_screen_index == 3){
+                additional_commit_created = 0;
                 headIdleAnimation(head, additional_commit_created);
                 calculateHeadDistance(head, checked_out_commit, commits);
                 headAnimationAndMovement(head, git_checkout_entered);
+                //moveHeadToLatestCommit(head, additional_commit_created);
                 window.draw(head);
                 for (unsigned short int i = 0; i < commits_count; i++)
                     window.draw(commits[i].sprite);
