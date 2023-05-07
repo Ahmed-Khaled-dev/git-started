@@ -16,7 +16,7 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
-string levels_screens[10] = { "intro level", "init level", "commit level", "checkout level" };
+string levels_screens[10] = { "intro level", "init level", "commit level", "checkout level" ,"credits menu"};
 int current_level_screen_index = 0;
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
@@ -495,10 +495,11 @@ int main()
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
                         current_level_screen_index++;
+                        if(current_level_screen_index<5){
+                            current_screen = "transition slide";    
+                        }
                         current_screen = levels_screens[current_level_screen_index];
-                        
                         //reset the dialogues in the array of structs
-                        current_screen = "transition slide";
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
                         dialogue_text.current_script_index = 0;
