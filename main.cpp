@@ -22,11 +22,6 @@ RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
 // Structs
 
 struct graphHead {
-struct graphCommit {
-    unsigned short int current_animation_frame = 0, animation_delay = 0;
-}graph_commit;
-
-struct graphHead{
     // We have 4 animation frames for the octocat movement (0, 1, 2, 3)
     unsigned short int current_animation_frame = 0, idle_animation_delay = 0;
     unsigned short int latest_commit_movement_delay = 0;
@@ -104,15 +99,6 @@ gameLevel level[4] = {
     {0, "It has useful commands that help us in working with others\nquickly and efficiently."},
     {0 ,"I will take you back with my time machine to the start\nof the contest and walk you through all the GIT commands."},
     {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest Are you ready to Git started?"}}},
-    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
-    {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
-    {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},
-    {0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
-    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."},
-    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code."},
-    {0 ,"It is created for the sake of aiding us in\nwriting our code. It has useful commands that\nhelp us in working with others quickly\nand efficiently."},
-    {0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
-    {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
     /*level_1 (git init)*/{{
     {0,"Let me show you around our time machine. This blue box is\nour IDE (like visual studio),where you will be able to write\ncode.The black box you see on your screen (the console) is your tool\nto tell Git what to do. but be aware!"},
     {0,"GIT will not understand what you wish to do unless you communicate\nwith it in a special syntax (like programming languages)."},
@@ -120,28 +106,6 @@ gameLevel level[4] = {
     {0,"Git init tells GIT to start watching your current folder which we call\na git repository (repo for short). You won't be able to\ntell git anything unless you initialize a repository. That's why \"Git init\"\nhas to be the first command to be executed."},
     {0,"Let's try executing it together. Please type:\n\"git init\" in the command line (the black box)"},
     {1,"Would you look at that!! That's Git's head (Now git has\nits eyes on you), It will accompany you throughout the game. You\nwill get to know more about the \"GIT head\" in the upcoming levels"}}
-    {0,"Letite the code you want."},
-    {0,"This  the \"Console\"."},
-    {0,"Hthey work."},
-    {0,"After in \"GIT\"."},
-    {0,"\"Commacertain job."},
-    {0,"We willtory."},
-    {0,"All cuted."},
-    {0,"Let'box)"},
-    {1,"Womething?"},
-    {0,"This ame."},
-    {0,"Youvels..."}}
-    {0,"Let me show you around our time machine.\nThis blue box is our IDE, where you\nwill write the code you want."},
-    {0,"This black box  is the command line window,\nwhere you will write the suitable \"GIT\" commands\nfor GIT to execute, also known as the \"Console\"."},
-    {0,"Here is your git graph, it is a diagram\nthat shows how the commands are translated and\nmakes it easier to understand how they work."},
-    {0,"After showing you around, let's start our\nadventure by telling you what the word \"command\"\nmeans in \"GIT\"."},
-    {0,"\"Commands\" are a set of instructions, each one\nof them is responsible for making a certain job."},
-    {0,"We will start with our first command \"Git init\".\nIt's responsible for watching your current\nfolder called a git repository."},
-    {0,"All of our git commands won't work unless we\ninitialize a repository. That's why\n\"Git init\" has to be the first command to be executed."},
-    {0,"Let's try executing it together. Please type\n\"git init\" in the command line (the black box)"},
-    {1,"Would you look at that!! That's our head.\nDoes it remind you of something?"},
-    {0,"This Octocat symbolizes the head in git.\nIt is inspired from the github logo and it will\naccompany you throughout the game."},
-    {0,"You will get to know more about the\n\"head\" in the upcoming levels..."}}
     ,{"git init"}},
     /*level_2 (git commit)*/{{
     {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code. Throughout each big step, you\nwill need to keep track of your history."},
@@ -155,29 +119,6 @@ gameLevel level[4] = {
     {0,"It's your turn to write another piece of code and commit\nyour changes! Try adding another variable in \"main.cpp\"\nedit window."},
     {2,"Commit your changes with the message\nthat describes it best!"},
     {1,"Notice that the Head moves onto your new commit."}},
-    {0,"Now g your code."},
-    {0,"Ttory."},
-    {0,"Imaam,"},
-    {0,"One messed up,"},
-    {0,"Now that you've created your first repository\n(which we will call \"repo\" from now),\nyou'll start by writing your code."},
-    {0,"Throughout each big step,\nyou will need to keep track of your history."},
-    {0,"Imagine this; you are working on\na huge project with your team,"},
-    {0,"One of your team mates messed up a part of\ntheir code, they can't remember what part\ngot messed up,"},
-    {0,"Neither can they go back to the code that\nworked fine, Scary to imagine right?"},
-    {0,"That's where \"commits\" come in hand.\n\"commits\" are like checkpoints in games\nbut for your code."},
-    {0,"We will use the \"git commit <commit_message>\"\ncommand."},
-    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need\nto write code using C++"},
-    {0,"For example, try writing: \"int i = 5;\""},
-    {2,"Now you need to commit your changes\nto mark this checkpoint!"},
-    {0,"In the command line write:\ngit commit, name it any thing you want\nfor example \"First Variable!\""},
-    {1,"Congratulations! you have just written your\nfirst commit.\nThe circle that just appeared represents our commit."},
-    {0,"As you can see, our Head (Octocat) has appeared\nabove our commit."},
-    {0,"He will be standing on the latest commit\nwe create."},
-    {0,"It's your turn to write another piece of\ncode and commit your changes!"},
-    {0,"Try adding another variable in \"main.cpp\"\nedit window."},
-    {2,"Commit your changes with the message\nthat describes it best!"},
-    {1,"Notice that the Head moves onto your\nnew commit."},
-    {0,"Now it is time for you to try out for yourself,\ngood luck!"}},
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
     {0,"Look at all the commits you have; you must be proud of yourself!\nNow as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
@@ -185,26 +126,7 @@ gameLevel level[4] = {
     {0,"We will use a new command which is \"git checkout <commit hash>\".\nNow, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
     {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit. Here you have your latest code again!"},
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
-    {0,"Lorself!"},
-    {0,"Now a(the Head)/mit that we created."},
-    {0,"But now we need to do?"},
-    {0,"We needis called \"commit hash\""},
-    {0,"We will useout to our first commit."},
-    {0,"Write in the cmit."},
-    {1,"As you cau first wrote\nin the previous level!"},
-    {0,"Now let'again!"},
-    {0,"The / into the next levels."}},
     {"git checkout"}}};
-    {0,"Look at all the commits you have;\nyou must be proud of yourself!"},
-    {0,"Now as mentioned before our friend (the Head)\nis looking at the latest commit that we created."},
-    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?"},
-    {0,"We need to move the Head to the\ncommit we want.Each commit has a specified number\nto show it, this number is called \"commit hash\""},
-    {0,"We will use a new command which is\n\"git checkout <commit hash>\". Now, we want to\ncheckout to our first commit."},
-    {0,"Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
-    {1,"As you can see in the edit menu,\nYour code has changed to what you first wrote\nin the previous level!"},
-    {0,"Now let's checkout again to our last commit.\nHere you have your latest code again!"},
-    {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
-    {"git checkout"}} };
 
 struct optionMenu {
     Font font;
@@ -240,14 +162,12 @@ void calculateHeadDistance(Sprite& head, string& checked_out_commit, commit comm
 void headAnimationAndMovement(Sprite& head, bool& git_checkout_entered);
 void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
-void commandsInputChecker(string& user_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit, int& current_level_screen_index);
+void commandsInputChecker(string& user_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit);
 void setTextOriginAndPosition(Text& text, float x_position, float y_position);
 void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed);
 void readProgressFile(string file_name, bool levels_status[], int levels_count);
 void updateProgressFile(string file_name, bool levels_status[], int levels_count);
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color);
-void showContinuationMessage(continuationMessage& continuation_message,bool& edit_window_changed);
-void makeCommit(Sprite& commit_animation);
 
 int main()
 {
@@ -488,14 +408,11 @@ int main()
     // Option menu
 
     // Graph
-    RectangleShape graph_commit_msg_shape, graph(Vector2f(1300, 576));
-    graph.setPosition(600, 81);
+    RectangleShape graph_commit_msg_shape, graph(Vector2f(1080, 500));
+    graph.setPosition(420, 155);
     graph.setFillColor({ 223, 221, 221 });
     graph.setOutlineThickness(8);
     graph.setOutlineColor(Color::Black);
-    Sprite head, smoke;
-    Texture octacat, commit_textures, smoke_texture;
-    graph.setOutlineColor(Color :: Black);
     Sprite head, smoke, commit_animation, empty_entity;
     Texture octacat, commit_textures, smoke_texture, commit_animation_texture, show_commit_message_texture;
     show_commit_message_texture.loadFromFile("resources/sprites/show_message.png");
@@ -695,7 +612,6 @@ int main()
                         git_init_entered = 0;
                         git_commit_entered = 0;
                         git_checkout_entered = 0;
-                        current_screen = levels_screens[1];
                         current_level_screen_index = 1;
                         current_screen = levels_screens[1];
                         current_screen = "transition slide";
@@ -709,7 +625,6 @@ int main()
                         git_init_entered = 1;
                         git_commit_entered = 0;
                         git_checkout_entered = 0;
-                        current_screen = levels_screens[2];
                         current_level_screen_index = 2;
                         current_screen = levels_screens[2];
                         current_screen = "transition slide";
@@ -729,8 +644,6 @@ int main()
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("TimeWarper: the Timeline");
                         levels_title.setPosition(610, 30);
-                    }
-                        current_level_screen = 3;
                         commits_count = 0;
                         git_checkout_entered = 0;
                         checked_out_commit = "2";
@@ -743,8 +656,8 @@ int main()
                         if (index_of_the_last_commit == 0)
                             head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
                         else if (index_of_the_last_commit == 1) {
-                                head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
-                                additional_commit_created = 1;
+                            head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
+                            additional_commit_created = 1;
                         }
                         else {
                             head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
@@ -834,17 +747,11 @@ int main()
                         {
                             commandsInputChecker(user_cli_input, git_init_entered, git_add_entered, git_commit_entered, git_checkout_entered, checked_out_commit);
                             if (user_cli_input == level[current_level_screen_index].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
-                            commandsInputChecker(user_cli_input, git_init_entered, git_add_entered, git_commit_entered, git_checkout_entered, checked_out_commit, current_level_screen_index);
-                            if(user_cli_input == level[current_level_screen].level_commands[commands_entered_counter] || (commit_command_entered) || (checkout_command_entered))
                                 correct_command = 1;
                             else
-                            else {
                                 correct_command = 0;
 
                             if (correct_command)
-                            }
-
-                            if(correct_command)
                             {
                                 // Commit message
                                 if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
@@ -854,12 +761,10 @@ int main()
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
                                     if (git_commit_entered) {
-                                        addCommit(commits_count, commits, commit_textures, commit_message, commit_num);
-                                    if (git_commit_entered){
-                                        addCommit(commits_count, commits, commit_textures, commit_message, commit_num, code);
                                         git_checkout_entered = 0;
-                                        pop_commit.play();
+                                        addCommit(commits_count, commits, commit_textures, commit_message, commit_num, code);
                                         window_collision_mode = 0;
+                                        pop_commit.play();
                                         should_create_smoke = 1;
                                         if (index_of_the_last_commit == 0)
                                             head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
@@ -874,9 +779,8 @@ int main()
                                         git_add_entered = 0;
                                         git_commit_entered = 0;
                                     }
-                                    else{
+                                    else
                                         window_collision_mode = 1;
-                                    }
                                     user_cli_input.clear();
                                     commands_entered_counter++;
                                     correct_command = 0;
@@ -886,14 +790,15 @@ int main()
                                 else if (checkout_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
                                     correct_command_sound.play();
-                                    green_command = 1;
-                                    final_cli_input = "checkout successful \n";
                                     checkout_id = user_cli_input;
                                     checked_out_commit = checkout_id;
-                                    if (checked_out_commit[0] - 48 > index_of_the_last_commit)
+                                    green_command = 1;
+                                     if (checked_out_commit[0] - 48 > index_of_the_last_commit)
                                         git_checkout_entered = 0;
                                     else
                                         git_checkout_entered = 1;
+                                    final_cli_input = "checkout successful \n";
+
                                     user_cli_input.clear();
                                     commands_entered_counter++;
                                     correct_command = 0;
@@ -1256,7 +1161,8 @@ int main()
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
             showContinuationMessage(continuation_message, edit_window_changed);
-            setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
+            if (checked_out_commit[0] - 48 == index_of_the_last_commit)
+                setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
             window.draw(game_window);
             window.draw(levels_title);
@@ -1278,33 +1184,26 @@ int main()
                 window.draw(game_window_next_button);
                 window.draw(game_window_next_text);
             }
-            window.draw(edit_window_title_text);
-            if (git_init_entered) {
-            if (current_level_screen_index == 1){
+            if (current_level_screen_index == 1) {
                 window_collision_mode = 1;
                 headIdleAnimation(head, additional_commit_created);
                 headBorderDeflection(head, window_collision_mode, additional_commit_created, graph);
                 if (git_init_entered)
-                    window.draw(head);     
+                    window.draw(head);
             }
-            if (current_level_screen_index == 2){
+            if (current_level_screen_index == 2) {
                 headIdleAnimation(head, additional_commit_created);
                 headBorderDeflection(head, window_collision_mode, additional_commit_created, graph);
                 window.draw(head);
                 for (unsigned short int i = 0; i < commits_count; i++)
                     window.draw(commits[i].sprite);
+                moveHeadToLatestCommit(head, additional_commit_created);
                 if (should_create_smoke) {
                     makeSmoke(smoke, should_create_smoke);
                     window.draw(smoke);
-                    window.draw(commits[i].sprite);
-                moveHeadToLatestCommit(head, additional_commit_created);
-                if (should_create_smoke){
-                     makeSmoke(smoke, should_create_smoke);
-                     window.draw(smoke);
                 }
             }
-            if (show_graph_commit_msg) {
-            if (current_level_screen_index == 3){
+            if (current_level_screen_index == 3) {
                 additional_commit_created = 0;
                 headIdleAnimation(head, additional_commit_created);
                 calculateHeadDistance(head, checked_out_commit, commits);
@@ -1313,22 +1212,17 @@ int main()
                 window.draw(head);
                 for (unsigned short int i = 0; i < commits_count; i++)
                     window.draw(commits[i].sprite);
-                if (git_checkout_entered){
+                if (git_checkout_entered) {
                     edit_window_text.setString(commits[checked_out_commit[0] - 48 - 1].commit_code);
                     if ((checked_out_commit[0] - 49) == index_of_the_last_commit)
                         git_checkout_entered = 0;
                 }
             }
-            if (show_graph_commit_msg){
+            if (show_graph_commit_msg) {
                 window.draw(graph_commit_msg_shape);
                 window.draw(graph_commit_msg);
             }
             window.draw(edit_window_text);
-               /* if (animate_commit){
-                    makeCommit(commit_animation);
-                    animate_commit = 0;
-                }*/    
-                //window.draw (commit_animation);
         }
         else if (current_screen == "options")
         {
@@ -1346,7 +1240,8 @@ int main()
         else if (current_screen == "options_in_game")
         {
             window.draw(game_window);
-            
+            if (git_init_entered)
+                window.draw(head);
             window.draw(levels_title);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
@@ -1632,13 +1527,12 @@ void createCliInputShape(RectangleShape& form) {
 }
 
 void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit) {
-void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit, int& current_level_screen_index){
     //string git_chekcout_sen = "";
-    if (user_cli_input == "git init" && current_level_screen_index == 1)
+    if (user_cli_input == "git init")
         git_init_entered = 1;
     else if ((user_cli_input == "git add ." || user_cli_input == "git add Main.cpp") && git_init_entered)
         git_add_entered = 1;
-    else if (user_cli_input == "git commit" && git_init_entered)
+    else if (user_cli_input == "git commit")
         git_commit_entered = 1;
     /*else if (user_cli_input.size() == 14)
         for (int i = 0; i < user_cli_input.size(); i++){
@@ -1658,10 +1552,6 @@ void makeSmoke(Sprite& smoke, bool& should_create_smoke) {
     smoke.setScale(0.2, 0.2);
     smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
     smoke.setPosition(WINDOW_WIDTH / 2.0 - 90 + 800, WINDOW_HEIGHT / 3.0 - 170);
-void makeSmoke(Sprite& smoke, bool& should_create_smoke){
-    smoke.setScale(0.28, 0.28);
-    smoke.setTextureRect(IntRect(current_smoke_animation_frame * 680.2857, 0, 714.2857, 741));
-    smoke.setPosition(WINDOW_WIDTH / 2.0 + 800 - 60, WINDOW_HEIGHT / 3.0 - 70);
     graph_smoke_animation_delay++;
     if (graph_smoke_animation_delay >= 3) {
         current_smoke_animation_frame++;
@@ -1680,6 +1570,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     commit_sprite.setTexture(commit_textures);
     const float COMMIT_SCALING = 0.5;
     commit_sprite.scale(Vector2f(COMMIT_SCALING, COMMIT_SCALING));
+
     if (commits_count == 0)
     {
         // I cut from the texture a circle **without** an arrow
@@ -1700,35 +1591,13 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
         commit_sprite.setPosition(1920 / 2 - ARROW_LENGTH + 800, 1080 / 3);
     }
 
-    commit new_commit = { commit_message, commit_sprite, commit_num };
-    commit new_commit = { commit_message, commit_sprite, commit_num, code};
+    commit new_commit = { commit_message, commit_sprite, commit_num, code };
     commit_num[0]++;
     commits[commits_count] = new_commit;
     commits_count++;
 }
 
 void showGraphCommitMessage(commit commits[], RectangleShape& mouse_cursor, Text& graph_commit_msg, RectangleShape& graph_commit_msg_shape, bool& show_graph_commit_msg) {
-void makeCommit(Sprite& commit_animation) {
-    commit_animation.setScale(0.5, 0.5);
-    graph_commit.animation_delay++;
-    if (graph_commit.animation_delay >= 10) {
-        if (graph_commit.current_animation_frame == 0)
-            commit_animation.setTextureRect(IntRect(0, 0, 50, 200));
-        if (graph_commit.current_animation_frame == 1)
-            commit_animation.setTextureRect(IntRect(90, 0, 100, 200));;
-        if (graph_commit.current_animation_frame == 2)
-            commit_animation.setTextureRect(IntRect(230, 0, 150, 200));
-        if (graph_commit.current_animation_frame == 3)
-            commit_animation.setTextureRect(IntRect(230, 0, 150, 200));
-        graph_commit.animation_delay = 0;
-        graph_commit.current_animation_frame++;
-    }
-    if (graph_commit.current_animation_frame >= 3) {
-        graph_commit.current_animation_frame = 3;
-    }
-}
-
-void showGraphCommitMessage(commit commits[], RectangleShape& mouse_cursor, Text& graph_commit_msg, RectangleShape& graph_commit_msg_shape, bool& show_graph_commit_msg){
     int index = 0;
     for (int i = 0; i <= index_of_the_last_commit; i++) {
         if (commits[i].sprite.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds())) {
@@ -1746,9 +1615,8 @@ void showGraphCommitMessage(commit commits[], RectangleShape& mouse_cursor, Text
         if (index == 0)
             graph_commit_msg_shape.setPosition(commits[index].sprite.getPosition().x + 40, commits[index].sprite.getPosition().y + 130);
         else
-             graph_commit_msg_shape.setPosition(commits[index].sprite.getPosition().x + (50 + 120), commits[index].sprite.getPosition().y + 130);
+            graph_commit_msg_shape.setPosition(commits[index].sprite.getPosition().x + (50 + 120), commits[index].sprite.getPosition().y + 130);
         graph_commit_msg.setPosition(graph_commit_msg_shape.getGlobalBounds().left + (graph_commit_msg_shape.getLocalBounds().width / 2), graph_commit_msg_shape.getGlobalBounds().top + 20);
-        graph_commit_msg_shape.setFillColor(Color::Black);
     }
     else
         show_graph_commit_msg = 0;
@@ -1778,9 +1646,9 @@ void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& addit
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         if (window_collision_mode) {
             head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
-            if (head.getPosition().x < (graph.getGlobalBounds().left + (80 * 0.5)) || head.getPosition().x >(graph.getGlobalBounds().left + 1300 - (50 * 0.5)))
+            if (head.getPosition().x < (graph.getGlobalBounds().left ) || head.getPosition().x > (graph.getGlobalBounds().left + 700))
                 graph_head.x_border_deflection_velocity *= -1;
-            if (head.getPosition().y < (graph.getGlobalBounds().top + (80 * 0.5)) || head.getPosition().y >(graph.getGlobalBounds().top + 576 - (80 * 0.5)))
+            if (head.getPosition().y < (graph.getGlobalBounds().top  ) || head.getPosition().y > (graph.getGlobalBounds().top + 155))
                 graph_head.y_border_deflection_velocity *= -1;
         }
     }
@@ -1840,8 +1708,8 @@ void headAnimationAndMovement(Sprite& head, bool& git_checkout_entered) {
         head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
         graph_head.distance_to_checkout_commit -= 5;
     }
-   /* else
-        git_checkout_entered = 0;*/
+    else
+        git_checkout_entered = 0;
 }
 
 bool checkInputEquality(string& input, string& correct_string, bool& edit_window_changed) {
