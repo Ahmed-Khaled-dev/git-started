@@ -240,6 +240,13 @@ int main()
     Text transition_text(transition_level_texts[current_level_screen_index], game_title_font, 29);
     transition_text.setPosition(1310, 700);
     transition_text.setFillColor(Color::White);
+    // Player name input
+    string player_name;
+    Text player_name_text("player_name", game_title_font , 32);
+    player_name_text.setPosition(1310, 750);
+    player_name_text.setFillColor(Color:: White);
+    const short int PLAYER_NAME_MAX_CHARS = 17;
+    bool show_player_name_cursor = 0, player_name_entry = 0;
 
     // Levels menu
     RectangleShape levels_menu_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
@@ -296,13 +303,6 @@ int main()
     string cli_checkout_message_rqst = "Please enter the ID of the commit\nyou want to checkout to";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0;
     Clock cursor_clock;
-    // player input
-    string player_name;
-    Text player_name_text("player_name", game_title_font , 32);
-    player_name_text.setPosition(1310, 750);
-    player_name_text.setFillColor(Color:: White);
-    const short int PLAYER_NAME_MAX_CHARS = 17;
-    bool show_player_name_cursor = 0, player_name_entry = 0;
 
     // Edit Window
     RectangleShape edit_window_shape;
@@ -451,8 +451,14 @@ int main()
 
         while (window.pollEvent(event))
         {
-            //player entry screen
-            if(transition_level_texts[current_level_screen_index]=="Please enter your name:"){
+            if (event.type == Event::Closed || current_screen == "close")
+            {
+                updateProgressFile("progress.txt", levels_status, levels_count);
+                window.close();
+            }
+            // Player name entry screen
+            if(transition_level_texts[current_level_screen_index] == "Please enter your name:")
+            {
                 player_name_entry = 1;
             }
             else 
@@ -463,15 +469,10 @@ int main()
             {
                 dialogue_text.current_script_index = level[current_level_screen_index].new_script.size() - 1;
             }
-            if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide" && player_name_entry !=1)
+            if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide" && player_name_entry != 1)
             {
                 current_screen = levels_screens[current_level_screen_index];
                 transition_text.setString(transition_level_texts[current_level_screen_index+1]);
-            }
-            if (event.type == Event::Closed || current_screen == "close")
-            {
-                updateProgressFile("progress.txt", levels_status, levels_count);
-                window.close();
             }
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -593,12 +594,10 @@ int main()
             }
             if (event.type == Event::TextEntered)
             {
-                if(player_name_entry == 1 && player_name.size()<=PLAYER_NAME_MAX_CHARS){
-                    if (event.type == Event::TextEntered ) {
-                        if (isprint(event.text.unicode))
-                            player_name += event.text.unicode;
-                    }
-                   
+                if(player_name_entry == 1 && player_name.size() <= PLAYER_NAME_MAX_CHARS && current_screen == "transition slide")
+                 {
+                    if (isprint(event.text.unicode))
+                        player_name += event.text.unicode;
                 }
                 if (edit_window_selected && current_screen == levels_screens[current_level_screen_index] && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 2)
                 {
@@ -642,20 +641,21 @@ int main()
             }
             if(event.type == Event::KeyPressed) 
             {   
-                if(player_name_entry == 1){
-                        if (event.key.code == Keyboard::BackSpace) 
-                        {
-                            if(!player_name.empty())
-                                player_name.pop_back();
-                        }
-                        if (event.key.code == Keyboard::Return) 
-                        {
-                            current_level_screen_index = 0;
-                            current_screen = levels_screens[current_level_screen_index];
-                            player_name_entry = 0;
-                            transition_text.setString(transition_level_texts[current_level_screen_index+1]);
-                            player_name_text.setString("");
-                        }
+                if(player_name_entry == 1 && current_screen == "transition slide")
+                {
+                    if (event.key.code == Keyboard::BackSpace) 
+                    {
+                        if(!player_name.empty())
+                            player_name.pop_back();
+                    }
+                    if (event.key.code == Keyboard::Return) 
+                    {
+                        current_level_screen_index = 0;
+                        current_screen = levels_screens[current_level_screen_index];
+                        player_name_entry = 0;
+                        transition_text.setString(transition_level_texts[current_level_screen_index + 1]);
+                        player_name_text.setString("");
+                    }
                 }
                 if(cli_selected)
                 {
@@ -1025,12 +1025,6 @@ int main()
                 }
             }
         }
-
-        if(player_name_entry == 1)
-        {
-            showCursor(cursor_clock, show_player_name_cursor, player_name_entry, cursor_time);
-            player_name_text.setString(player_name + (show_player_name_cursor ? '_' : ' '));
-        }
         window.clear(Color(223, 221, 221));
         if (current_screen == "main menu")
         {
@@ -1047,7 +1041,12 @@ int main()
          {
             window.draw(transition_slide_bg);
             window.draw(transition_text);
-            if(player_name_entry == 1) 
+            if(player_name_entry == 1)
+            {
+                showCursor(cursor_clock, show_player_name_cursor, player_name_entry, cursor_time);
+                player_name_text.setString(player_name + (show_player_name_cursor ? '_' : ' '));
+            }
+            if(player_name_entry == 1)
                 window.draw(player_name_text);
         }
         // Checking if it's a level screen
