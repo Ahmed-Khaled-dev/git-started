@@ -7,7 +7,6 @@
 
 using namespace std;
 using namespace sf;
-
 const int levels_count = 4;
 bool levels_status[levels_count] = {0, 0, 0, 0};
 
@@ -142,7 +141,7 @@ void createCliInputShape(RectangleShape& form);
 void createCliOutputShape(RectangleShape& form);
 void createEditWindowShape(RectangleShape& form);
 void setEditWindowText(Text& edit_text, string& edit_input, bool&, RectangleShape& rectangle);
-void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape&);
+void setCliTexts(Text& text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape&, bool& correct_command);
 void showCursor(Clock& cursor_clock, bool& show_cursor, bool&, Time& cursor_time);
 void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box);
 void printDialogueText(dialogueText& dialogue_text);
@@ -732,7 +731,7 @@ int main()
                                 }
                                 else
                                 {
-                                    final_cli_input += ("$ " + user_cli_input + "\n\t\t\t\t\tcorrect!!!" + "\n");
+                                    final_cli_input = ("$ " + user_cli_input + "\n\t\t\t\t\tcorrect!!!" + "\n");
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;
                                     //correct_command = 0;
@@ -1062,7 +1061,7 @@ int main()
             printDialogueText(dialogue_text);
             showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,correct_command);
             showContinuationMessage(continuation_message, edit_window_changed);
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
@@ -1353,11 +1352,14 @@ void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_com
 }
 
 
-void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper) {
+void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, string final_cli_input, bool& show_cursor, RectangleShape& rectangle, RectangleShape& rectangle_upper, bool& correct_command) {
     // Shape of cursor
     cli_text.setString(user_cli_input + (show_cursor ? '|' : ' '));
     cli_text.setPosition(rectangle.getPosition().x + 7, rectangle.getPosition().y + 7);
-    cli_text_final.setFillColor(Color::White);
+    if(correct_command)
+    cli_text_final.setFillColor(Color::Green);
+    else
+    cli_text_final.setFillColor(Color::Red);
     cli_text_final.setString(final_cli_input);
     cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+10);
    // cout<<user_cli_input<<'\n'<<final_cli_input;
