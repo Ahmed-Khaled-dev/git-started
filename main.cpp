@@ -83,6 +83,7 @@ struct dialogueText
 
 }dialogue_text;
 
+int current_level_screen = 0;
 // For the vectors of pairs
 // If bool = 1 
 // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
@@ -90,15 +91,13 @@ struct dialogueText
 // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
 gameLevel level[4] = {
     /*level_0 (intro)*/{{
-    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming*\nbecause your team's code was full of errors\nand was disorganized"},
-    {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
-    {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},
-    {0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
-    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."}, 
-    {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code."},
-    {0 ,"It is created for the sake of aiding us in\nwriting our code. It has useful commands that\nhelp us in working with others quickly\nand efficiently."},
-    {0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
-    {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
+    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming* because your\nteam's code was full of errors and was disorganized"},
+    {0 ,"* Suddenly...*\n*someone appears in front of you, they look similar to you but older *"},
+    {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
+    {0 ,"I am you but from the future. I remember this day clearly. I was\nfilled with disappointment because of my failure, but fear not,\nI am here to introduce you to a system that changed my life."}, 
+    {0 ,"I am talking about \"GIT\" it is a free version control system that tracks\nall versions of your code. It is created for the sake of aiding us in writing our code.\nIt has useful commands that help us in working with others\nquickly and efficiently."},
+    {0 ,"I will take you back with my time machine to the start\nof the contest and walk you through all the GIT commands."},
+    {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest Are you ready to Git started?"}}},
     /*level_1 (git init)*/{{
     {0,"Let me show you around our time machine. This blue box is\nour IDE (like visual studio),where you will be able to write\ncode.The black box you see on your screen (the console) is your tool\nto tell Git what to do. but be aware!"},
     {0,"GIT will not understand what you wish to do unless you communicate\nwith it in a special syntax (like programming languages)."},
@@ -126,7 +125,7 @@ gameLevel level[4] = {
     {0,"We will use a new command which is \"git checkout <commit hash>\".\nNow, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
     {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit. Here you have your latest code again!"},
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
-    {"git checkout"}} };
+    {"git checkout"}}};
 
 struct optionMenu {
     Font font;
@@ -209,6 +208,21 @@ int main()
     Music music;
     playMusicFromFile("resources/audio/background audio.wav", music);
     music.setVolume(0);
+    SoundBuffer soundbuffer_1;
+    soundbuffer_1.loadFromFile("resources/audio/correct command.wav");
+    Sound correct_command_sound;
+    correct_command_sound.setBuffer(soundbuffer_1);
+    correct_command_sound.setVolume(300.0f);
+    SoundBuffer soundbuffer_2;
+    soundbuffer_2.loadFromFile("resources/audio/incorrect command.wav");
+    Sound incorrect_command_sound;
+    incorrect_command_sound.setBuffer(soundbuffer_2);
+    incorrect_command_sound.setVolume(300.0f);
+    SoundBuffer soundbuffer_3;
+    soundbuffer_3.loadFromFile("resources/audio/level up.wav");
+    Sound level_up_sound;
+    level_up_sound.setBuffer(soundbuffer_3);
+    level_up_sound.setVolume(300.0f);
 
     // Transition slide
     Texture transition_slide;
@@ -296,7 +310,7 @@ int main()
     // Next button
     RectangleShape game_window_next_button(Vector2f(140, 50));
     Text game_window_next_text("Next", buttons_font, 35);
-    setButtonProperties(game_window_next_button, 60, 154, 145, 1415, 965);
+    setButtonProperties(game_window_next_button, 60, 154, 145, 1415, 950);
     setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(333, 50));
@@ -487,19 +501,32 @@ int main()
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
+                        level_up_sound.play();
                         current_level_screen_index++;
                         current_screen = levels_screens[current_level_screen_index];
-                        
+                        current_level_screen++;
                         //reset the dialogues in the array of structs
                         current_screen = "transition slide";
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
                         dialogue_text.current_script_index = 0;
+                        dialogue_text.script_ended = 0;
                         user_cli_input.clear();
                         final_cli_input.clear();
                         commands_entered_counter = 0;
-                        dialogue_text.script_ended = 0;
-                        player_name_entry = 0;
+                        levels_title.setString(level_title[current_level_screen_index]);
+                        if (current_level_screen_index == 1)
+                        {
+                            levels_title.setPosition(690, 30);
+                        }
+                        else if (current_level_screen_index == 2)
+                        {
+                            levels_title.setPosition(640, 30);
+                        }
+                        else if (current_level_screen_index == 3)
+                        {
+                            levels_title.setPosition(610, 30);
+                        }
                     }
                     
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
@@ -551,39 +578,36 @@ int main()
                     }
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
+                        current_level_screen = 0;
                         current_screen = levels_screens[0];
                         current_level_screen_index = 0;
-                        current_edit_window_input = "type here", old_edit_window_input = "type here";
-                        transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
                         levels_title.setString("Introducing Git");
-                        levels_title.setPosition(725,30);
+                        levels_title.setPosition(725, 30);
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
                     {
-                        current_screen = levels_screens[1];
+                       current_screen = levels_screens[1];
                         current_level_screen_index = 1;
-                        player_name_entry = 0;
-                        current_edit_window_input = "type here", old_edit_window_input = "type here";
-                        transition_text.setString(transition_level_texts[current_level_screen_index]);
-                        current_screen = "transition slide";
+                        current_level_screen = 1;
+                        levels_title.setString("The Git Beginning!");
+                        levels_title.setPosition(690, 30);
                     }
                     else if (commit_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[1])
                     {
                         current_screen = levels_screens[2];
                         current_level_screen_index = 2;
-                        player_name_entry = 0;
-                        current_edit_window_input = "type here", old_edit_window_input = "type here";
-                        transition_text.setString(transition_level_texts[current_level_screen_index]);
-                        current_screen = "transition slide";
+                        current_level_screen = 2;
+                        levels_title.setString("Committing to Success");
+                        levels_title.setPosition(640, 30);
                     }
                     else if (checkout_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[2])
                     {
                         current_screen = levels_screens[3];
                         current_level_screen_index = 3;
-                        player_name_entry = 0;
-                        transition_text.setString(transition_level_texts[current_level_screen_index]);
-                        current_screen = "transition slide";
+                        current_level_screen = 3;
+                        levels_title.setString("TimeWarper: the Timeline");
+                        levels_title.setPosition(610, 30);
                     }
                 }
             }
@@ -677,6 +701,7 @@ int main()
                                 // Commit message
                                 if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
+                                    correct_command_sound.play();
                                     green_command = 1;
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
@@ -706,6 +731,7 @@ int main()
                                 }
                                 else if (checkout_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
+                                    correct_command_sound.play();
                                     green_command = 1;
                                     final_cli_input = "checkout successful \n";
                                     checkout_id = user_cli_input;
@@ -737,6 +763,7 @@ int main()
                                 }
                                 else
                                 {
+                                    correct_command_sound.play();
                                     green_command = 1;
                                     final_cli_input = ("$ " + user_cli_input + "\ncorrect!" + "\n");
                                     continuation_message.commands_flag = 1;
@@ -746,6 +773,7 @@ int main()
                             }
                             else
                             {
+                                incorrect_command_sound.play();
                                 green_command = 0;
                                 final_cli_input = "$ " + user_cli_input + "\nincorrect command!\n";
                             }
@@ -1658,4 +1686,4 @@ void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color col
     rectangle.setScale(scale, scale);
     rectangle.setOutlineThickness(5);
     rectangle.setOutlineColor(outline_color);
-}
+}   
