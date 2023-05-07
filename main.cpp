@@ -15,7 +15,7 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
-string levels_screens[10] = { "intro level", "init level", "commit level", "checkout level" ,"credits menu"};
+string levels_screens[10] = { "intro level", "init level", "commit level", "checkout level" };
 int current_level_screen_index = 0;
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
@@ -204,6 +204,8 @@ int main()
     if (!arial.loadFromFile("resources/fonts/arial.ttf")) {
         cout << "Error has happened while loading arial font" << endl;
     }
+    Font quote;
+    quote.loadFromFile("resources/fonts/PressStart2P-Regular.ttf");
 
     // View
     View view;
@@ -231,6 +233,26 @@ int main()
     level_up_sound.setBuffer(soundbuffer_3);
     level_up_sound.setVolume(300.0f);
 
+    //credits menu
+    Texture credits_menu;
+    credits_menu.loadFromFile("resources/sprites/Credit menu v1.0 7-May-2023.png");
+    Sprite credits_menu_bg;
+    credits_menu_bg.setTexture(credits_menu);
+    credits_menu_bg.setScale(0.24f, 0.24f); 
+    Text credits_to_text("Credits to:", cli_font , 37);
+    credits_to_text.setPosition(200, 100);
+    credits_to_text.setStyle(Text::Bold | Text::Underlined);
+    Text contributers_text("Haneen Hany\nRahma Khattab\nRehab Khaled\nAbdallah Mohamed\nAhmed Khaled\nAhmed Khaled\n", game_title_font , 45);
+    contributers_text.setStyle(Text::Italic);
+    contributers_text.setPosition(200, 140);
+    Text quote_text("\"Always walk through life as if\n\tyou have something new\n\tto learn and you will.\"", quote , 32);
+    quote_text.setStyle(Text::Bold | Text::Italic);
+    quote_text.setPosition(170, 730);
+    Text aim_title_text("Our Aim:", cli_font , 37);
+    aim_title_text.setPosition(200,470);
+    aim_title_text.setStyle(Text::Bold | Text::Underlined);
+    Text aim_description_text("We aim to help new people/students who are looking to learn git\nto have the chance to do it while playing a game\nand having fun at the same time.", arial , 32);
+    aim_description_text.setPosition(200,540);
     // Transition slide
     Texture transition_slide;
     transition_slide.loadFromFile("resources/sprites/Transition background v1.0.png");
@@ -516,6 +538,10 @@ int main()
                         current_level_screen_index++;
                         dialogue_text.script_ended = 0;
                         current_screen = levels_screens[current_level_screen_index];
+                        if(current_level_screen_index>=4){
+
+                        current_screen = "credits menu";
+                        }
                         //reset the dialogues in the array of structs
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
@@ -1273,6 +1299,14 @@ int main()
             window.draw(init_level_text);
             window.draw(commit_level_text);
             window.draw(checkout_level_text);
+        }
+        else if(current_screen == "credits menu"){
+            window.draw(credits_menu_bg);
+            window.draw(credits_to_text);
+            window.draw(contributers_text);
+            window.draw(quote_text);
+            window.draw(aim_title_text);
+            window.draw(aim_description_text);
         }
         window.setView(view);
         window.display();
