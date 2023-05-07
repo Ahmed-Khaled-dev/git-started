@@ -91,7 +91,7 @@ struct dialogueText
 // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
 gameLevel level[4] = {
     /*level_0 (intro)*/{{
-    {0 ,"And last place goes to... (name)!\n*You are devastated but you saw it coming* because your\nteam's code was full of errors and was disorganized"},
+    {0 ,""},
     {0 ,"* Suddenly...*\n*someone appears in front of you, they look similar to you but older *"},
     {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
     {0 ,"I am you but from the future. I remember this day clearly. I was\nfilled with disappointment because of my failure, but fear not,\nI am here to introduce you to a system that changed my life."}, 
@@ -484,11 +484,6 @@ int main()
             {
                 player_name_entry = 0;
             }
-            if ((Keyboard::isKeyPressed(Keyboard::Insert)) && current_screen == levels_screens[current_level_screen_index])
-            {
-                dialogue_text.current_script_index = level[current_level_screen_index].new_script.size() - 1;
-                continuation_message.sub_script_ended = 1;
-            }
             if((Keyboard::isKeyPressed(Keyboard:: Space)) && current_screen == "transition slide" && player_name_entry != 1)
             {
                 current_screen = levels_screens[current_level_screen_index];
@@ -714,7 +709,10 @@ int main()
                         }
                     }
             }
-            if(event.type == Event::KeyPressed) 
+            string str1 = "And last place goes to... ";
+            string str2 = "!\n*You are devastated but you saw it coming* because your\nteam's code was full of errors and was disorganized";
+            string output = str1 + player_name + str2;
+            if(event.type == Event::KeyPressed)
             {   
                 if(player_name_entry == 1 && current_screen == "transition slide")
                 {
@@ -1097,6 +1095,10 @@ int main()
                     }
                     // Clear the current text and reset the script content to the next string
                     dialogue_text.script_text.setString("");
+                    if (current_level_screen_index == 0 && dialogue_text.current_script_index==0)
+                    {
+                        dialogue_text.script_text.setString(output);
+                    }
                     dialogue_text.script_content = level[current_level_screen_index].new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++;
                 }
