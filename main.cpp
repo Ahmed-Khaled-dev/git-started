@@ -281,13 +281,13 @@ int main()
     Text cli_text("", cli_font,35), cli_text_final("", cli_font);
     string cli_commit_msg_request = " # Please enter the \ncommit message for\nyour changes in the\ncommand line.";
     string cli_checkout_message_rqst = "Please enter the ID of\nthe commit you want \nto checkout to";
-    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0;
+    bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0,green_command;
     Clock cursor_clock;
 
     // Edit Window
     RectangleShape edit_window_shape;
     string current_edit_window_input = "type here", old_edit_window_input = "type here";
-    const short int EDIT_WINDOW_MAX_CHARS = 600;
+    const short int EDIT_WINDOW_MAX_CHARS = 500;
     Text edit_window_text(current_edit_window_input, cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
@@ -299,8 +299,8 @@ int main()
     setButtonTextProperties(game_window_next_button, game_window_next_text, Color::Black);
     // Save button
     RectangleShape edit_window_save_button(Vector2f(333, 50));
-    Text edit_window_save_text("Save", arial, 35);
-    setButtonProperties(edit_window_save_button, 110, 164, 198, 1700, 945);
+    Text edit_window_save_text("Save", buttons_font, 35);
+    setButtonProperties(edit_window_save_button, 110, 164, 198, 1706, 840);
     setButtonTextProperties(edit_window_save_button, edit_window_save_text, Color::Black);
 
     // Game window is the window containing the dialogue box, edit window, cli etc.
@@ -675,6 +675,7 @@ int main()
                                 // Commit message
                                 if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
+                                    green_command = 1;
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
                                     if (git_commit_entered) {
@@ -703,6 +704,7 @@ int main()
                                 }
                                 else if (checkout_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
+                                    green_command = 1;
                                     final_cli_input = "checkout successful \n";
                                     checkout_id = user_cli_input;
                                     checked_out_commit = checkout_id;
@@ -717,6 +719,7 @@ int main()
                                 // So we use this if condition to adjust the uniqueness of each one
                                 else if (level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
+                                    green_command = 1;
                                     final_cli_input.clear();
                                     final_cli_input = (cli_commit_msg_request + '\n');
                                     commit_command_entered = 1;
@@ -724,6 +727,7 @@ int main()
                                 }
                                 else if (level[current_level_screen_index].level_commands[commands_entered_counter] == "git checkout")
                                 {
+                                    green_command = 1;
                                     final_cli_input.clear();
                                     final_cli_input = (cli_checkout_message_rqst + '\n');
                                     checkout_command_entered = 1;
@@ -731,6 +735,7 @@ int main()
                                 }
                                 else
                                 {
+                                    green_command = 1;
                                     final_cli_input = ("$ " + user_cli_input + "\n\t\t\t\t\tcorrect!!!" + "\n");
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;
@@ -739,6 +744,7 @@ int main()
                             }
                             else
                             {
+                                green_command = 0;
                                 final_cli_input = user_cli_input + "\n\t\tincorrect command\n";
                             }
                             user_cli_input.clear();
@@ -1061,7 +1067,7 @@ int main()
             printDialogueText(dialogue_text);
             showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
-            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,correct_command);
+            setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
             showContinuationMessage(continuation_message, edit_window_changed);
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
@@ -1122,6 +1128,21 @@ int main()
         }
         else if (current_screen == "options_in_game")
         {
+            window.draw(game_window);
+            window.draw(levels_title);
+            window.draw(dialogue_box.title);
+            window.draw(dialogue_box.sprite);
+            window.draw(dialogue_text.script_text);
+            window.draw(continuation_message.continuation_text);
+            window.draw(edit_window_text);
+            window.draw(cli_text);
+            window.draw(edit_window_save_button);
+            window.draw(edit_window_save_text);
+            window.draw(cli_text_final);
+            window.draw(game_window_back_button);
+            window.draw(game_window_back_text);
+            window.draw(game_window_options_button);
+            window.draw(game_window_options_text);
             controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
             controlSfxTexts(sfx_text, mouse_cursor, pop_commit, event);
             controlSfxAndMusicVolume(sfx_text, music, pop_commit, slider_bar, slider, option_menu, mouse_cursor, event, change_sfx_volume, change_music_volume);
@@ -1372,7 +1393,7 @@ void setEditWindowText(Text& edit_text, string& edit_input, bool& show_cursor, R
 }
 
 void createEditWindowShape(RectangleShape& form) {
-    form.setSize(Vector2f(340, 870));
+    form.setSize(Vector2f(340, 670));
     form.setFillColor(Color(0, 116, 185));
     form.setOutlineThickness(5);
     form.setOutlineColor(Color::White);
