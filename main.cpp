@@ -124,7 +124,8 @@ gameLevel level[4] = {
     {0,"Look at all the commits you have; you must be proud of yourself!\nNow as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
     {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?\nWe need to move the Head to the commit we want.Each commit\nhas a specified number to show it, this number is called \"commit hash\""},
     {0,"We will use a new command which is \"git checkout <commit hash>\".\nNow, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
-    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit. Here you have your latest code again!"},
+    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit."},
+    {1,"Here you have your latest code again!"},
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
     {"git checkout"}}};
 
@@ -435,7 +436,7 @@ int main()
     head.setTextureRect(IntRect(0, 0, 200.25, 301));
     head.setScale(0.8, 0.8);
     head.setOrigin(100.125, 150.5);
-    head.setPosition(graph.getGlobalBounds().left + 100, 200);
+    head.setPosition(graph.getGlobalBounds().left + 100, 300);
     bool additional_commit_created = 0;
     bool window_collision_mode = 1;
     bool should_create_smoke = 0;
@@ -1161,8 +1162,8 @@ int main()
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
             showContinuationMessage(continuation_message, edit_window_changed);
-            if (checked_out_commit[0] - 48 == index_of_the_last_commit)
-                setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
+            //if (checked_out_commit[0] - 48 == index_of_the_last_commit)
+            setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
             window.draw(game_window);
             window.draw(levels_title);
@@ -1214,14 +1215,17 @@ int main()
                     window.draw(commits[i].sprite);
                 if (git_checkout_entered) {
                     edit_window_text.setString(commits[checked_out_commit[0] - 48 - 1].commit_code);
-                    if ((checked_out_commit[0] - 49) == index_of_the_last_commit)
-                        git_checkout_entered = 0;
+                    if ((checked_out_commit[0] - 49) == index_of_the_last_commit){
+                       git_checkout_entered = 0;
+                       cout << checked_out_commit[0] - 49 << ' ' << index_of_the_last_commit << endl;
+                    }
                 }
             }
             if (show_graph_commit_msg) {
                 window.draw(graph_commit_msg_shape);
                 window.draw(graph_commit_msg);
             }
+            window.draw(edit_window_title_text);
             window.draw(edit_window_text);
         }
         else if (current_screen == "options")
@@ -1248,7 +1252,6 @@ int main()
             window.draw(dialogue_text.script_text);
             window.draw(continuation_message.continuation_text);
             window.draw(edit_window_text);
-            window.draw(edit_window_title_text);
             window.draw(cli_text);
             window.draw(edit_window_save_button);
             window.draw(edit_window_save_text);
@@ -1268,7 +1271,6 @@ int main()
                 window.draw(slider[i]);
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
-
         }
         else if (current_screen == "levels menu") {
             window.draw(levels_menu_bg);
@@ -1548,10 +1550,10 @@ void commandsInputChecker(string& user_cli_input, bool& git_init_entered, bool& 
             git_commit_entered = 0;*/
 }
 
-void makeSmoke(Sprite& smoke, bool& should_create_smoke) {
-    smoke.setScale(0.2, 0.2);
-    smoke.setTextureRect(IntRect(current_smoke_animation_frame * 1380.571428571429, 0, 1380.571428571429, 2000.000));
-    smoke.setPosition(WINDOW_WIDTH / 2.0 - 90 + 800, WINDOW_HEIGHT / 3.0 - 170);
+void makeSmoke(Sprite& smoke, bool& should_create_smoke){
+    smoke.setScale(0.28, 0.28);
+    smoke.setTextureRect(IntRect(current_smoke_animation_frame * 680.2857, 0, 714.2857, 741));
+    smoke.setPosition(WINDOW_WIDTH / 2.0 + 400 - 60, WINDOW_HEIGHT / 3.0 - 70);
     graph_smoke_animation_delay++;
     if (graph_smoke_animation_delay >= 3) {
         current_smoke_animation_frame++;
@@ -1575,7 +1577,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
     {
         // I cut from the texture a circle **without** an arrow
         commit_sprite.setTextureRect(IntRect(287, 70, 156, 156));
-        commit_sprite.setPosition(WINDOW_WIDTH / 2.0 + 800, WINDOW_HEIGHT / 3.0);
+        commit_sprite.setPosition(WINDOW_WIDTH / 2.0 + 400, WINDOW_HEIGHT / 3.0);
     }
     else
     {
@@ -1588,7 +1590,7 @@ void addCommit(unsigned short int& commits_count, commit commits[], Texture& com
         }
         // I cut from the texture a circle **with** an arrow
         commit_sprite.setTextureRect(IntRect(37, 278, 406, 156));
-        commit_sprite.setPosition(1920 / 2 - ARROW_LENGTH + 800, 1080 / 3);
+        commit_sprite.setPosition(1920 / 2 - ARROW_LENGTH + 400, 1080 / 3);
     }
 
     commit new_commit = { commit_message, commit_sprite, commit_num, code };
@@ -1646,9 +1648,9 @@ void headBorderDeflection(Sprite& head, bool& window_collision_mode, bool& addit
         head.setTextureRect(IntRect(graph_head.current_animation_frame * 200.25, 0, 200.25, 301));
         if (window_collision_mode) {
             head.setPosition(head.getPosition().x + graph_head.x_border_deflection_velocity, head.getPosition().y + graph_head.y_border_deflection_velocity);
-            if (head.getPosition().x < (graph.getGlobalBounds().left ) || head.getPosition().x > (graph.getGlobalBounds().left + 700))
+            if (head.getPosition().x < (graph.getGlobalBounds().left + 80 ) || head.getPosition().x > (graph.getGlobalBounds().left + 1080 - 80))
                 graph_head.x_border_deflection_velocity *= -1;
-            if (head.getPosition().y < (graph.getGlobalBounds().top  ) || head.getPosition().y > (graph.getGlobalBounds().top + 155))
+            if (head.getPosition().y < (graph.getGlobalBounds().top + 80) || head.getPosition().y > (graph.getGlobalBounds().top + 500 - 80))
                 graph_head.y_border_deflection_velocity *= -1;
         }
     }
@@ -1708,8 +1710,8 @@ void headAnimationAndMovement(Sprite& head, bool& git_checkout_entered) {
         head.setTextureRect(IntRect(3 * 200.25, 0, 200.25, 301));
         graph_head.distance_to_checkout_commit -= 5;
     }
-    else
-        git_checkout_entered = 0;
+    //else
+      //  git_checkout_entered = 0;
 }
 
 bool checkInputEquality(string& input, string& correct_string, bool& edit_window_changed) {
