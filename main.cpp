@@ -49,7 +49,7 @@ struct dialogueBox {
     Text title;
     string title_content = "Mentor";
     double title_size = 32;
-    string image_path = "resources/sprites/new-mentor.png";
+    string image_path = "resources/sprites/man.png";
     string font_type = "resources/fonts/Roboto-Black.ttf";
 }dialogue_box;
 
@@ -95,54 +95,37 @@ gameLevel level[4] = {
     {0 ,"* Suddenly...\nsomeone appears in front of you, they look\nsimilar to you but older *"},
     {0 ,"Hello!, I finally succeeded in going back\nin time to help you learn from our mistakes."},
     {0 ,"I am you but from the future. I remember this\nday clearly. I was filled with disappointment\nbecause of my failure,"},
-    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."},
+    {0,"But fear not, I am here to introduce\nyou to a system that changed my life."}, 
     {0 ,"I am talking about \"GIT\",\n\"GIT\" is a free version control system that tracks\nall versions of your code."},
     {0 ,"It is created for the sake of aiding us in\nwriting our code. It has useful commands that\nhelp us in working with others quickly\nand efficiently."},
     {0 ,"I will take you back with my time machine to\nthe start of the contest and walk you through all\nthe GIT commands."},
     {0 ,"I will try my best to teach you everything about\nGIT so that you can start your project again with\nGIT and have a shot in winning this contest\nAre you ready to Git started?"}}},
     /*level_1 (git init)*/{{
-    {0,"Let me show you around our time machine.\nThis blue box is our IDE, where you\nwill write the code you want."},
-    {0,"This black box  is the command line window,\nwhere you will write the suitable \"GIT\" commands\nfor GIT to execute, also known as the \"Console\"."},
-    {0,"Here is your git graph, it is a diagram\nthat shows how the commands are translated and\nmakes it easier to understand how they work."},
-    {0,"After showing you around, let's start our\nadventure by telling you what the word \"command\"\nmeans in \"GIT\"."},
-    {0,"\"Commands\" are a set of instructions, each one\nof them is responsible for making a certain job."},
-    {0,"We will start with our first command \"Git init\".\nIt's responsible for watching your current\nfolder called a git repository."},
-    {0,"All of our git commands won't work unless we\ninitialize a repository. That's why\n\"Git init\" has to be the first command to be executed."},
-    {0,"Let's try executing it together. Please type\n\"git init\" in the command line (the black box)"},
-    {1,"Would you look at that!! That's our head.\nDoes it remind you of something?"},
-    {0,"This Octocat symbolizes the head in git.\nIt is inspired from the github logo and it will\naccompany you throughout the game."},
-    {0,"You will get to know more about the\n\"head\" in the upcoming levels..."}}
+    {0,"Let me show you around our time machine. This blue box is\nour IDE (like visual studio),where you will be able to write\ncode.The black box you see on your screen (the console) is your tool\nto tell Git what to do. but be aware!"},
+    {0,"GIT will not understand what you wish to do unless you communicate\nwith it in a special syntax (like programming languages)."},
+    {0,"After showing you around, let's start our adventure by telling\nyou what the word \"command\" means in \"GIT\". \"Commands\"\nare a set of instructions, each one of them is responsible for\nmaking a certain job. We will start with our first command \"Git init\"."},
+    {0,"Git init tells GIT to start watching your current folder which we call\na git repository (repo for short). You won't be able to\ntell git anything unless you initialize a repository. That's why \"Git init\"\nhas to be the first command to be executed."},
+    {0,"Let's try executing it together. Please type:\n\"git init\" in the command line (the black box)"},
+    {1,"Would you look at that!! That's Git's head (Now git has\nits eyes on you), It will accompany you throughout the game. You\nwill get to know more about the \"GIT head\" in the upcoming levels"}}
     ,{"git init"}},
     /*level_2 (git commit)*/{{
-    {0,"Now that you've created your first repository\n(which we will call \"repo\" from now),\nyou'll start by writing your code."},
-    {0,"Throughout each big step,\nyou will need to keep track of your history."},
-    {0,"Imagine this; you are working on\na huge project with your team,"},
-    {0,"One of your team mates messed up a part of\ntheir code, they can't remember what part\ngot messed up,"},
-    {0,"Neither can they go back to the code that\nworked fine, Scary to imagine right?"},
-    {0,"That's where \"commits\" come in hand.\n\"commits\" are like checkpoints in games\nbut for your code."},
-    {0,"We will use the \"git commit <commit_message>\"\ncommand."},
-    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need\nto write code using C++"},
+    {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code. Throughout each big step, you\nwill need to keep track of your history."},
+    {0,"Imagine this; you are working on a huge project with your\nteam, One of your team mates messed up a part of their code,\nthey can't remember what part got messed up, Neither can they go back\nto the code that worked fine, Scary to imagine right?"},
+    {0,"That's where \"commits\" come in hand. \"commits\" are like\ncheckpoints in games but for your code. We will use the\n\"git commit <commit_message>\" command."},
+    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need to write code using C++"},
     {0,"For example, try writing: \"int i = 5;\""},
-    {2,"Now you need to commit your changes\nto mark this checkpoint!"},
-    {0,"In the command line write:\ngit commit, name it any thing you want\nfor example \"First Variable!\""},
-    {1,"Congratulations! you have just written your\nfirst commit.\nThe circle that just appeared represents our commit."},
-    {0,"As you can see, our Head (Octocat) has appeared\nabove our commit."},
-    {0,"He will be standing on the latest commit\nwe create."},
-    {0,"It's your turn to write another piece of\ncode and commit your changes!"},
-    {0,"Try adding another variable in \"main.cpp\"\nedit window."},
+    {2,"Now you need to commit your changes to mark this\ncheckpoint! In the command line write: \"git commit\""},
+    {1,"Congratulations! you have just written your first commit.\nThis is your git graph, it is a diagram that shows how the commands\nare translated and makes it easier to understand how they work.The\ncircle that just appeared represents our commit.As you can see, our Head\n(Octocat) has appeared above our commit."},
+    {0,"He will be standing on the latest commit we create.\nSince he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
+    {0,"It's your turn to write another piece of code and commit\nyour changes! Try adding another variable in \"main.cpp\"\nedit window."},
     {2,"Commit your changes with the message\nthat describes it best!"},
-    {1,"Notice that the Head moves onto your\nnew commit."},
-    {0,"Now it is time for you to try out for yourself,\ngood luck!"}},
+    {1,"Notice that the Head moves onto your new commit."}},
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
-    {0,"Look at all the commits you have;\nyou must be proud of yourself!"},
-    {0,"Now as mentioned before our friend (the Head)\nis looking at the latest commit that we created."},
-    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?"},
-    {0,"We need to move the Head to the\ncommit we want.Each commit has a specified number\nto show it, this number is called \"commit hash\""},
-    {0,"We will use a new command which is\n\"git checkout <commit hash>\". Now, we want to\ncheckout to our first commit."},
-    {0,"Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
-    {1,"As you can see in the edit menu,\nYour code has changed to what you first wrote\nin the previous level!"},
-    {0,"Now let's checkout again to our last commit.\nHere you have your latest code again!"},
+    {0,"Look at all the commits you have; you must be proud of yourself!\nNow as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
+    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?\nWe need to move the Head to the commit we want.Each commit\nhas a specified number to show it, this number is called \"commit hash\""},
+    {0,"We will use a new command which is \"git checkout <commit hash>\".\nNow, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
+    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit. Here you have your latest code again!"},
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
     {"git checkout"}} };
 
@@ -224,7 +207,7 @@ int main()
 
     // Music
     Music music;
-    playMusicFromFile("resources/audio/background audio.wav", music);
+    playMusicFromFile("resources/audio/lepo.wav", music);
     music.setVolume(0);
 
     // Transition slide
@@ -326,6 +309,11 @@ int main()
     game_window_bg.loadFromFile("resources/sprites/Game menu design.png");
     Sprite game_window(game_window_bg);
     game_window.setScale(0.618f,0.638f);
+    string level_title [10] = {"Introducing Git","The Git Beginning!","Committing to Success","TimeWarper: the Timeline"};
+    Text levels_title(level_title[current_level_screen_index], game_title_font, 45);
+    levels_title.setPosition(725,30);
+    levels_title.setFillColor(Color::White);
+    
     // Back button
     RectangleShape game_window_back_button(Vector2f(333, 82));
     Text game_window_back_text("Back", buttons_font, 35);
@@ -567,6 +555,8 @@ int main()
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         current_screen = "transition slide";
+                        levels_title.setString("Introducing Git");
+                        levels_title.setPosition(725,30);
                     }
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
                     {
@@ -686,12 +676,6 @@ int main()
                                 // Commit message
                                 if (commit_command_entered && level[current_level_screen_index].level_commands[commands_entered_counter] == "git commit")
                                 {
-                                    SoundBuffer correct_command_sound;
-                                    correct_command_sound.loadFromFile("resources/audio/correct command.wav");
-                                    Sound correct_command_audio;
-                                    correct_command_audio.setBuffer(correct_command_sound);
-                                    correct_command_audio.setVolume(100);
-                                    correct_command_audio.play();
                                     final_cli_input = "commit successful \n";
                                     commit_message = user_cli_input;
                                     if (git_commit_entered) {
@@ -1083,6 +1067,7 @@ int main()
             setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
             window.draw(game_window);
+            window.draw(levels_title);
             window.draw(dialogue_box.title);
             window.draw(dialogue_box.sprite);
             window.draw(dialogue_text.script_text);
@@ -1177,8 +1162,8 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
 
     //Sprite
     dialogue_box.sprite.setTexture(dialogue_box.texture);
-    dialogue_box.sprite.setScale(0.7, 0.7);
-    dialogue_box.sprite.setPosition(63, 660);
+    dialogue_box.sprite.setScale(0.8, 0.8);
+    dialogue_box.sprite.setPosition(50, 680);
 
     //Title
     dialogue_box.title.setString(dialogue_box.title_content);
@@ -1201,10 +1186,10 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
-        continuation_message.continuation_text.setFillColor(Color::Black);
+        continuation_message.continuation_text.setFillColor(Color::White);
         continuation_message.continuation_text.setCharacterSize(24);
         continuation_message.continuation_text.setStyle(Text::Italic);
-        continuation_message.continuation_text.setPosition(1200, 925);
+        continuation_message.continuation_text.setPosition(1200, 945);
     }
     else if (!continuation_message.sub_script_ended)
     {
@@ -1374,8 +1359,8 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     cli_text.setPosition(rectangle.getPosition().x + 7, rectangle.getPosition().y + 7);
     cli_text_final.setFillColor(Color::White);
     cli_text_final.setString(final_cli_input);
-    cli_text_final.setPosition(rectangle_upper.getPosition().x + 7, rectangle_upper.getPosition().y + 10);
-    // cout<<user_cli_input<<'\n'<<final_cli_input;
+    cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+10);
+   // cout<<user_cli_input<<'\n'<<final_cli_input;
 }
 
 void setEditWindowText(Text& edit_text, string& edit_input, bool& show_cursor, RectangleShape& rectangle) {
