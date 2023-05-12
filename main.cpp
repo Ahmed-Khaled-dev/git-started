@@ -134,7 +134,7 @@ gameLevel level[4] = {
     {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit."},
     {1,"Here you have your latest code again!"},
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
-    {"git checkout"}}};
+    {"git checkout", "git checkout"}}};
 
 
 
@@ -590,6 +590,7 @@ int main()
                     else if (intro_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         current_level_screen_index = 0;
+                        player_name_entry = 0;
                         current_screen = levels_screens[0];
                         current_screen = "transition slide";
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
@@ -600,6 +601,7 @@ int main()
                     else if (init_level_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && levels_status[0])
                     {
                         git_init_entered = 0;
+                        player_name_entry = 0;
                         git_commit_entered = 0;
                         git_checkout_entered = 0;
                         current_level_screen_index = 1;
