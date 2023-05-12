@@ -173,6 +173,7 @@ void updateProgressFile(string file_name, bool levels_status[], int levels_count
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color);
 void resetLevls(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode);
 void gitCheckoutLevel (unsigned short int& commits_count,bool& additional_commit_created, bool& git_checkout_entered, string& checked_out_commit, string& commit_num, commit commits[], Texture& commit_textures, Sprite& head);
+void changeSfxVolume (Sound& correct_command_sound, Sound& incorrect_command_sound, Sound& level_up_sound, Sound& pop_commit);
 
 int main()
 {
@@ -1222,6 +1223,7 @@ int main()
                 window.draw(slider[i]);;
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
+            changeSfxVolume(correct_command_sound, incorrect_command_sound, level_up_sound, pop_commit);
         }
         else if (current_screen == "options_in_game")
         {
@@ -1253,6 +1255,7 @@ int main()
                 window.draw(slider[i]);
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
+            changeSfxVolume(correct_command_sound, incorrect_command_sound, level_up_sound, pop_commit);
         }
         else if (current_screen == "levels menu") {
             window.draw(levels_menu_bg);
@@ -1777,4 +1780,10 @@ void gitCheckoutLevel (unsigned short int& commits_count,bool& additional_commit
     addCommit(commits_count, commits, commit_textures, "Second Variable", commit_num, code_2);
     index_of_the_last_commit = commits_count;
     head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
+}
+
+void changeSfxVolume (Sound& correct_command_sound, Sound& incorrect_command_sound, Sound& level_up_sound, Sound& pop_commit){
+    correct_command_sound.setVolume(pop_commit.getVolume());
+    incorrect_command_sound.setVolume(pop_commit.getVolume());
+    level_up_sound.setVolume(pop_commit.getVolume());
 }
