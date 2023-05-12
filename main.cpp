@@ -84,6 +84,13 @@ struct dialogueText
 
 }dialogue_text;
 
+struct optionMenu {
+    Font font;
+    Text text;
+    String option_font_type = "resources/fonts/minecraft_font.ttf";
+    const int short  size = 64;
+};
+
 // For the vectors of pairs
 // If bool = 1 
 // Then it tells the dialogue that it should wait for a command before this dialogue sub-script
@@ -129,12 +136,7 @@ gameLevel level[4] = {
     {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
     {"git checkout"}}};
 
-struct optionMenu {
-    Font font;
-    Text text;
-    String option_font_type = "resources/fonts/minecraft_font.ttf";
-    const int short  size = 64;
-};
+
 
 // Functions declaration
 bool checkInputEquality(string& current_edit_window_input, string& correct_string, bool& edit_window_changed);
@@ -169,6 +171,8 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
 void readProgressFile(string file_name, bool levels_status[], int levels_count);
 void updateProgressFile(string file_name, bool levels_status[], int levels_count);
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color);
+void resetLevls(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode);
+void gitCheckoutLevel (unsigned short int& commits_count,bool& additional_commit_created, bool& git_checkout_entered, string& checked_out_commit, string& commit_num, commit commits[], Texture& commit_textures, Sprite& head);
 
 int main()
 {
@@ -414,12 +418,10 @@ int main()
     graph.setFillColor({ 223, 221, 221 });
     graph.setOutlineThickness(8);
     graph.setOutlineColor(Color::Black);
-    Sprite head, smoke, commit_animation, empty_entity;
-    Texture octacat, commit_textures, smoke_texture, commit_animation_texture, show_commit_message_texture;
+    Sprite head, smoke, empty_entity;
+    Texture octacat, commit_textures, smoke_texture, show_commit_message_texture;
     show_commit_message_texture.loadFromFile("resources/sprites/show_message.png");
     show_commit_message_texture.setSmooth(true);
-    commit_animation_texture.loadFromFile("resources/sprites/commit_animation.png");
-    commit_animation_texture.setSmooth(true);
     octacat.loadFromFile("resources/sprites/octocat.png");
     octacat.setSmooth(true);
     commit_textures.loadFromFile("resources/sprites/commits_sprites.png");
@@ -428,10 +430,6 @@ int main()
     smoke_texture.setSmooth(true);
     smoke.setTexture(smoke_texture);
     graph_commit_msg_shape.setTexture(&show_commit_message_texture);
-    commit_animation.setTexture(commit_animation_texture);
-    commit_animation.setTextureRect(IntRect(0, 0, 0, 0));
-    commit_animation.setPosition(WINDOW_WIDTH / 2.0 + 800, WINDOW_HEIGHT / 3.0);
-    commit_animation.setColor({ 43, 45, 47 });
     head.setTexture(octacat);
     head.setTextureRect(IntRect(0, 0, 200.25, 301));
     head.setScale(0.8, 0.8);
@@ -455,9 +453,9 @@ int main()
     Font graph_commit_msg_font;
     graph_commit_msg_font.loadFromFile("resources/fonts/Roboto-Black.ttf");
     Text graph_commit_msg;
-    graph_commit_msg.setCharacterSize(15);
+    graph_commit_msg.setCharacterSize(20);
     graph_commit_msg.setFont(graph_commit_msg_font);
-    string code_1 = "int i = 5;\ncout << i++ << endl;", code_2 = "int i = 5;\ncout << i++ << endl;\nint res = calc(i)";
+    string code_for_second_commit = "int i = 5;\ncout << i++ << endl;\nint res = calc(i)"; 
 
 
     Event event;
@@ -506,14 +504,7 @@ int main()
                         commands_entered_counter = 0;
                         dialogue_text.script_ended = 0;
                         player_name_entry = 0;
-                        for (int i = 0; i < commits_count; i++)
-                        {
-                            commits[i].sprite = empty_entity;
-                        }
-                        commit_num = "1";
-                        code = " ";
-                        index_of_the_last_commit = 0;
-                        commits_count = 0;
+                        resetLevls(commits, empty_entity, commits_count, commit_num, code, window_collision_mode);
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
@@ -640,25 +631,8 @@ int main()
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("TimeWarper: the Timeline");
                         levels_title.setPosition(610, 30);
-                        commits_count = 0;
-                        git_checkout_entered = 0;
-                        checked_out_commit = "2";
-                        additional_commit_created = 0;
-                        commit_num = "1";
-                        addCommit(commits_count, commits, commit_textures, "First Variable", commit_num, code_1);
-                        commits_count = 1;
-                        addCommit(commits_count, commits, commit_textures, "Second Variable", commit_num, code_2);
-                        index_of_the_last_commit = commits_count;
-                        if (index_of_the_last_commit == 0)
-                            head.setPosition(commits[index_of_the_last_commit].sprite.getPosition().x + 40, commits[0].sprite.getPosition().y - 100);
-                        else if (index_of_the_last_commit == 1) {
-                            head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40), commits[0].sprite.getPosition().y - 100);
-                            additional_commit_created = 1;
-                        }
-                        else {
-                            head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
-                            additional_commit_created = 1;
-                        }
+                        gitCheckoutLevel (commits_count, additional_commit_created, git_checkout_entered, checked_out_commit, commit_num, commits, commit_textures, head);
+                        edit_window_text.setString("int i = 5;\ncout << i++ << endl;\nint res = calc(i)");
                     }
                 }
             }
@@ -1165,7 +1139,11 @@ int main()
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
             showContinuationMessage(continuation_message, edit_window_changed);
             //if (checked_out_commit[0] - 48 == index_of_the_last_commit)
-            setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
+            if (current_level_screen_index == 3)
+                setEditWindowText(edit_window_text, code_for_second_commit, show_edit_window_cursor, edit_window_shape);
+            else
+                 setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
+
             showGraphCommitMessage(commits, mouse_cursor, graph_commit_msg, graph_commit_msg_shape, show_graph_commit_msg);
             window.draw(game_window);
             window.draw(levels_title);
@@ -1217,9 +1195,8 @@ int main()
                     window.draw(commits[i].sprite);
                 if (git_checkout_entered) {
                     edit_window_text.setString(commits[checked_out_commit[0] - 48 - 1].commit_code);
-                    if ((checked_out_commit[0] - 49) == index_of_the_last_commit){
+                    if ((checked_out_commit[0] - '0') == index_of_the_last_commit){
                        git_checkout_entered = 0;
-                       cout << checked_out_commit[0] - 49 << ' ' << index_of_the_last_commit << endl;
                     }
                 }
             }
@@ -1614,7 +1591,7 @@ void showGraphCommitMessage(commit commits[], RectangleShape& mouse_cursor, Text
         graph_commit_msg.setString(commits[index].message);
         graph_commit_msg.setFillColor(Color::White);
         graph_commit_msg.setOrigin(graph_commit_msg.getLocalBounds().width / 2, graph_commit_msg.getLocalBounds().height / 2);
-        graph_commit_msg_shape.setSize(Vector2f(commits[index].message.size() * 15, 40));
+        graph_commit_msg_shape.setSize(Vector2f(commits[index].message.size() * 20, 40));
         graph_commit_msg_shape.setOrigin(graph_commit_msg_shape.getLocalBounds().width / 2, graph_commit_msg_shape.getLocalBounds().height / 2);
         if (index == 0)
             graph_commit_msg_shape.setPosition(commits[index].sprite.getPosition().x + 40, commits[index].sprite.getPosition().y + 130);
@@ -1774,4 +1751,27 @@ void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color col
     rectangle.setScale(scale, scale);
     rectangle.setOutlineThickness(5);
     rectangle.setOutlineColor(outline_color);
-}   
+}
+void resetLevls(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode){
+    for (int i = 0; i < commits_count; i++)
+        commits[i].sprite = empty_entity;
+    commit_num = "1";
+    code = " ";
+    index_of_the_last_commit = 0;
+    commits_count = 0;
+    window_collision_mode = 1;
+}
+
+void gitCheckoutLevel (unsigned short int& commits_count,bool& additional_commit_created, bool& git_checkout_entered, string& checked_out_commit, string& commit_num, commit commits[], Texture& commit_textures, Sprite& head){
+    commits_count = 0;
+    git_checkout_entered = 0;
+    checked_out_commit = "2";
+    additional_commit_created = 0;
+    commit_num = "1";
+    string code_1 = "int i = 5;\ncout << i++ << endl;", code_2 = "int i = 5;\ncout << i++ << endl;\nint res = calc(i)";
+    addCommit(commits_count, commits, commit_textures, "First Variable", commit_num, code_1);
+    commits_count = 1;
+    addCommit(commits_count, commits, commit_textures, "Second Variable", commit_num, code_2);
+    index_of_the_last_commit = commits_count;
+    head.setPosition(commits[index_of_the_last_commit - 1].sprite.getPosition().x + (40 + 125), commits[0].sprite.getPosition().y - 100);
+}
