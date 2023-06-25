@@ -1,12 +1,11 @@
 Let me show you around our time machine. 
-This blue box is our IDE, where you will write the code you want.
-This black box  is the command line window, where you will write the suitable “GIT” commands for GIT to execute, also known as the “Console”.
-Here is your git graph, it is a diagram that shows how the commands are translated and makes it easier to understand how they work.
-After showing you around, let’s start our adventure by telling you what the word “command” means in “GIT”. 
-“Commands” are a set of instructions, each one of them is responsible for making a certain job. 
+This blue box is our IDE (like visual studio), where you will write the code you want.
+The black box you see on your screen (the console) is your tool to tell Git what to do. but be aware ! GIT will not obey your orders unless you communicate to it in a special language (like programming languages).
+After showing you around, let’s start our adventure by telling you what the word order or “command” means to “GIT”. 
+“Commands” are a set of instructions , each one of them is a trigger that makes GIT do a certain job. 
 We will start with our first command “Git init”. 
 
-Git init is responsible for watching your current folder which we call a git repository. All of our git commands won’t work unless we initialize a repository. That’s why “Git init” has to be the first command to be executed. 
+Git init enforms GIT to start watching your current folder which we call a git repository. All of our git commands won’t work unless we initialize a repository.since GIT won't know where should it carry on your orders That’s why “Git init” has to be the first command to be executed. 
 Let’s try executing it together. Please type “git init” in the command line (the black box) -c
 (head appears)
 Would you look at that!! That’s our head. Does it remind you of something?
