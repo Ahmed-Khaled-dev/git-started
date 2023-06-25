@@ -1,0 +1,13 @@
+Look at all the commits you have; you must be proud of yourself!
+Now as mentioned before our friend (the Head) is looking at the latest commit that we created.
+But now you need to look at a previous checkpoint of your code, what do we need to do?
+We just need to move the Head to the commit we want, it's that simple!
+Each commit has a specified number to show it, this number is called "commit hash"
+We will use a new command which is (git checkout <commit hash>)
+Now, we want to checkout to our first commit.
+Write in the console: "git checkout" and the "hash" of that commit. (-c)
+As you can see in the edit menu, 
+Your code has changed to what you first wrote in the previous level!
+Now let's checkout again to our last commit.
+Here you have your latest code again!
+The "git checkout" command has a lot of benefits that you will discover more into the next levels.
