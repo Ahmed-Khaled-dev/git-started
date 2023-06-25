@@ -253,6 +253,13 @@ int main()
     aim_title_text.setStyle(Text::Bold | Text::Underlined);
     Text aim_description_text("We aim to help new people/students who are looking to learn git\nto have the chance to do it while playing a game\nand having fun at the same time.", arial , 32);
     aim_description_text.setPosition(200,540);
+    RectangleShape credits_menu_close_button(Vector2f(215, 75)),credits_menu_back_button(Vector2f(215, 75));
+    setButtonProperties(credits_menu_close_button, 255, 0, 0, 1705, 180);
+    setButtonProperties(credits_menu_back_button,46, 139, 87, 1705, 80);
+    Text credits_menu_close_text("Close", buttons_font, 33),credits_menu_back_text("Back", buttons_font, 33);
+    setButtonTextProperties(credits_menu_close_button, credits_menu_close_text, Color::Black);
+    setButtonTextProperties(credits_menu_back_button, credits_menu_back_text, Color::Black);
+
     // Transition slide
     Texture transition_slide;
     transition_slide.loadFromFile("resources/sprites/Transition background v1.0.png");
@@ -668,7 +675,19 @@ int main()
                         edit_window_text.setString("int i = 5;\ncout << i++ << endl;\nint res = calc(i)");
                     }
                 }
-            }
+            else if (current_screen == "credits menu")
+                {
+                    if (credits_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                        {
+                            current_screen = "close";
+                        }
+                    if (credits_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                        {
+                            current_screen = "levels menu";
+                        }
+                
+                } 
+        }         
             if (event.type == Event::TextEntered)
             {
                 if(player_name_entry == 1 && player_name.size() <= PLAYER_NAME_MAX_CHARS && current_screen == "transition slide")
@@ -888,6 +907,14 @@ int main()
                 else
                 {
                     changeButtonScaleAndColor(main_menu_close_button, 1.0f, Color::Red, Color::Black);
+                } 
+                if (credits_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    changeButtonScaleAndColor(credits_menu_close_button, 0.9f, Color(139, 0, 0), Color::Black);
+                }
+                else
+                {
+                    changeButtonScaleAndColor(credits_menu_close_button, 1.0f, Color::Red, Color::Black);
                 }
                 if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -918,6 +945,14 @@ int main()
                 {
                     game_window_back_button.setFillColor(Color(121,101,190));
                     game_window_back_button.setScale(1.0f, 1.0f);
+                }
+                if (credits_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    changeButtonScaleAndColor(credits_menu_back_button, 0.9f, Color(153, 153, 0), Color::Black);
+                }
+                else
+                {
+                    changeButtonScaleAndColor(credits_menu_back_button, 1.0f, Color::Yellow, Color::Black);
                 }
                 if (levels_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -1307,6 +1342,10 @@ int main()
             window.draw(quote_text);
             window.draw(aim_title_text);
             window.draw(aim_description_text);
+            window.draw(credits_menu_close_button);
+            window.draw(credits_menu_close_text);
+            window.draw(credits_menu_back_button);
+            window.draw(credits_menu_back_text);
         }
         window.setView(view);
         window.display();
