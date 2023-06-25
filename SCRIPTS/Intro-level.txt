@@ -1,0 +1,11 @@
+Please enter your name: 
+Announcer of competition: and last place goes to (player's name)
+You are devastated but you saw it coming because your team's code was full of errors and was disorganized
+suddenly someone appears in front of you, they look similar to you but older
+(we could put the background a time machine)
+The mentor: Hello (player's name) I finally succeeded in going back in time to help you learn from (your) my mistakes. I am you but from the future. I remember this day clearly. I was filled with disappointment because of my failure but fear not, I am here to introduce you to a system that changed my life.
+I am talking about “GIT” 
+“GIT” is a free version control system that tracks all versions of your code. It is created for the sake of aiding us in writing our code. It has useful commands that help us in working with others quickly and efficiently.
+I will take you back with my time machine to the start of the contest and walk you through all the GIT commands.I will try my best to teach you everything about GIT so that you can start your project again with GIT and have a shot in winning this contest 
+Are you ready to Git started?
+
