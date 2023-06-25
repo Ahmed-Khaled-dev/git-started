@@ -1204,7 +1204,7 @@ int main()
                 if (git_checkout_entered) {
                     edit_window_text.setString(commits[checked_out_commit[0] - 48 - 1].commit_code);
                     if ((checked_out_commit[0] - '0') == index_of_the_last_commit){
-                       git_checkout_entered = 0;
+                      // git_checkout_entered = 0;
                     }
                 }
             }
