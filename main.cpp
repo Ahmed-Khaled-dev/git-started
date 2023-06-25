@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
+#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -234,11 +235,15 @@ int main()
     level_up_sound.setVolume(300.0f);
 
     //credits menu
-    Texture credits_menu;
+    Texture credits_menu,git_hub_logo_texture;
     credits_menu.loadFromFile("resources/sprites/Credit menu v1.0 7-May-2023.png");
-    Sprite credits_menu_bg;
+    git_hub_logo_texture.loadFromFile("resources/sprites/git hub logo.png");
+    Sprite credits_menu_bg,git_hub_logo;
     credits_menu_bg.setTexture(credits_menu);
     credits_menu_bg.setScale(0.24f, 0.24f); 
+    git_hub_logo.setTexture(git_hub_logo_texture);
+    git_hub_logo.setPosition(900,120);
+    git_hub_logo.setScale(0.5f,0.5f); 
     Text credits_to_text("Credits to:", cli_font , 37);
     credits_to_text.setPosition(200, 100);
     credits_to_text.setStyle(Text::Bold | Text::Underlined);
@@ -680,6 +685,12 @@ int main()
                     if (credits_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                         {
                             current_screen = "close";
+                        }
+                    if (git_hub_logo.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                        {
+                            string url = "https://github.com/Ahmed-Khaled-dev/git-started";
+                            string command = "start " + url;
+                            system(command.c_str());
                         }
                     if (credits_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                         {
@@ -1346,6 +1357,7 @@ int main()
             window.draw(credits_menu_close_text);
             window.draw(credits_menu_back_button);
             window.draw(credits_menu_back_text);
+            window.draw(git_hub_logo);
         }
         window.setView(view);
         window.display();
