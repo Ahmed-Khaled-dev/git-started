@@ -27,7 +27,8 @@
     {0,"Since he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
     {0,"It's your turn to write another piece of code and commit your changes!\nTry adding another variable in \"main.cpp\" edit window."},
     {2,"Commit your changes with the message that describes it best!"},
-    {1,"Notice that the Head moves onto your new commit."}},
+    {1,"Notice that the Head moves onto your new commit."},
+    {0,"And now we will start discovering how these commits come in handy!"}},
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
     {0,"Look at all the commits you have; you must be proud of yourself!"}, {0, "Now as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},

@@ -99,43 +99,43 @@ struct optionMenu {
 gameLevel level[4] = {
     /*level_0 (intro)*/{{
     {0 ,""},
-    {0 ,"* Suddenly...*\n*someone appears in front of you, they look similar to you but older *"},
+    {0 ,"* Suddenly...*"},{0,"*someone appears in front of you, they look similar to you but older *"},
     {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
-    {0 ,"I am you but from the future. I remember this day clearly. I was\nfilled with disappointment because of my failure, but fear not,\nI am here to introduce you to a system that changed my life."}, 
-    {0 ,"I am talking about \"GIT\" it is a free version control system that tracks\nall versions of your code.\nIt is created for the sake of aiding us in writing our code."},
-    {0, "It has useful commands that help us in working with others\nquickly and efficiently."},
+    {0 ,"I am you but from the future. I remember this day clearly.\nI was filled with disappointment because of my failure"},{0,"but fear not, i am here to introduce you to a system that changed my life."},
+    {0 ,"I am talking about \"GIT\"\nIt is a free version control system that tracks all versions of your code."},
+    {0, "It is created for the sake of aiding us in writing our code.\nIt has useful commands that help us in working with others\nquickly and efficiently."},
     {0 ,"I will take you back with my time machine to the start\nof the contest and walk you through all the GIT commands."},
-    {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest Are you ready to Git started?"}}},
+    {0 ,"I will try my best to teach you everything about GIT so that you\ncan start your project again with GIT and have a shot\nin winning this contest"},{0,"Are you ready to Git started?"}}},
     /*level_1 (git init)*/{{
-    {0,"Let me show you around our time machine. This blue box is\nour IDE (like visual studio),where you will be able to write\ncode.The black box you see on your screen (the console) is your tool\nto tell Git what to do. but be aware!"},
+    {0,"Let me show you around our time machine.\nThis blue box is our IDE (like visual studio), where you will be able to\nwrite code."},{0,"The black box you see on your screen (the console) is your tool\nto tell Git what to do."},{0,"but be aware!"},
     {0,"GIT will not understand what you wish to do unless you communicate\nwith it in a special syntax (like programming languages)."},
-    {0,"After showing you around, let's start our adventure by telling\nyou what the word \"command\" means in \"GIT\". \"Commands\"\nare a set of instructions, each one of them is responsible for\nmaking a certain job. We will start with our first command \"Git init\"."},
-    {0,"Git init tells GIT to start watching your current folder which we call\na git repository (repo for short). You won't be able to\ntell git anything unless you initialize a repository. That's why \"Git init\"\nhas to be the first command to be executed."},
-    {0,"Let's try executing it together. Please type:\n\"git init\" in the command line (the black box)"},
-    {1,"Would you look at that!! That's Git's head (Now git has\nits eyes on you), It will accompany you throughout the game. You\nwill get to know more about the \"GIT head\" in the upcoming levels"}}
+    {0,"After showing you around, let's start our adventure by telling\nyou what the word \"command\" means in \"GIT\"."},{0,"\"Commands\" are a set of instructions, each one of them is responsible for\nmaking a certain job."},{0,"We will start with our first command \"Git init\"."},
+    {0,"Git init tells GIT to start watching your current folder which we call\na git repository (repo for short)."},{0," You won't be able to tell git anything unless you initialize a repository.\nThat's why \"Git init\" has to be the first command to be executed."},
+    {0,"Let's try executing it together.\nPlease type:  \"git init\"  in the command line (the black box)"},
+    {1,"Would you look at that!! That's Git's head \n(Now git has its eyes on you)"},{0, "It will accompany you throughout the game. You will get to know more\nabout the \"GIT head\" in the upcoming levels"}}
     ,{"git init"}},
     /*level_2 (git commit)*/{{
-    {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code. Throughout each big step, you\nwill need to keep track of your history."},
+    {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code."} , {0, "Throughout each big step, you will need to keep track of your history."},
     {0,"Imagine this; you are working on a huge project with your\nteam, One of your team mates messed up a part of their code,\nthey can't remember what part got messed up, Neither can they go back\nto the code that worked fine, Scary to imagine right?"},
-    {0,"That's where \"commits\" come in hand. \"commits\" are like\ncheckpoints in games but for your code. We will use the\n\"git commit <commit_message>\" command."},
+    {0,"That's where \"commits\" come in hand. \"commits\" are like checkpoints\nin games but for your code. We will use the\n\"git commit <commit_message>\" command."},
     {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need to write code using C++"},
     {0,"For example, try writing: \"int i = 5;\""},
-    {2,"Now you need to commit your changes to mark this\ncheckpoint! In the command line write: \"git commit\""},
-    {1,"Congratulations! you have just written your first commit.\nThis is your git graph, it is a diagram that shows how the commands\nare translated and makes it easier to understand how they work.The\ncircle that just appeared represents our commit.As you can see, our Head\n(Octocat) has appeared above our commit."},
-    {0,"He will be standing on the latest commit we create.\nSince he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
-    {0,"It's your turn to write another piece of code and commit\nyour changes! Try adding another variable in \"main.cpp\"\nedit window."},
-    {2,"Commit your changes with the message\nthat describes it best!"},
-    {1,"Notice that the Head moves onto your new commit."}},
+    {2,"Now you need to commit your changes to mark this checkpoint!\nIn the command line write: \"git commit\""},
+    {1,"Congratulations! you have just written your first commit."}, { 0, "This is your git graph, it is a diagram that shows how the commands\nare translated and makes it easier to understand how they work."},
+    {0,"The circle that just appeared represents our commit. As you can see,\nour Head (Octocat) has appeared above our commit.\nHe will be standing on the latest commit we create."},
+    {0,"Since he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
+    {0,"It's your turn to write another piece of code and commit your changes!\nTry adding another variable in \"main.cpp\" edit window."},
+    {2,"Commit your changes with the message that describes it best!"},
+    {1,"Notice that the Head moves onto your new commit."},
+    {0,"And now we will start discovering how these commits come in handy!"}},
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
-    {0,"Look at all the commits you have; you must be proud of yourself!\nNow as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
-    {0,"But now you need to look at a previous checkpoint\nof your code, what do we need to do?\nWe need to move the Head to the commit we want.Each commit\nhas a specified number to show it, this number is called \"commit hash\""},
-    {0,"We will use a new command which is \"git checkout <commit hash>\".\nNow, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
-    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level! Now let's checkout again to our\nlast commit."},
-    {1,"Here you have your latest code again!"},
-    {0,"The \"git checkout\" command has a lot of benefits\nthat you will discover more into the next levels."}},
-    {"git checkout", "git checkout"}}};
-
+    {0,"Look at all the commits you have; you must be proud of yourself!"}, {0, "Now as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
+    {0,"But now you need to look at a previous checkpoint of your code,\nwhat do we need to do?"},{0,"We need to move the Head to the commit we want. Each commit\nhas a specified number to show it, this number is called \"commit hash\""},
+    {0,"We will use a new command which is \"git checkout <commit hash>\"."},{0,"Now, we want to checkout to our first commit. Write in the console:\n\"git checkout\" and the \"hash\"of that commit."},
+    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level!"}, {0,"Now let's checkout again to our\nlast commit."}, {1,"Here you have your latest code again!"},
+    {0,"The \"git checkout\" command has a lot of benefits that you will\ndiscover more into the next levels."}},
+    {"git checkout" , "git checkout"}}};
 
 
 // Functions declaration
