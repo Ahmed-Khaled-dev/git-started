@@ -6,5 +6,8 @@ Each commit has a specified number to show it, this number is called "commit has
 We will use a new command which is (git checkout <commit hash>)
 Now, we want to checkout to our first commit.
 Write in the console: "git checkout" and the "hash" of that commit.  (Wait for user input).
-Great job! Now let's checkout again to our last commit.
+As you can see in the edit menu, 
+Your code has changed to what you first wrote in the previous level!
+Now let's checkout again to our last commit.
+Here you have your latest code again!
 The "git checkout" command has a lot of benefits that you will discover more into the next levels.
