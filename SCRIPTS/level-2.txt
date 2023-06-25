@@ -1,0 +1,12 @@
+Now that you've created your first repository, you'll start by writing your code.
+Throughout each step, you will need to keep track of your history.
+That's where "commits" come in hand.
+"commits" are like checkpoints of your code.
+We will use the "git commit -m <commit_message>" command.
+But first, let's write some code together!
+In the "main.cpp" edit window, we need to write code using C++
+For example, try writing: "int i = 5;"
+Now you need to commit your changes.
+In the command line write: git commit -m "First Variable!"
+Congratulations! you have just written your first commit.
+It's your turn to write another piece of code and commit your changes!
