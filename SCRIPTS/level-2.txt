@@ -9,4 +9,7 @@ For example, try writing: "int i = 5;"
 Now you need to commit your changes.
 In the command line write: git commit -m "First Variable!"
 Congratulations! you have just written your first commit.
+As you can see, our Head (Octocat) has appeared above our commit.
+He will be standing on the commit that we're currently looking on.
 It's your turn to write another piece of code and commit your changes!
+Notice that the Head moves onto your new commit.
