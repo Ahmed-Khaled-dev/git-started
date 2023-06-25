@@ -19,3 +19,4 @@ It's your turn to write another piece of code and commit your changes!
 Try adding another variable in "main.cpp" edit window. (-e)
 Commit your changes with the message that describes it best! (-c) 
 Notice that the Head moves onto your new commit.
+Now it is time for you to try out for yourself, good luck! (leave option for user to try alone or skip to the next level)
