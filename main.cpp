@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
+#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -97,7 +98,7 @@ struct optionMenu {
 // If bool = 2
 // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
 gameLevel level[4] = {
-    /*level_0 (intro)*/{{
+        /*level_0 (intro)*/{{
     {0 ,""},
     {0 ,"* Suddenly...*"},{0,"*someone appears in front of you, they look similar to you but older *"},
     {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
@@ -204,6 +205,8 @@ int main()
     if (!arial.loadFromFile("resources/fonts/arial.ttf")) {
         cout << "Error has happened while loading arial font" << endl;
     }
+    Font quote;
+    quote.loadFromFile("resources/fonts/PressStart2P-Regular.ttf");
 
     // View
     View view;
@@ -230,6 +233,39 @@ int main()
     Sound level_up_sound;
     level_up_sound.setBuffer(soundbuffer_3);
     level_up_sound.setVolume(300.0f);
+
+    // Credits menu
+    Texture credits_menu,git_hub_logo_texture;
+    credits_menu.loadFromFile("resources/sprites/Credit menu v1.0 7-May-2023.png");
+    git_hub_logo_texture.loadFromFile("resources/sprites/git hub logo.png");
+    Sprite credits_menu_bg,git_hub_logo;
+    credits_menu_bg.setTexture(credits_menu);
+    credits_menu_bg.setScale(0.24f, 0.24f); 
+    git_hub_logo_texture.setSmooth(true);
+    git_hub_logo.setTexture(git_hub_logo_texture);
+    git_hub_logo.setOrigin(git_hub_logo.getGlobalBounds().width/2,git_hub_logo.getGlobalBounds().height/2);
+    git_hub_logo.setPosition(1240,132);
+    git_hub_logo.setScale(0.5f,0.5f); 
+    Text credits_to_text("Credits to:", cli_font , 37);
+    credits_to_text.setPosition(200, 100);
+    credits_to_text.setStyle(Text::Bold | Text::Underlined);
+    Text contributers_text("Abdallah Mohamed\nAhmed Khaled Yousry (Team leader)\nAhmed Khaled Eissa\nHaneen Hany\nRahma Khattab\nRehab Khaled\n", game_title_font , 45);
+    contributers_text.setStyle(Text::Italic);
+    contributers_text.setPosition(200, 140);
+    Text quote_text("\"Always walk through life as if\n\tyou have something new\n\tto learn and you will.\"", quote , 32);
+    quote_text.setStyle(Text::Bold | Text::Italic);
+    quote_text.setPosition(170, 730);
+    Text aim_title_text("Our Aim:", cli_font , 37);
+    aim_title_text.setPosition(200,470);
+    aim_title_text.setStyle(Text::Bold | Text::Underlined);
+    Text aim_description_text("We aim to help new people/students who are looking to learn git\nto have the chance to do it while playing a game\nand having fun at the same time.", arial , 32);
+    aim_description_text.setPosition(200,540);
+    RectangleShape credits_menu_close_button(Vector2f(215, 75)),credits_menu_back_button(Vector2f(215, 75));
+    setButtonProperties(credits_menu_close_button, 255, 0, 0, 1705, 180);
+    setButtonProperties(credits_menu_back_button,46, 139, 87, 1705, 80);
+    Text credits_menu_close_text("Close", buttons_font, 33),credits_menu_back_text("Back", buttons_font, 33);
+    setButtonTextProperties(credits_menu_close_button, credits_menu_close_text, Color::Black);
+    setButtonTextProperties(credits_menu_back_button, credits_menu_back_text, Color::Black);
 
     // Transition slide
     Texture transition_slide;
@@ -516,8 +552,12 @@ int main()
                         current_level_screen_index++;
                         dialogue_text.script_ended = 0;
                         current_screen = levels_screens[current_level_screen_index];
-                        //reset the dialogues in the array of structs
                         current_screen = "transition slide";
+                        if(current_level_screen_index>=4){
+
+                        current_screen = "credits menu";
+                        }
+                        //reset the dialogues in the array of structs
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
                         player_name_entry = 0;
@@ -643,7 +683,25 @@ int main()
                         edit_window_text.setString("int i = 5;\ncout << i++ << endl;\nint res = calc(i)");
                     }
                 }
-            }
+            else if (current_screen == "credits menu")
+                {
+                    if (credits_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                        {
+                            current_screen = "close";
+                        }
+                    if (git_hub_logo.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                        {
+                            string url = "https://github.com/Ahmed-Khaled-dev/git-started";
+                            string command = "start " + url;
+                            system(command.c_str());
+                        }
+                    if (credits_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                        {
+                            current_screen = "levels menu";
+                        }
+                
+                } 
+        }         
             if (event.type == Event::TextEntered)
             {
                 if(player_name_entry == 1 && player_name.size() <= PLAYER_NAME_MAX_CHARS && current_screen == "transition slide")
@@ -863,6 +921,22 @@ int main()
                 else
                 {
                     changeButtonScaleAndColor(main_menu_close_button, 1.0f, Color::Red, Color::Black);
+                } 
+                if (credits_menu_close_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    changeButtonScaleAndColor(credits_menu_close_button, 0.9f, Color(139, 0, 0), Color::Black);
+                }
+                else
+                {
+                    changeButtonScaleAndColor(credits_menu_close_button, 1.0f, Color::Red, Color::Black);
+                } 
+                if (git_hub_logo.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                        git_hub_logo.setScale(0.6f,0.6f);
+                }
+                else
+                {
+                    git_hub_logo.setScale(0.5f,0.5f);
                 }
                 if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -893,6 +967,14 @@ int main()
                 {
                     game_window_back_button.setFillColor(Color(121,101,190));
                     game_window_back_button.setScale(1.0f, 1.0f);
+                }
+                if (credits_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    changeButtonScaleAndColor(credits_menu_back_button, 0.9f, Color(153, 153, 0), Color::Black);
+                }
+                else
+                {
+                    changeButtonScaleAndColor(credits_menu_back_button, 1.0f, Color::Yellow, Color::Black);
                 }
                 if (levels_menu_back_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -1274,6 +1356,19 @@ int main()
             window.draw(init_level_text);
             window.draw(commit_level_text);
             window.draw(checkout_level_text);
+        }
+        else if(current_screen == "credits menu"){
+            window.draw(credits_menu_bg);
+            window.draw(credits_to_text);
+            window.draw(contributers_text);
+            window.draw(quote_text);
+            window.draw(aim_title_text);
+            window.draw(aim_description_text);
+            window.draw(credits_menu_close_button);
+            window.draw(credits_menu_close_text);
+            window.draw(credits_menu_back_button);
+            window.draw(credits_menu_back_text);
+            window.draw(git_hub_logo);
         }
         window.setView(view);
         window.display();
