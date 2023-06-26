@@ -234,7 +234,7 @@ int main()
     level_up_sound.setBuffer(soundbuffer_3);
     level_up_sound.setVolume(300.0f);
 
-    //credits menu
+    // Credits menu
     Texture credits_menu,git_hub_logo_texture;
     credits_menu.loadFromFile("resources/sprites/Credit menu v1.0 7-May-2023.png");
     git_hub_logo_texture.loadFromFile("resources/sprites/git hub logo.png");
@@ -244,12 +244,12 @@ int main()
     git_hub_logo_texture.setSmooth(true);
     git_hub_logo.setTexture(git_hub_logo_texture);
     git_hub_logo.setOrigin(git_hub_logo.getGlobalBounds().width/2,git_hub_logo.getGlobalBounds().height/2);
-    git_hub_logo.setPosition(900,180);
+    git_hub_logo.setPosition(1240,132);
     git_hub_logo.setScale(0.5f,0.5f); 
     Text credits_to_text("Credits to:", cli_font , 37);
     credits_to_text.setPosition(200, 100);
     credits_to_text.setStyle(Text::Bold | Text::Underlined);
-    Text contributers_text("Haneen Hany\nRahma Khattab\nRehab Khaled\nAbdallah Mohamed\nAhmed Khaled\nAhmed Khaled\n", game_title_font , 45);
+    Text contributers_text("Abdallah Mohamed\nAhmed Khaled Yousry (Team leader)\nAhmed Khaled Eissa\nHaneen Hany\nRahma Khattab\nRehab Khaled\n", game_title_font , 45);
     contributers_text.setStyle(Text::Italic);
     contributers_text.setPosition(200, 140);
     Text quote_text("\"Always walk through life as if\n\tyou have something new\n\tto learn and you will.\"", quote , 32);
