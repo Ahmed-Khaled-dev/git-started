@@ -51,7 +51,7 @@ struct dialogueBox {
     string title_content = "Mentor";
     double title_size = 32;
     string image_path = "resources/sprites/new-mentor-edited.png";
-    string font_type = "resources/fonts/Roboto-Black.ttf";
+    string font_type = "resources/fonts/Righteous-Regular.ttf";
 }dialogue_box;
 
 struct continuationMessage
@@ -346,7 +346,7 @@ int main()
     RectangleShape edit_window_shape;
     string current_edit_window_input = "type here", old_edit_window_input = "type here";
     const short int EDIT_WINDOW_MAX_CHARS = 500;
-    Text edit_window_text(current_edit_window_input, cli_font);
+    Text edit_window_text(current_edit_window_input, buttons_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
     bool edit_window_selected = 0, show_edit_window_cursor = 0, edit_window_changed = 0;
@@ -383,7 +383,7 @@ int main()
     setButtonTextProperties(game_window_options_button, game_window_options_text, Color::Black);
     // Main.cpp Rectangle 
     RectangleShape edit_window_title(Vector2f(340, 45));
-    Text edit_window_title_text("Main.cpp", cli_font, 35);
+    Text edit_window_title_text("Main.cpp", buttons_font , 35);
     setButtonProperties(edit_window_title, 110, 164, 198, 1705, 173);
     setButtonTextProperties(edit_window_title, edit_window_title_text, Color::Black);
     edit_window_title.setOutlineColor(Color ::White);
@@ -1388,7 +1388,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setString(dialogue_box.title_content);
     dialogue_box.title.setFont(dialogue_box.font);
     dialogue_box.title.setFillColor(Color::White);
-    dialogue_box.title.setStyle(Text::Italic);
+    //dialogue_box.title.setStyle(Text::Italic);
     dialogue_box.title.setCharacterSize(dialogue_box.title_size);
     dialogue_box.title.setPosition(460, 710);
 }
