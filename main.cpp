@@ -171,7 +171,7 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
 void readProgressFile(string file_name, bool levels_status[], int levels_count);
 void updateProgressFile(string file_name, bool levels_status[], int levels_count);
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color);
-void resetLevls(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode);
+void resetLevels(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode);
 void gitCheckoutLevel (unsigned short int& commits_count,bool& additional_commit_created, bool& git_checkout_entered, string& checked_out_commit, string& commit_num, commit commits[], Texture& commit_textures, Sprite& head);
 void changeSfxVolume (Sound& correct_command_sound, Sound& incorrect_command_sound, Sound& level_up_sound, Sound& pop_commit);
 
@@ -437,7 +437,7 @@ int main()
     head.setOrigin(100.125, 150.5);
     head.setPosition(graph.getGlobalBounds().left + 100, 300);
     bool additional_commit_created = 0;
-    bool window_collision_mode = 1, enterd_checkout_level = 0;
+    bool window_collision_mode = 1, entered_checkout_level = 0;
     bool should_create_smoke = 0;
     bool show_graph_commit_msg = 0;
     bool git_init_entered = 0, git_add_entered = 0, git_commit_entered = 0, git_checkout_entered = 0, animate_commit = 0;
@@ -507,8 +507,8 @@ int main()
                         commands_entered_counter = 0;
                         dialogue_text.script_ended = 0;
                         player_name_entry = 0;
-                        resetLevls(commits, empty_entity, commits_count, commit_num, code, window_collision_mode);
-                        enterd_checkout_level = 0;
+                        resetLevels(commits, empty_entity, commits_count, commit_num, code, window_collision_mode);
+                        entered_checkout_level = 0;
                     }
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
@@ -521,7 +521,7 @@ int main()
                         dialogue_text.script_text.setString("");
                         continuation_message.sub_script_ended = 1;
                         player_name_entry = 0;
-                        enterd_checkout_level = 0;
+                        entered_checkout_level = 0;
                         dialogue_text.current_script_index = 0;
                         user_cli_input.clear();
                         final_cli_input.clear();
@@ -638,7 +638,7 @@ int main()
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
                         levels_title.setString("TimeWarper: the Timeline");
                         levels_title.setPosition(610, 30);
-                        enterd_checkout_level = 1;
+                        entered_checkout_level = 1;
                         gitCheckoutLevel (commits_count, additional_commit_created, git_checkout_entered, checked_out_commit, commit_num, commits, commit_textures, head);
                         edit_window_text.setString("int i = 5;\ncout << i++ << endl;\nint res = calc(i)");
                     }
@@ -1147,7 +1147,7 @@ int main()
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
             showContinuationMessage(continuation_message, edit_window_changed);
             //if (checked_out_commit[0] - 48 == index_of_the_last_commit)
-            if (current_level_screen_index == 3 && enterd_checkout_level)
+            if (current_level_screen_index == 3 && entered_checkout_level)
                 setEditWindowText(edit_window_text, code_for_second_commit, show_edit_window_cursor, edit_window_shape);
             else
                  setEditWindowText(edit_window_text, current_edit_window_input, show_edit_window_cursor, edit_window_shape);
@@ -1758,7 +1758,7 @@ void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color col
     rectangle.setOutlineThickness(5);
     rectangle.setOutlineColor(outline_color);
 }
-void resetLevls(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode){
+void resetLevels(commit commits[], Sprite& empty_entity, unsigned short int& commits_count, string& commit_num, string& code, bool& window_collision_mode){
     for (int i = 0; i < commits_count; i++)
         commits[i].sprite = empty_entity;
     commit_num = "1";
