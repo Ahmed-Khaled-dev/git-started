@@ -336,7 +336,7 @@ int main()
     RectangleShape cli_output_shape, cli_input_shape;
     int commands_entered_counter = 0;
     string user_cli_input, final_cli_input, commit_message, checkout_id;
-    Text cli_text("", cli_font,35), cli_text_final("", cli_font);
+    Text cli_text("", cli_font,32), cli_text_final("", cli_font);
     string cli_commit_msg_request = " # Please enter the \ncommit message for\nyour changes in the\ncommand line.";
     string cli_checkout_message_rqst = "Please enter number of\nthe commit you want \nto checkout to";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0,green_command;
@@ -346,7 +346,7 @@ int main()
     RectangleShape edit_window_shape;
     string current_edit_window_input = "type here", old_edit_window_input = "type here";
     const short int EDIT_WINDOW_MAX_CHARS = 500;
-    Text edit_window_text(current_edit_window_input, buttons_font);
+    Text edit_window_text(current_edit_window_input, cli_font);
     edit_window_text.setCharacterSize(22);
     Time cursor_time;
     bool edit_window_selected = 0, show_edit_window_cursor = 0, edit_window_changed = 0;
