@@ -233,6 +233,22 @@ int main()
     Sound level_up_sound;
     level_up_sound.setBuffer(soundbuffer_3);
     level_up_sound.setVolume(300.0f);
+    
+    //evaluation
+    Texture evaluation_bg_texture[5];
+    evaluation_bg_texture[0].loadFromFile("resources/sprites/evaluation_0.png");
+    evaluation_bg_texture[1].loadFromFile("resources/sprites/evaluation_1.png");
+    evaluation_bg_texture[2].loadFromFile("resources/sprites/evaluation_2.png");
+    evaluation_bg_texture[3].loadFromFile("resources/sprites/evaluation_3.png");
+    evaluation_bg_texture[4].loadFromFile("resources/sprites/evaluation_4.png");
+    Sprite evaluation_bg,progress_sprite;
+    evaluation_bg.setTexture(evaluation_bg_texture[0]);
+    evaluation_bg.setOrigin(400, 300);
+    evaluation_bg.setPosition(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
+    RectangleShape evaluation_button(Vector2f(380, 130));
+    Text evaluation_text("Evaluation", buttons_font, 50);
+    setButtonProperties(evaluation_button, 97, 44, 148, 969, 100);
+    setButtonTextProperties(evaluation_button, evaluation_text, Color::Black);
 
     // Credits menu
     Texture credits_menu,git_hub_logo_texture;
@@ -274,7 +290,7 @@ int main()
     transition_slide_bg.setTexture(transition_slide);
     transition_slide_bg.setScale(0.999f, 0.9999f);
     // Transition array of strings (could be put in the levels struct)
-    string transition_level_texts[10] = { "Please enter your name:","The Git Beginning!\n(git init) \n\n\npress space to continue ","Committing to Success:\nCrafting Meaningful\nCommits \n(git commit) \n\npress space to continue","TimeWarper:\nNavigating the Timeline\n(git checkout)  \npress space to continue","thank you" };
+    string transition_level_texts[10] = { "Please enter your name:","The Git Beginning!\n(git init) \n\n\npress space to continue ","Committing to Success:\nCrafting Meaningful\nCommits \n(git commit) \n\npress space to continue","TimeWarper:\nNavigating the Timeline\n(git checkout)  \npress space to continue" };
     Text transition_text(transition_level_texts[current_level_screen_index], game_title_font, 29);
     transition_text.setPosition(1310, 700);
     transition_text.setFillColor(Color::White);
@@ -525,6 +541,8 @@ int main()
             {
                 current_screen = levels_screens[current_level_screen_index];
                 transition_text.setString(transition_level_texts[current_level_screen_index+1]);
+                evaluation_bg.setTexture(evaluation_bg_texture[current_level_screen_index+1]);
+
             }
             // Mouse click CLI
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -554,8 +572,8 @@ int main()
                         current_screen = levels_screens[current_level_screen_index];
                         current_screen = "transition slide";
                         if(current_level_screen_index>=4){
-
-                        current_screen = "credits menu";
+                            
+                        current_screen = "evaluation menu";
                         }
                         //reset the dialogues in the array of structs
                         dialogue_text.script_text.setString("");
@@ -637,6 +655,7 @@ int main()
                         current_screen = "transition slide";
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        evaluation_bg.setTexture(evaluation_bg_texture[current_level_screen_index]);
                         levels_title.setString("Introducing Git");
                         levels_title.setPosition(725, 30);
                     }
@@ -651,6 +670,7 @@ int main()
                         current_screen = "transition slide";
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        evaluation_bg.setTexture(evaluation_bg_texture[current_level_screen_index]);
                         levels_title.setString("The Git Beginning!");
                         levels_title.setPosition(690, 30);
                     }
@@ -665,6 +685,7 @@ int main()
                         player_name_entry = 0;
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        evaluation_bg.setTexture(evaluation_bg_texture[current_level_screen_index]);
                         levels_title.setString("Committing to Success");
                         levels_title.setPosition(640, 30);
                     }
@@ -676,6 +697,7 @@ int main()
                         current_screen = "transition slide";
                         current_edit_window_input = "type here", old_edit_window_input = "type here";
                         transition_text.setString(transition_level_texts[current_level_screen_index]);
+                        evaluation_bg.setTexture(evaluation_bg_texture[current_level_screen_index]);
                         levels_title.setString("TimeWarper: the Timeline");
                         levels_title.setPosition(610, 30);
                         entered_checkout_level = 1;
@@ -701,6 +723,13 @@ int main()
                         }
                 
                 } 
+            else if(current_screen == "transition slide")
+            {
+                if (evaluation_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        current_screen = "evaluation menu";
+                    }
+            }
         }         
             if (event.type == Event::TextEntered)
             {
@@ -767,6 +796,7 @@ int main()
                         current_screen = levels_screens[current_level_screen_index];
                         player_name_entry = 0;
                         transition_text.setString(transition_level_texts[current_level_screen_index + 1]);
+                        evaluation_bg.setTexture(evaluation_bg_texture[current_level_screen_index+1]);
                         player_name_text.setString("");
                     }
                 }
@@ -945,8 +975,18 @@ int main()
                 }
                 else
                 {
-                    edit_window_save_button.setFillColor(Color(110, 164, 198));
+                    edit_window_save_button.setFillColor(Color(110, 165, 190));
                     edit_window_save_button.setScale(1.0f, 1.0f);
+                }
+                if (evaluation_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                    evaluation_button.setFillColor(Color(97, 44, 148));
+                    evaluation_button.setScale(0.9f, 0.9f);
+                }
+                else
+                {
+                    evaluation_button.setFillColor(Color(110, 66, 130));
+                    evaluation_button.setScale(1.0f, 1.0f);
                 }
                 if (game_window_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
@@ -1209,6 +1249,8 @@ int main()
          {
             window.draw(transition_slide_bg);
             window.draw(transition_text);
+            window.draw(evaluation_button);
+            window.draw(evaluation_text);
             if(player_name_entry == 1)
             {
                 showCursor(cursor_clock, show_player_name_cursor, player_name_entry, cursor_time);
@@ -1375,6 +1417,23 @@ int main()
             window.draw(credits_menu_back_text);
             window.draw(git_hub_logo);
         }
+        else if(current_screen == "evaluation menu")
+        {
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
+            window.draw(transition_slide_bg);
+            window.draw(transition_text);
+            window.draw(evaluation_button);
+            window.draw(evaluation_text);
+            if(player_name_entry == 1)
+            {
+                showCursor(cursor_clock, show_player_name_cursor, player_name_entry, cursor_time);
+                player_name_text.setString(player_name + (show_player_name_cursor ? '_' : ' '));
+            }
+            if(player_name_entry == 1)
+                window.draw(player_name_text);
+            window.draw(evaluation_bg);
+            window.draw(options_exit_button);
+        }
         window.setView(view);
         window.display();
     }
@@ -1523,6 +1582,14 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
             else if (current_screen == "options")
             {
                 current_screen = "main menu";
+            }
+            else if(current_screen == "evaluation menu"&&current_level_screen_index>=4)
+            {
+                current_screen = "credits menu";
+            }
+            else if(current_screen == "evaluation menu")
+            {
+                current_screen = "transition slide";
             }
         }
     }
