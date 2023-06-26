@@ -925,6 +925,10 @@ int main()
                 {
                     changeButtonScaleAndColor(credits_menu_close_button, 0.9f, Color(139, 0, 0), Color::Black);
                 }
+                else
+                {
+                    changeButtonScaleAndColor(credits_menu_close_button, 1.0f, Color::Red, Color::Black);
+                } 
                 if (git_hub_logo.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
                         git_hub_logo.setScale(0.6f,0.6f);
