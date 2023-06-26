@@ -241,8 +241,10 @@ int main()
     Sprite credits_menu_bg,git_hub_logo;
     credits_menu_bg.setTexture(credits_menu);
     credits_menu_bg.setScale(0.24f, 0.24f); 
+    git_hub_logo_texture.setSmooth(true);
     git_hub_logo.setTexture(git_hub_logo_texture);
-    git_hub_logo.setPosition(900,120);
+    git_hub_logo.setOrigin(git_hub_logo.getGlobalBounds().width/2,git_hub_logo.getGlobalBounds().height/2);
+    git_hub_logo.setPosition(900,180);
     git_hub_logo.setScale(0.5f,0.5f); 
     Text credits_to_text("Credits to:", cli_font , 37);
     credits_to_text.setPosition(200, 100);
@@ -923,9 +925,13 @@ int main()
                 {
                     changeButtonScaleAndColor(credits_menu_close_button, 0.9f, Color(139, 0, 0), Color::Black);
                 }
+                if (git_hub_logo.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                {
+                        git_hub_logo.setScale(0.6f,0.6f);
+                }
                 else
                 {
-                    changeButtonScaleAndColor(credits_menu_close_button, 1.0f, Color::Red, Color::Black);
+                    git_hub_logo.setScale(0.5f,0.5f);
                 }
                 if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
