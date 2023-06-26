@@ -1161,7 +1161,8 @@ int main()
                     dialogue_text.script_text.setString("");
                     if (current_level_screen_index == 0 && dialogue_text.current_script_index==0)
                     {
-                        dialogue_text.script_text.setString(output);
+                        level[0].new_script[0].second=output;
+                        dialogue_text.script_content=level[0].new_script[0].second;
                     }
                     dialogue_text.script_content = level[current_level_screen_index].new_script[dialogue_text.current_script_index].second;
                     dialogue_text.current_script_index++;
