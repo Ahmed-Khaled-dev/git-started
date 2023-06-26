@@ -98,7 +98,7 @@ struct optionMenu {
 // If bool = 2
 // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
 gameLevel level[4] = {
-    /*level_0 (intro)*/{{
+        /*level_0 (intro)*/{{
     {0 ,""},
     {0 ,"* Suddenly...*"},{0,"*someone appears in front of you, they look similar to you but older *"},
     {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
@@ -552,6 +552,7 @@ int main()
                         current_level_screen_index++;
                         dialogue_text.script_ended = 0;
                         current_screen = levels_screens[current_level_screen_index];
+                        current_screen = "transition slide";
                         if(current_level_screen_index>=4){
 
                         current_screen = "credits menu";
