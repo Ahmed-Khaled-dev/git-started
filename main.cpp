@@ -242,12 +242,13 @@ int main()
     level_up_sound.setVolume(300.0f);
     
     //evaluation
-    Texture evaluation_bg_texture[5];
+    Texture evaluation_bg_texture[6];
     evaluation_bg_texture[0].loadFromFile("resources/sprites/evaluation_0.png");
-    evaluation_bg_texture[1].loadFromFile("resources/sprites/evaluation_1.png");
-    evaluation_bg_texture[2].loadFromFile("resources/sprites/evaluation_2.png");
-    evaluation_bg_texture[3].loadFromFile("resources/sprites/evaluation_3.png");
-    evaluation_bg_texture[4].loadFromFile("resources/sprites/evaluation_4.png");
+    evaluation_bg_texture[1].loadFromFile("resources/sprites/evaluation_0.png");
+    evaluation_bg_texture[2].loadFromFile("resources/sprites/evaluation_1.png");
+    evaluation_bg_texture[3].loadFromFile("resources/sprites/evaluation_2.png");
+    evaluation_bg_texture[4].loadFromFile("resources/sprites/evaluation_3.png");
+    evaluation_bg_texture[5].loadFromFile("resources/sprites/evaluation_4.png");
     Sprite evaluation_bg,progress_sprite;
     evaluation_bg.setTexture(evaluation_bg_texture[0]);
     evaluation_bg.setOrigin(400, 300);
