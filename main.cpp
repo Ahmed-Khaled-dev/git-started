@@ -118,18 +118,25 @@ gameLevel level[4] = {
     /*level_2 (git commit)*/{{
     {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code."} , {0, "Throughout each big step, you will need to keep track of your history."},
     {0,"Imagine this; you are working on a huge project with your\nteam, One of your team mates messed up a part of their code,\nthey can't remember what part got messed up, Neither can they go back\nto the code that worked fine, Scary to imagine right?"},
-    {0,"That's where \"commits\" come in hand. \"commits\" are like checkpoints\nin games but for your code. We will use the\n\"git commit\" command."},
-    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need to write code using C++"},
+    {0,"That's where \"commits\" come in hand. \"commits\" are like checkpoints\nin games but for your code. We will use the\n\"git commit\" command."},    {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need to write code using C++"},
     {0,"For example, try writing: \"int i = 5;\""},
-    {2,"Now you need to commit your changes to mark this checkpoint!\nIn the command line write: \"git commit\""},
+    {2,"now there's a small problem,\nGit needs to know what changes you want to commit."},{0,"These changes should be in the \"Git staging area\" whether they are\ndeleted files, new ones or any type of change you have made."},
+    {0,"That's where the command \"git add \" comes in hand,\nit adds new or changed files in your working directory to\nthe Git staging area."},{ 0,"without it, no git commit would ever do anything.\nWe will be using the command \"git add .\" "},
+    {0,"(which stages all files in the entire repository) \nbefore each commit we make from now on"},{0,"Try typing \"git add \""},
+    {1,"Now you need to commit your changes to mark this checkpoint!\nIn the command line write: \"git commit\""},
     {1,"Congratulations! you have just written your first commit."}, { 0, "This is your git graph, it is a diagram that shows how the commands\nare translated and makes it easier to understand how they work."},
     {0,"The circle that just appeared represents our commit. As you can see,\nour Head (Octocat) has appeared above our commit.\nHe will be standing on the latest commit we create."},
     {0,"Since he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
-    {0,"It's your turn to write another piece of code and commit your changes!\nTry adding another variable in \"main.cpp\" edit window."},
-    {2,"Commit your changes with the message that describes it best!"},
+    {0,"It's your turn to write another piece of code and commit your changes!\nTry adding another variable in \"main.cpp\" edit window."},{2,"add your changes to the stadging area"},
+    {1,"finally,commit your changes with the message that describes it best!"},
     {1,"Notice that the Head moves onto your new commit."},
     {0,"And now we will start discovering how these commits come in handy!"}},
-    {"git commit","git commit"}},
+    {"git add","git commit","git add","git commit"}},
+
+
+
+
+
     /*level_3 (git checkout)*/{{
     {0,"Look at all the commits you have; you must be proud of yourself!"}, {0, "Now as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
     {0,"But now you need to look at a previous checkpoint of your code,\nwhat do we need to do?"},{0,"We need to move the Head to the commit we want. Each commit\nhas a specified number to show it"},
