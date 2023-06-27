@@ -98,7 +98,7 @@ struct optionMenu {
 // If bool = 2
 // Then it tells the dialogue that it should wait for the user to edit in the edit menu before this sub-script
 gameLevel level[4] = {
-        /*level_0 (intro)*/{{
+/*level_0 (intro)*/{{
     {0 ,""},
     {0 ,"* Suddenly...*"},{0,"*someone appears in front of you, they look similar to you but older *"},
     {0 ,"Hello! I finally succeeded in going back in time to help\nyou learn from your...umm our mistakes."},
@@ -113,8 +113,10 @@ gameLevel level[4] = {
     {0,"After showing you around, let's start our adventure by telling\nyou what the word \"command\" means in \"GIT\"."},{0,"\"Commands\" are a set of instructions, each one of them is responsible for\nmaking a certain job."},{0,"We will start with our first command \"Git init\"."},
     {0,"Git init tells GIT to start watching your current folder which we call\na git repository (repo for short)."},{0," You won't be able to tell git anything unless you initialize a repository.\nThat's why \"Git init\" has to be the first command to be executed."},
     {0,"Let's try executing it together.\nPlease type:  \"git init\"  in the command line (the black box)"},
-    {1,"Would you look at that!! That's Git's head \n(Now git has its eyes on you)"},{0, "It will accompany you throughout the game. You will get to know more\nabout the \"GIT head\" in the upcoming levels"}}
-    ,{"git init"}},
+    {1,"Would you look at that!! That's Git's head \n(Now git has its eyes on you)"},{0, "It will accompany you throughout the game. You will get to know more\nabout the \"GIT head\" in the upcoming levels"},
+    {0,"It's questions time"},{0," The git init command creates a new Git repository."},{3,"It creates a .git directory, which contains all of\nthe metadata for the repository, such as the commit history,\nthe list of tracked files, and the branches."},
+    {0,"Let's move on to our next question."},{0,"The git init command is a one-time command that only needs to be run once."},{3,". Once you have run the git init command, your current directory\nwill be a Git repository,and you can start\ntracking files with the git add command."}
+},{"git init"}},
     /*level_2 (git commit)*/{{
     {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code."} , {0, "Throughout each big step, you will need to keep track of your history."},
     {0,"Imagine this; you are working on a huge project with your\nteam, One of your team mates messed up a part of their code,\nthey can't remember what part got messed up, Neither can they go back\nto the code that worked fine, Scary to imagine right?"},
@@ -130,19 +132,21 @@ gameLevel level[4] = {
     {0,"It's your turn to write another piece of code and commit your changes!\nTry adding another variable in \"main.cpp\" edit window."},{2,"add your changes to the stadging area"},
     {1,"finally,commit your changes with the message that describes it best!"},
     {1,"Notice that the Head moves onto your new commit."},
-    {0,"And now we will start discovering how these commits come in handy!"}},
-    {"git add","git commit","git add","git commit"}},
+    {0,"And now we will start discovering how these commits come in handy!"},{0,"evaluation time"},{0," The git commit command requires a message."},{3,"The git commit command requires a message.\nThe message is a brief description of the changes that were made."},
+    {0,"The message is important for tracking the history of your project,\nand for communicating with other people who are\nworking on the same project."},{0, "Our next question is:"},{0,"The git add command adds all files in the current directory to the staging area."},
+    {3," The git add . command will add all files in the current directory\nand any sub-directories to the staging area."},{0,"This means that the files will be ready to be committed to the repository"}
+    
+},{"git add","git commit","git add","git commit"}},
 
 
-
-
-
-    /*level_3 (git checkout)*/{{
+        /*level_3 (git checkout)*/{{
     {0,"Look at all the commits you have; you must be proud of yourself!"}, {0, "Now as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
     {0,"But now you need to look at a previous checkpoint of your code,\nwhat do we need to do?"},{0,"We need to move the Head to the commit we want. Each commit\nhas a specified number to show it"},
     {0,"We will use a new command which is \"git checkout\"."},{0,"Now, we want to checkout to our first commit. Write in the console:\n\"git checkout\""},
     {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level!"}, {0,"Now let's checkout again to our\nlast commit."}, {1,"Here you have your latest code again!"},
-    {0,"The \"git checkout\" command has a lot of benefits that you will\ndiscover more into the next levels."}},
+    {0,"The \"git checkout\" command has a lot of benefits that you will\ndiscover more into the next levels."},{0,"now time to check your level of understanding"},{0,"The git checkout command can be used to merge two branches?"},
+    {3,"The git checkout command cannot be used to merge two branches.\nIt can only be used to switch to a different branch\nor check out a specific file from a different branch. "},{0,"If you want to merge two branches, you need to\nuse the git merge command."}, {0,"Let's look at our next question."},
+    {0," The git checkout command can be used to check out a specific commit.?"},{3,"The git checkout command can be used to check out a specific commit.\nThis means that you can switch to a specific point\nin the history of the repository."}},
     {"git checkout" , "git checkout"}}};
 
 
@@ -175,7 +179,7 @@ void moveHeadToLatestCommit(Sprite& head, bool& additional_commit_created);
 void makeSmoke(Sprite& smoke, bool& should_create_smoke);
 void commandsInputChecker(string& user_input, bool& git_init_entered, bool& git_add_entered, bool& git_commit_entered, bool& git_checkout_entered, string& checked_out_commit);
 void setTextOriginAndPosition(Text& text, float x_position, float y_position);
-void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed);
+void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed,bool&);
 void readProgressFile(string file_name, bool levels_status[], int levels_count);
 void updateProgressFile(string file_name, bool levels_status[], int levels_count);
 void changeButtonScaleAndColor(RectangleShape& rectangle, float scale, Color color, Color outline_color);
@@ -309,7 +313,16 @@ int main()
     player_name_text.setFillColor(Color:: White);
     const short int PLAYER_NAME_MAX_CHARS = 17;
     bool show_player_name_cursor = 0, player_name_entry = 0;
-
+    
+    //questions
+    RectangleShape yes_button(Vector2f(700, 50)) , no_button(Vector2f(700, 50));
+    Text yes_text("TRUE", dialogue_text.font, 32),no_text("FALSE", dialogue_text.font, 32);
+    setButtonProperties(yes_button, 70,130,180, 800, 870);
+    setButtonProperties(no_button, 70,130,180, 800, 940);
+    setButtonTextProperties(yes_button, yes_text, Color::White);
+    setButtonTextProperties(no_button, no_text, Color::White);
+    bool continuation_question=0;
+    int check_correct_answer=0;
     // Levels menu
     RectangleShape levels_menu_back_button(Vector2f(125, 60)), level_buttons_bg(Vector2f(1140, 830)), intro_level_button(Vector2f(1000, 150));
     RectangleShape init_level_button(Vector2f(1000, 150)), commit_level_button(Vector2f(1000, 150)), checkout_level_button(Vector2f(1000, 150));
@@ -606,7 +619,27 @@ int main()
                             levels_title.setPosition(610, 30);
                         }
                     }
-                    
+                    if (yes_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        yes_button.setScale(1,1);
+                        check_correct_answer = 3;
+                        continuation_question=1;
+
+                    }
+                    else if (no_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        no_button.setScale(1,1);
+                        check_correct_answer = 4;
+                        continuation_question=1;
+                    }
+                    if(level[current_level_screen_index].new_script[dialogue_text.current_script_index].first==3)
+                    {
+                        yes_button.setFillColor(Color(0,255,0));
+                    }
+                    else if(level[current_level_screen_index].new_script[dialogue_text.current_script_index].first==4)
+                    {
+                        no_button.setFillColor(Color(0,255,0));
+                    }
                     if (edit_window_save_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                     {
                         edit_window_changed = checkInputEquality(current_edit_window_input, old_edit_window_input, edit_window_changed);
@@ -944,6 +977,25 @@ int main()
                 {
                     changeButtonScaleAndColor(main_menu_start_button, 1.0f, Color::Green, Color::Black);
                 }
+                if(!continuation_question)
+                {
+                    if (yes_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))&&(continuation_question ==0 && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 3))
+                    {
+                        changeButtonScaleAndColor(yes_button, 0.9f, Color(80, 150, 200), Color::Black);
+                    }
+                    else 
+                    {
+                        changeButtonScaleAndColor(yes_button, 1.0f, Color( 70,130,180), Color::Black);
+                    }
+                    if (no_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
+                    {
+                        changeButtonScaleAndColor(no_button, 0.9f, Color(80, 150, 200), Color::Black);
+                    }
+                    else
+                    {
+                        changeButtonScaleAndColor(no_button, 1.0f, Color( 70,130,180), Color::Black);
+                    }
+                }
                 if (main_menu_options_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))))
                 {
                     changeButtonScaleAndColor(main_menu_options_button, 0.9f, Color(153, 153, 0), Color::Black);
@@ -1239,6 +1291,20 @@ int main()
                     dialogue_text.current_script_index++;
                     edit_window_changed = 0;
                 }
+                else if (continuation_question == 1 && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 3)
+                {
+                    if (level[current_level_screen_index].new_script[dialogue_text.current_script_index] == level[current_level_screen_index].new_script.back())
+                    {
+                        dialogue_text.script_ended = 1;
+                    }
+                    //level[current_level_screen].new_script[dialogue_text.current_script_index].first=0;
+                    dialogue_text.script_text.setString("");
+                    dialogue_text.script_content = level[current_level_screen_index].new_script[dialogue_text.current_script_index].second;
+                    dialogue_text.current_script_index++;
+                    yes_button.setFillColor(Color(70,130,180));
+                    no_button.setFillColor(Color(70,130,180));
+                    continuation_question = 0;
+                }
             }
         }
         window.clear(Color(223, 221, 221));
@@ -1278,7 +1344,7 @@ int main()
             showCursor(cursor_clock, show_cli_cursor, cli_selected, cursor_time);
             showCursor(cursor_clock, show_edit_window_cursor, edit_window_selected, cursor_time);
             setCliTexts(cli_text, cli_text_final, user_cli_input, final_cli_input, show_cli_cursor, cli_input_shape, cli_output_shape,green_command);
-            showContinuationMessage(continuation_message, edit_window_changed);
+            showContinuationMessage(continuation_message, edit_window_changed,continuation_question);
             //if (checked_out_commit[0] - 48 == index_of_the_last_commit)
             if (current_level_screen_index == 3 && entered_checkout_level)
                 setEditWindowText(edit_window_text, code_for_second_commit, show_edit_window_cursor, edit_window_shape);
@@ -1300,6 +1366,13 @@ int main()
             window.draw(game_window_back_text);
             window.draw(game_window_options_button);
             window.draw(game_window_options_text);
+            if(level[current_level_screen_index].new_script[dialogue_text.current_script_index].first==3)
+            {
+                window.draw(yes_button);
+                window.draw(no_button);
+                window.draw(yes_text);
+                window.draw(no_text);
+            }
             if (dialogue_text.script_ended)
             {
                 levels_status[current_level_screen_index] =1;
@@ -1464,7 +1537,7 @@ void drawDialogue(RenderWindow& window, dialogueBox& dialogue_box)
     dialogue_box.title.setPosition(460, 710);
 }
 
-void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed)
+void showContinuationMessage(continuationMessage& continuation_message, bool& edit_window_changed,bool&continuation_question)
 {
     continuation_message.continuation_fade_time += continuation_message.continuation_fade_clock.restart();
     if (continuation_message.continuation_fade_time >= seconds(continuation_message.continuation_delay))
@@ -1472,7 +1545,7 @@ void showContinuationMessage(continuationMessage& continuation_message, bool& ed
         continuation_message.continuation_message_running = !continuation_message.continuation_message_running;
         continuation_message.continuation_fade_time = Time::Zero;
     }
-    if (!dialogue_text.script_ended && continuation_message.sub_script_ended && (level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 0 || continuation_message.commands_flag == 1 || edit_window_changed == 1))
+    if (!dialogue_text.script_ended && continuation_message.sub_script_ended && (level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 0 || continuation_message.commands_flag == 1 || edit_window_changed == 1||(continuation_question ==1 && level[current_level_screen_index].new_script[dialogue_text.current_script_index].first == 3)))
     {
         continuation_message.continuation_text.setString((continuation_message.continuation_message_running ? continuation_message.continuation_content : ""));
         continuation_message.continuation_text.setFont(continuation_message.font);
