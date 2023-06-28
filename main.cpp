@@ -393,8 +393,8 @@ int main()
     game_title.setString("\t  Git \n Started");
     game_title.setFont(game_title_font);
     game_title.setOutlineThickness(-4);
-    game_title.setFillColor(Color(50, 50, 50)); // Dark grey fill
-    game_title.setOutlineColor(Color(100, 255, 30));
+    game_title.setFillColor(Color(0, 0, 0)); // Dark grey fill
+    game_title.setOutlineColor(Color(157, 201, 221));
     game_title.setCharacterSize(120);
     game_title.setPosition(620, 80);
     /*Git Green: RGB(52, 111, 69)
