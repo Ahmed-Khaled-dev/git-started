@@ -866,7 +866,7 @@ int main()
                                 {
                                     correct_command_sound.play();
                                     green_command = 1;
-                                    final_cli_input = ("$ " + user_cli_input + "\ncorrect!" + "\n");
+                                    final_cli_input = ("$ " + user_cli_input);
                                     continuation_message.commands_flag = 1;
                                     commands_entered_counter++;
                                     //correct_command = 0;
@@ -876,7 +876,7 @@ int main()
                             {
                                 incorrect_command_sound.play();
                                 green_command = 0;
-                                final_cli_input = "$ " + user_cli_input + "\nincorrect command!\n";
+                                final_cli_input = "$ " + user_cli_input;
                             }
                             user_cli_input.clear();
                         }
@@ -1304,9 +1304,12 @@ int main()
             controlSfxTexts(sfx_text, mouse_cursor);
             setSliderMoveLimits(slider_bar, slider);
             window.draw(main_menu);
+            window.draw(main_menu_close_button);
+            window.draw(main_menu_close_text);
+            window.draw(game_title);
             window.draw(option_menu);
             for (int i = 0; i < 2; i++)
-                window.draw(slider[i]);;
+                window.draw(slider[i]);
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
             changeSfxVolume(correct_command_sound, incorrect_command_sound, level_up_sound, pop_commit);
@@ -1341,6 +1344,7 @@ int main()
             window.draw(sfx_text.text);
             window.draw(options_exit_button);
             changeSfxVolume(correct_command_sound, incorrect_command_sound, level_up_sound, pop_commit);
+            window.draw(edit_window_title_text);
         }
         else if (current_screen == "levels menu") {
             window.draw(levels_menu_bg);
@@ -1579,7 +1583,7 @@ void setCliTexts(Text& cli_text, Text& cli_text_final, string& user_cli_input, s
     else
     cli_text_final.setFillColor(Color::Red);
     cli_text_final.setString(final_cli_input);
-    cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+10);
+    cli_text_final.setPosition(rectangle_upper.getPosition().x+7, rectangle_upper.getPosition().y+12);
    // cout<<user_cli_input<<'\n'<<final_cli_input;
 }
 
