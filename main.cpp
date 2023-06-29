@@ -248,10 +248,10 @@ int main()
     //evaluation
     Texture evaluation_bg_texture[6];
     evaluation_bg_texture[0].loadFromFile("resources/sprites/evaluation_0.png");
-    evaluation_bg_texture[1].loadFromFile("resources/sprites/evaluation_0.png");
-    evaluation_bg_texture[2].loadFromFile("resources/sprites/evaluation_1.png");
-    evaluation_bg_texture[3].loadFromFile("resources/sprites/evaluation_2.png");
-    evaluation_bg_texture[4].loadFromFile("resources/sprites/evaluation_3.png");
+    evaluation_bg_texture[1].loadFromFile("resources/sprites/evaluation_1.png");
+    evaluation_bg_texture[2].loadFromFile("resources/sprites/evaluation_2.png");
+    evaluation_bg_texture[3].loadFromFile("resources/sprites/evaluation_3.png");
+    evaluation_bg_texture[4].loadFromFile("resources/sprites/evaluation_4.png");
     evaluation_bg_texture[5].loadFromFile("resources/sprites/evaluation_4.png");
     Sprite evaluation_bg,progress_sprite;
     evaluation_bg.setTexture(evaluation_bg_texture[0]);
@@ -589,7 +589,7 @@ int main()
                     {
                         //level_up_sound.play();
                         if(current_level_screen_index >= 3){ 
-                            current_screen = "levels menu";
+                            current_screen = "evaluation menu";
                             dialogue_text.script_ended = 0;
                         }
                         else{
