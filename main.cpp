@@ -1666,7 +1666,7 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
             {
                 current_screen = "main menu";
             }
-            else if(current_screen == "evaluation menu"&&current_level_screen_index>=4)
+            else if(current_screen == "evaluation menu"&&current_level_screen_index>=3)
             {
                 current_screen = "credits menu";
             }
