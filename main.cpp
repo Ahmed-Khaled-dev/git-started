@@ -16,7 +16,7 @@ short int index_of_the_last_commit = 0;
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
 string current_screen = "main menu";
-string levels_screens[10] = { "intro level", "init level", "commit level", "checkout level" };
+string levels_screens[10] = { "intro level", "init level", "commit level", "checkout level"};
 int current_level_screen_index = 0;
 
 RenderWindow window(VideoMode::getDesktopMode(), "Git Started!");
@@ -166,7 +166,7 @@ void setButtonProperties(RectangleShape& rectangle, int red_intensity, int green
 void setButtonTextProperties(RectangleShape& rectangle, Text& text, Color color);
 void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu);
 void controlSfxTexts(optionMenu& sfx_text, RectangleShape& mouse_cursor);
-void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu);
+void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu, bool& show_credits);
 void setSliderMoveLimits(Sprite slider_bar[], CircleShape slider[]);
 void controlSfxAndMusicVolume(optionMenu& sfx_text, Music& music, Sound& pop_commit, Sprite slider_bar[], CircleShape slider[], Sprite& option_menu, RectangleShape& mouse_cursor, Event& event, bool& change_sfx_volume, bool& change_music_volume);
 void addCommit(unsigned short int& commits_count, commit commits[], Texture& commit_textures, string commit_message, string& commit_num, string& code);
@@ -294,7 +294,7 @@ int main()
     Text credits_menu_close_text("Close", buttons_font, 33),credits_menu_back_text("Back", buttons_font, 33);
     setButtonTextProperties(credits_menu_close_button, credits_menu_close_text, Color::Black);
     setButtonTextProperties(credits_menu_back_button, credits_menu_back_text, Color::Black);
-
+    bool show_credits = 0;
     // Transition slide
     Texture transition_slide;
     transition_slide.loadFromFile("resources/sprites/Transition background v1.0.png");
@@ -589,6 +589,7 @@ int main()
                     {
                         //level_up_sound.play();
                         if(current_level_screen_index >= 3){ 
+                            show_credits = 1;
                             current_screen = "evaluation menu";
                             dialogue_text.script_ended = 0;
                         }
@@ -1425,7 +1426,7 @@ int main()
         }
         else if (current_screen == "options")
         {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu, show_credits);
             controlSfxTexts(sfx_text, mouse_cursor);
             setSliderMoveLimits(slider_bar, slider);
             window.draw(main_menu);
@@ -1458,7 +1459,7 @@ int main()
             window.draw(game_window_back_text);
             window.draw(game_window_options_button);
             window.draw(game_window_options_text);
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu, show_credits);
             controlSfxTexts(sfx_text, mouse_cursor);
             setSliderMoveLimits(slider_bar, slider);
             drawDialogue(window, dialogue_box);
@@ -1502,7 +1503,7 @@ int main()
         }
         else if(current_screen == "evaluation menu")
         {
-            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu);
+            controlOptionsExitButton(options_exit_button, mouse_cursor, option_menu, show_credits);
             window.draw(transition_slide_bg);
             window.draw(transition_text);
             window.draw(evaluation_button);
@@ -1652,7 +1653,7 @@ void setSfxTexts(optionMenu& sfx_text, Sprite& option_menu) {
     sfx_text.text.setPosition(option_menu.getGlobalBounds().left + 357, option_menu.getGlobalBounds().top + 321);
 }
 
-void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu) {
+void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse_cursor, Sprite& option_menu, bool& show_credits) {
     if (options_exit_button.getGlobalBounds().intersects(mouse_cursor.getGlobalBounds()))
     {
         options_exit_button.setColor(Color::Red);
@@ -1666,7 +1667,7 @@ void controlOptionsExitButton(Sprite& options_exit_button, RectangleShape& mouse
             {
                 current_screen = "main menu";
             }
-            else if(current_screen == "evaluation menu"&&current_level_screen_index>=3)
+            else if(show_credits)
             {
                 current_screen = "credits menu";
             }
