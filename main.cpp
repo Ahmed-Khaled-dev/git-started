@@ -88,7 +88,7 @@ struct dialogueText
 struct optionMenu {
     Font font;
     Text text;
-    String option_font_type = "resources/fonts/minecraft_font.ttf";
+    String option_font_type = "resources/fonts/Righteous-Regular.ttf";
     const int short  size = 64;
 };
 
