@@ -206,7 +206,7 @@ int main()
         cout << "Error has happened while loading arial font" << endl;
     }
     Font quote;
-    quote.loadFromFile("resources/fonts/PressStart2P-Regular.ttf");
+    quote.loadFromFile("resources/fonts/Righteous-Regular.ttf");
 
     // View
     View view;
@@ -246,20 +246,20 @@ int main()
     git_hub_logo.setOrigin(git_hub_logo.getGlobalBounds().width/2,git_hub_logo.getGlobalBounds().height/2);
     git_hub_logo.setPosition(1240,132);
     git_hub_logo.setScale(0.5f,0.5f); 
-    Text credits_to_text("Credits to:", cli_font , 37);
+    Text credits_to_text("Credits to:", buttons_font , 37);
     credits_to_text.setPosition(200, 100);
     credits_to_text.setStyle(Text::Bold | Text::Underlined);
-    Text contributers_text("Abdallah Mohamed\nAhmed Khaled Yousry (Team leader)\nAhmed Khaled Eissa\nHaneen Hany\nRahma Khattab\nRehab Khaled\n", game_title_font , 45);
+    Text contributers_text("Abdallah Mohamed (SFML Pro)\nAhmed Khaled Yousry (Team Leader)\nAhmed Khaled Eissa (Files Expert)\nHaneen Hany (Design Master)\nRahma Khattab (Bug Slayer)\nRehab Khaled (Innovative Mastermind)\n", cli_font , 50);
     contributers_text.setStyle(Text::Italic);
-    contributers_text.setPosition(200, 140);
-    Text quote_text("\"Always walk through life as if\n\tyou have something new\n\tto learn and you will.\"", quote , 32);
-    quote_text.setStyle(Text::Bold | Text::Italic);
-    quote_text.setPosition(170, 730);
-    Text aim_title_text("Our Aim:", cli_font , 37);
-    aim_title_text.setPosition(200,470);
+    contributers_text.setPosition(200, 160);
+    Text aim_title_text("Our aim:", cli_font , 37);
+    aim_title_text.setPosition(200,530);
     aim_title_text.setStyle(Text::Bold | Text::Underlined);
     Text aim_description_text("We aim to help new people/students who are looking to learn git\nto have the chance to do it while playing a game\nand having fun at the same time.", arial , 32);
-    aim_description_text.setPosition(200,540);
+    aim_description_text.setPosition(200,590);
+    Text quote_text("\"Always walk through life as if\n\tyou have something new\n\t  to learn and you will.\"", quote , 50);
+    quote_text.setStyle(Text::Italic);
+    quote_text.setPosition(350, 730);
     RectangleShape credits_menu_close_button(Vector2f(215, 75)),credits_menu_back_button(Vector2f(215, 75));
     setButtonProperties(credits_menu_close_button, 255, 0, 0, 1705, 180);
     setButtonProperties(credits_menu_back_button,46, 139, 87, 1705, 80);
