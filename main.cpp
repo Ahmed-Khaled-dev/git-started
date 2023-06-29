@@ -588,13 +588,15 @@ int main()
                     if (game_window_next_button.getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window))) && dialogue_text.script_ended)
                     {
                         //level_up_sound.play();
-                        current_level_screen_index++;
-                        dialogue_text.script_ended = 0;
-                        current_screen = levels_screens[current_level_screen_index];
-                        current_screen = "transition slide";
-                        if(current_level_screen_index>=4){
-                            
-                        current_screen = "evaluation menu";
+                        if(current_level_screen_index >= 3){ 
+                            current_screen = "levels menu";
+                            dialogue_text.script_ended = 0;
+                        }
+                        else{
+                            current_level_screen_index++;
+                            dialogue_text.script_ended = 0;
+                            current_screen = levels_screens[current_level_screen_index];
+                            current_screen = "transition slide";
                         }
                         //reset the dialogues in the array of structs
                         dialogue_text.script_text.setString("");
