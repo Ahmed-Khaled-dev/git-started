@@ -117,14 +117,15 @@ gameLevel level[4] = {
     ,{"git init"}},
     /*level_2 (git commit)*/{{
     {0,"Now that you've created your first repository (which we will call \"repo\"\nfrom now), you'll start by writing your code."} , {0, "Throughout each big step, you will need to keep track of your history."},
-    {0,"Imagine this; you are working on a huge project with your\nteam, One of your team mates messed up a part of their code,\nthey can't remember what part got messed up, Neither can they go back\nto the code that worked fine, Scary to imagine right?"},
-    {0,"That's where \"commits\" come in hand. \"commits\" are like checkpoints\nin games but for your code. We will use the\n\"git commit\" command."},
+    {0,"Imagine this; you are working on a huge project with your team,\none of your teammates messed up a part of their code,\nthey can't remember which part got messed up,\nneither can they go back to the code that worked fine.\nScary to imagine right?"},
+    {0,"That's where \"commits\" come in hand. \"commits\" are like checkpoints\nin games but for your code.\nWe will use the \"git commit\" command."},
     {0,"But first, let's write some code together!\nIn the \"main.cpp\" edit window, we need to write code using C++"},
-    {0,"For example, try writing: \"int i = 5;\""},
+    {0,"For example, try writing: \"int i = 5;\", then save your changes"},
     {2,"Now you need to commit your changes to mark this checkpoint!\nIn the command line write: \"git commit\""},
     {1,"Congratulations! you have just written your first commit."}, { 0, "This is your git graph, it is a diagram that shows how the commands\nare translated and makes it easier to understand how they work."},
     {0,"The circle that just appeared represents our commit. As you can see,\nour Head (Octocat) has appeared above our commit.\nHe will be standing on the latest commit we create."},
-    {0,"Since he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou last written when you formed that commit."},
+    {0,"Since he is standing on a commit, Git knows exactly what changes\nyou've made and now the code displayed on the edit window is what\nyou have last written when you formed that commit."},
+    {0,"You can hover over any commit to view it's commit message"},
     {0,"It's your turn to write another piece of code and commit your changes!\nTry adding another variable in \"main.cpp\" edit window."},
     {2,"Commit your changes with the message that describes it best!"},
     {1,"Notice that the Head moves onto your new commit."},
@@ -132,10 +133,10 @@ gameLevel level[4] = {
     {"git commit","git commit"}},
     /*level_3 (git checkout)*/{{
     {0,"Look at all the commits you have; you must be proud of yourself!"}, {0, "Now as mentioned before our friend (the Head) is looking at the\nlatest commit that we created."},
-    {0,"But now you need to look at a previous checkpoint of your code,\nwhat do we need to do?"},{0,"We need to move the Head to the commit we want. Each commit\nhas a specified number to show it"},
-    {0,"We will use a new command which is \"git checkout\"."},{0,"Now, we want to checkout to our first commit. Write in the console:\n\"git checkout\""},
-    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level!"}, {0,"Now let's checkout again to our\nlast commit."}, {1,"Here you have your latest code again!"},
-    {0,"The \"git checkout\" command has a lot of benefits that you will\ndiscover more into the next levels."}},
+    {0,"But now we need to look at a previous checkpoint of your code,\nwhat do we need to do?"},{0,"We need to move the Head to the commit we want. Each commit\nhas a specified number to show it"},
+    {0,"We will use a new command which is \"git checkout\"."},{0,"Now, we want to checkout to our first commit (Number 1).\nWrite in the console: \"git checkout\""},
+    {1,"As you can see in the edit menu, Your code has changed to what you\nfirst wrote in the previous level!"}, {0,"Now let's checkout again to our\nlast commit (2)."}, {1,"Here you have your latest code again!"},
+    {0,"The \"git checkout\" command has a lot of benefits that you will\ndiscover more in the next levels."}},
     {"git checkout" , "git checkout"}}};
 
 
@@ -338,7 +339,7 @@ int main()
     string user_cli_input, final_cli_input, commit_message, checkout_id;
     Text cli_text("", cli_font,32), cli_text_final("", cli_font);
     string cli_commit_msg_request = " # Please enter the \ncommit message for\nyour changes in the\ncommand line.";
-    string cli_checkout_message_rqst = "Please enter number of\nthe commit you want \nto checkout to";
+    string cli_checkout_message_rqst = "Please enter number of\nthe commit you want \nto checkout to\n(1, 2 etc.)";
     bool show_cli_cursor = 0, cli_selected = 0, commit_command_entered = 0, correct_command = 0, checkout_command_entered = 0,green_command;
     Clock cursor_clock;
 
