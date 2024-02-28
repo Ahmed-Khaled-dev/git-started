@@ -4,10 +4,10 @@
 
 <div align="center">
     <a href="https://github.com/Ahmed-Khaled-dev/git-started/blob/main/LICENSE">
-        <img src="https://img.shields.io/badge/License-MIT-green.svg">
+        <img src="https://img.shields.io/badge/License-MIT-703BE7.svg">
     </a>
     <a href="https://cplusplus.com/">
-        <img src="https://img.shields.io/badge/Made%20with-C++-1f425f.svg">
+        <img src="https://img.shields.io/badge/Made%20with-C++-008B8B.svg">
     </a>
 </div>
 
@@ -21,9 +21,12 @@ The game aims to help beginners memorize git commands, visualize internal git st
 
 And all of this happens while being **guided by a tutor** character throughout the game.
 
-- #### [Trailer video/More details](https://www.facebook.com/100005920653093/videos/818662826092485/)
-
 The whole game is made without a game engine, only using C++ and [SFML](https://www.sfml-dev.org/)
+
+### 📷 Screenshots
+![](https://i.imgur.com/QIXpDRH.jpg)
+
+- #### [Trailer video/More details](https://www.facebook.com/100005920653093/videos/818662826092485/)
 
 ### 🕹️ Play the game!
 [Download it](https://drive.google.com/file/d/1HS88RBgUQb3pGO7rIeaTSNRhzO2qsV0m/view) then extract it and run main.exe!
